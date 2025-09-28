@@ -11,7 +11,7 @@ import me.doruk.inventory.entity.Venue;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventInventoryResponse {
-    private String event;
-    private Long capacity;
-    private Venue venue;
+  private String event;
+  private Long capacity;
+  private Venue venue;
 }
