@@ -11,7 +11,7 @@
 	<groupId>me.doruk</groupId>
 	<artifactId>inventoryService</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>inventory</name>
+	<name>inventoryService</name>
 	<description>Microservices - Inventory Service</description>
 	<url/>
 	<licenses>
@@ -62,6 +62,12 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+      <groupId>me.paulschwarz</groupId>
+      <artifactId>spring-dotenv</artifactId>
+      <version>4.0.0</version>
+      <scope>runtime</scope>
+    </dependency>
 	</dependencies>
 
 	<build>
