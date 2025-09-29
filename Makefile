@@ -16,7 +16,7 @@ stop:
 
 prune:
 	docker image prune
-routine:
+prune_system:
 	docker system prune -a
 reset:
 	docker stop $$(docker ps -qa); \
@@ -33,9 +33,16 @@ mysql:
 react:
 	docker exec -it react sh 
 
-inventory_service_restart:
+restart_inventory_service:
 	docker restart inventory-service
 
+clean_inventory_service:
+	docker exec -it inventory-service mvn clean
 
-.PHONY: all down stop prune routine reset mysql react inventory_service_restart
+clean_microservices:
+	docker exec -it inventory-service mvn clean
+
+
+.PHONY: all down stop prune prune_system routine reset mysql react clean_microservices \
+	restart_inventory_service clean_inventory_service
 
