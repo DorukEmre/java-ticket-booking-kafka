@@ -40,6 +40,7 @@ public class InventoryService {
     return VenueInventoryResponse.builder()
         .venueId(venue.getId())
         .name(venue.getName())
+        .address(venue.getAddress())
         .totalCapacity(venue.getTotalCapacity())
         .build();
   }
