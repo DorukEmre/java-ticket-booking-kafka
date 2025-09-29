@@ -49,11 +49,12 @@ services:
       - ./backend/inventoryService:/app
     working_dir: /app
     ports:
-      - "8080:8080"
+      - "${SERVER_PORT_INVENTORY:8080}:${SERVER_PORT_INVENTORY:8080}"
     command: ["mvn", "spring-boot:run"]
     depends_on:
       - mysql
     environment:
+      SERVER_PORT: ${SERVER_PORT_INVENTORY:8080}
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
