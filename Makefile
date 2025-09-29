@@ -33,16 +33,26 @@ mysql:
 react:
 	docker exec -it react sh 
 
+
 restart_inventory_service:
 	docker restart inventory-service
 
 clean_inventory_service:
 	docker exec -it inventory-service mvn clean
 
+restart_booking_service:
+	docker restart booking-service
+
+clean_booking_service:
+	docker exec -it booking-service mvn clean
+
+
 clean_microservices:
 	docker exec -it inventory-service mvn clean
+	docker exec -it booking-service mvn clean
 
 
-.PHONY: all down stop prune prune_system routine reset mysql react clean_microservices \
-	restart_inventory_service clean_inventory_service
-
+.PHONY: all down stop prune prune_system routine reset mysql react \
+	create_volumes_dirs clean_microservices \
+	restart_inventory_service clean_inventory_service \
+	restart_booking_service clean_booking_service

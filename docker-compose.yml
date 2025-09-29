@@ -3,11 +3,8 @@ services:
     image: mysql:8.4.6
     container_name: mysql
     restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    env_file:
+      - .env
     ports:
       - "3306:3306"
     volumes:
@@ -55,7 +52,29 @@ services:
       - mysql
     environment:
       SERVER_PORT: ${SERVER_PORT_INVENTORY:-8080}
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_INVENTORY}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+    networks:
+      - ticket-booking-network
+
+  booking-service:
+    build:
+      context: ./backend/bookingService
+      dockerfile: Dockerfile
+    image: booking-service
+    container_name: booking-service
+    volumes:
+      - ./backend/bookingService:/app
+    working_dir: /app
+    ports:
+      - "${SERVER_PORT_BOOKING:-8081}:${SERVER_PORT_BOOKING:-8081}"
+    command: ["mvn", "spring-boot:run"]
+    depends_on:
+      - mysql
+    environment:
+      SERVER_PORT: ${SERVER_PORT_BOOKING:-8081}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_BOOKING}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     networks:
