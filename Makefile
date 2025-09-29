@@ -33,8 +33,8 @@ mysql:
 react:
 	docker exec -it react sh 
 
-inventoryService_restart:
-	docker restart inventoryService
+inventory_service_restart:
+	docker restart inventory-service
 
 
 .PHONY: all down stop prune routine reset mysql react inventoryService_restart

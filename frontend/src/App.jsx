@@ -94,7 +94,7 @@ function App() {
         <input type="text" name="venueName" placeholder="Name" />
         <input type="text" name="venueAddress" placeholder="Address" />
         <input type="text" name="venueCapacity" placeholder="Capacity" />
-        <button type="submit">Send</button>
+        <button type="submit">Add</button>
       </form>
     </>
   )
