@@ -37,5 +37,5 @@ inventory_service_restart:
 	docker restart inventory-service
 
 
-.PHONY: all down stop prune routine reset mysql react inventoryService_restart
+.PHONY: all down stop prune routine reset mysql react inventory_service_restart
 
