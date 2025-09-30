@@ -78,6 +78,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       INVENTORY_BASE_URL: "inventory-service:8080"
+      KAFKA_BOOTSTRAP_SERVERS: "kafka-broker:29092"
     networks:
       - ticket-booking-network
 
@@ -90,10 +91,13 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 3000
+    networks:
+      - ticket-booking-network
 
   kafka-broker:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka-broker
+    hostname: kafka-broker
     ports:
       - "9092:9092"
       - "29092:29092"
@@ -105,6 +109,8 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - ticket-booking-network
 
   kafka-ui:
     container_name: kafka-ui
@@ -117,6 +123,8 @@ services:
       KAFKA_CLUSTERS_NAME: local
       KAFKA_CLUSTERS_BOOTSTRAPSERVERS: kafka-broker:29092
       DYNAMIC_CONFIG_ENABLED: 'true'
+    networks:
+      - ticket-booking-network
 
   kafka-schema-registry:
     image: confluentinc/cp-schema-registry:7.5.0
@@ -130,6 +138,8 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: kafka-schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'kafka-broker:29092'
       SCHEMA_REGISTRY_LISTENERS: http://kafka-schema-registry:8081
+    networks:
+      - ticket-booking-network
 
 networks:
   ticket-booking-network:
