@@ -34,6 +34,8 @@ public class BookingService {
     // --- get event information to also get Venue information
     final InventoryResponse inventoryResponse = inventoryServiceClient.getInventory(request.getEventId());
     System.out.println(inventoryResponse);
+    if (inventoryResponse.getCapacity() < request.getTicketCount())
+      throw new RuntimeException("Not enough tickets available");
 
     // create booking
 
