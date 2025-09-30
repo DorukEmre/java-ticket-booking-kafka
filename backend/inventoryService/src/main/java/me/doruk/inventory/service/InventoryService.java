@@ -1,5 +1,6 @@
 package me.doruk.inventory.service;
 
+import lombok.extern.slf4j.Slf4j;
 import me.doruk.inventory.entity.Event;
 import me.doruk.inventory.entity.Venue;
 import me.doruk.inventory.repository.EventRepository;
@@ -10,11 +11,13 @@ import me.doruk.inventory.response.EventInventoryResponse;
 import me.doruk.inventory.response.VenueInventoryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class InventoryService {
 
   private final EventRepository eventRepository;
@@ -117,4 +120,12 @@ public class InventoryService {
         .ticketPrice(savedEvent.getTicketPrice())
         .build();
   }
+
+  public void updateEventCapacity(final Long eventId, final Long ticketBooked) {
+    final Event event = eventRepository.findById(eventId).orElse(null);
+    event.setLeftCapacity(event.getLeftCapacity() - ticketBooked);
+    eventRepository.save(event);
+    log.info("Updated event capacity for event {} with tickets booked {}", eventId, ticketBooked);
+  }
+
 }

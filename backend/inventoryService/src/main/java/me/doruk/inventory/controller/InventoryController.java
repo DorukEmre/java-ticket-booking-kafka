@@ -60,4 +60,11 @@ public class InventoryController {
     EventInventoryResponse createdEvent = inventoryService.createEvent(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdEvent);
   }
+
+  @PutMapping(value = "/inventory/event/{eventId}/capacity/{capacity}")
+  public ResponseEntity<Void> updateEventCapacity(@PathVariable("eventId") Long eventId,
+                                                  @PathVariable("capacity") Long ticketBooked) {
+    inventoryService.updateEventCapacity(eventId, ticketBooked);
+    return ResponseEntity.ok().build();
+  }
 }
