@@ -64,7 +64,7 @@ public class InventoryService {
         .build();
   }
 
-  public List<VenueInventoryResponse> GetAllVenues() {
+  public List<VenueInventoryResponse> getAllVenues() {
     final List<Venue> venues = venueRepository.findAll();
 
     return venues.stream().map(venue -> VenueInventoryResponse.builder()

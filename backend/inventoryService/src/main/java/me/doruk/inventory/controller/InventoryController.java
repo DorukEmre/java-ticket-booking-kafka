@@ -44,7 +44,7 @@ public class InventoryController {
   @GetMapping({ "/inventory/venues", "/inventory/venues/" })
   public @ResponseBody List<VenueInventoryResponse> inventoryGetAllVenues() {
     System.out.println("GET /api/v1/inventory/venues called");
-    return inventoryService.GetAllVenues();
+    return inventoryService.getAllVenues();
   }
 
   @PostMapping(value = "/inventory/add-venue", consumes = "application/json", produces = "application/json")
@@ -62,8 +62,9 @@ public class InventoryController {
   }
 
   @PutMapping(value = "/inventory/event/{eventId}/capacity/{capacity}")
-  public ResponseEntity<Void> updateEventCapacity(@PathVariable("eventId") Long eventId,
-                                                  @PathVariable("capacity") Long ticketBooked) {
+  public ResponseEntity<Void> updateEventCapacity(
+      @PathVariable("eventId") Long eventId,
+      @PathVariable("capacity") Long ticketBooked) {
     inventoryService.updateEventCapacity(eventId, ticketBooked);
     return ResponseEntity.ok().build();
   }
