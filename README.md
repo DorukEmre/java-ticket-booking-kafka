@@ -63,3 +63,4 @@ The backend consists of Java-based microservices (e.g., Inventory) running in se
 ## Services
 
 - Inventory
+- Booking
