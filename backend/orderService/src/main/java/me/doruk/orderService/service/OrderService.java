@@ -5,9 +5,14 @@ import me.doruk.bookingService.event.BookingEvent;
 import me.doruk.orderService.client.InventoryServiceClient;
 import me.doruk.orderService.entity.Order;
 import me.doruk.orderService.repository.OrderRepository;
+import me.doruk.orderService.response.OrderResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -44,6 +49,19 @@ public class OrderService {
         .customerId(bookingEvent.getUserId())
         .eventId(bookingEvent.getEventId())
         .build();
+  }
+
+  public List<OrderResponse> getAllOrders() {
+    final List<Order> orders = orderRepository.findAll();
+
+    return orders.stream().map(order -> OrderResponse.builder()
+        .id(order.getId())
+        .customerId(order.getCustomerId())
+        .eventId(order.getEventId())
+        .ticketCount(order.getTicketCount())
+        .totalPrice(order.getTotalPrice())
+        .placedAt(order.getPlacedAt())
+        .build()).collect(Collectors.toList());
   }
 
 }
