@@ -1,7 +1,9 @@
 package me.doruk.bookingService.service;
 
+import lombok.extern.slf4j.Slf4j;
 import me.doruk.bookingService.client.InventoryServiceClient;
 import me.doruk.bookingService.entity.Customer;
+import me.doruk.bookingService.event.BookingEvent;
 import me.doruk.bookingService.repository.CustomerRepository;
 import me.doruk.bookingService.request.BookingRequest;
 import me.doruk.bookingService.request.UserCreateRequest;
@@ -10,32 +12,38 @@ import me.doruk.bookingService.response.InventoryResponse;
 
 import me.doruk.bookingService.response.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class BookingService {
 
   private final CustomerRepository customerRepository;
   private final InventoryServiceClient inventoryServiceClient;
+  private final KafkaTemplate<String, BookingEvent> kafkaTemplate;
 
   @Autowired
   public BookingService(final CustomerRepository customerRepository,
-      final InventoryServiceClient inventoryServiceClient) {
+      final InventoryServiceClient inventoryServiceClient,
+      final KafkaTemplate<String, BookingEvent> kafkaTemplate) {
     this.customerRepository = customerRepository;
     this.inventoryServiceClient = inventoryServiceClient;
+    this.kafkaTemplate = kafkaTemplate;
   }
 
   public List<UserResponse> GetAllUsers() {
     final List<Customer> users = customerRepository.findAll();
 
     return users.stream().map(user -> UserResponse.builder()
-      .id(user.getId())
-      .name(user.getName())
-      .email(user.getEmail())
-      .build()).collect(Collectors.toList());
+        .id(user.getId())
+        .name(user.getName())
+        .email(user.getEmail())
+        .build()).collect(Collectors.toList());
   }
 
   public UserResponse createUser(final UserCreateRequest request) {
@@ -47,10 +55,10 @@ public class BookingService {
     Customer savedUser = customerRepository.save(customer);
 
     return UserResponse.builder()
-      .id(savedUser.getId())
-      .name(savedUser.getName())
-      .email(savedUser.getEmail())
-      .build();
+        .id(savedUser.getId())
+        .name(savedUser.getName())
+        .email(savedUser.getEmail())
+        .build();
   }
 
   public BookingResponse createBooking(final BookingRequest request) {
@@ -68,9 +76,33 @@ public class BookingService {
       throw new RuntimeException("Not enough tickets available");
 
     // create booking
+    final BookingEvent bookingEvent = createBookingEvent(request, customer, inventoryResponse);
+    System.out.println(bookingEvent);
 
     // send booking to Order Service on a Kafka Topic
+    kafkaTemplate.send("booking", bookingEvent)
+        .thenAccept(result -> log.info("Booking event sent successfully: {}", bookingEvent))
+        .exceptionally(ex -> {
+          log.error("Failed to send booking event: {}", bookingEvent, ex);
+          return null;
+        });
 
-    return BookingResponse.builder().build();
+    return BookingResponse.builder()
+        .userId(bookingEvent.getUserId())
+        .eventId(bookingEvent.getEventId())
+        .ticketCount(bookingEvent.getTicketCount())
+        .totalPrice(bookingEvent.getTotalPrice())
+        .build();
+  }
+
+  private BookingEvent createBookingEvent(final BookingRequest request,
+      final Customer customer,
+      final InventoryResponse inventoryResponse) {
+    return BookingEvent.builder()
+        .userId(customer.getId())
+        .eventId(request.getEventId())
+        .ticketCount(request.getTicketCount())
+        .totalPrice(inventoryResponse.getTicketPrice().multiply(BigDecimal.valueOf(request.getTicketCount())))
+        .build();
   }
 }
