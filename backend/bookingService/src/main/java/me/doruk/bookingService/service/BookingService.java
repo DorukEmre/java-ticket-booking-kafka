@@ -8,10 +8,12 @@ import me.doruk.bookingService.request.UserCreateRequest;
 import me.doruk.bookingService.response.BookingResponse;
 import me.doruk.bookingService.response.InventoryResponse;
 
-import me.doruk.bookingService.response.UserCreateResponse;
+import me.doruk.bookingService.response.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
@@ -26,7 +28,17 @@ public class BookingService {
     this.inventoryServiceClient = inventoryServiceClient;
   }
 
-  public UserCreateResponse createUser(final UserCreateRequest request) {
+  public List<UserResponse> GetAllUsers() {
+    final List<Customer> users = customerRepository.findAll();
+
+    return users.stream().map(user -> UserResponse.builder()
+      .id(user.getId())
+      .name(user.getName())
+      .email(user.getEmail())
+      .build()).collect(Collectors.toList());
+  }
+
+  public UserResponse createUser(final UserCreateRequest request) {
     System.out.println("Create user called: " + request);
     Customer customer = new Customer();
     customer.setName(request.getName());
@@ -34,7 +46,7 @@ public class BookingService {
 
     Customer savedUser = customerRepository.save(customer);
 
-    return UserCreateResponse.builder()
+    return UserResponse.builder()
       .id(savedUser.getId())
       .name(savedUser.getName())
       .email(savedUser.getEmail())
