@@ -21,6 +21,12 @@ public class InventoryController {
     this.inventoryService = inventoryService;
   }
 
+  @GetMapping({ "/inventory/event/{eventId}", "/inventory/event/{eventId}/" })
+  public @ResponseBody EventInventoryResponse inventoryByEventId(@PathVariable("eventId") Long eventId) {
+    System.out.println("GET /api/v1/inventory/event/" + eventId + " called");
+    return inventoryService.getEventInformation(eventId);
+  }
+
   @GetMapping({ "/inventory/events", "/inventory/events/" })
   public @ResponseBody List<EventInventoryResponse> inventoryGetAllEvents() {
     System.out.println("GET /api/v1/inventory/events called");

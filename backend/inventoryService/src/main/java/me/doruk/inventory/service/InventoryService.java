@@ -24,13 +24,27 @@ public class InventoryService {
     this.venueRepository = venueRepository;
   }
 
+  public EventInventoryResponse getEventInformation(final Long eventId) {
+    final Event event = eventRepository.findById(eventId).orElse(null);
+
+    return EventInventoryResponse.builder()
+        .eventId(event.getId())
+        .event(event.getName())
+        .capacity(event.getLeftCapacity())
+        .venue(event.getVenue())
+        .ticketPrice(event.getTicketPrice())
+        .build();
+  }
+
   public List<EventInventoryResponse> GetAllEvents() {
     final List<Event> events = eventRepository.findAll();
 
     return events.stream().map(event -> EventInventoryResponse.builder()
+        .eventId(event.getId())
         .event(event.getName())
         .capacity(event.getLeftCapacity())
         .venue(event.getVenue())
+        .ticketPrice(event.getTicketPrice())
         .build()).collect(Collectors.toList());
   }
 
