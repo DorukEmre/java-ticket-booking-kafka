@@ -4,10 +4,13 @@ import me.doruk.bookingService.client.InventoryServiceClient;
 import me.doruk.bookingService.entity.Customer;
 import me.doruk.bookingService.repository.CustomerRepository;
 import me.doruk.bookingService.request.BookingRequest;
+import me.doruk.bookingService.request.UserCreateRequest;
 import me.doruk.bookingService.response.BookingResponse;
 import me.doruk.bookingService.response.InventoryResponse;
 
+import me.doruk.bookingService.response.UserCreateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,6 +24,21 @@ public class BookingService {
       final InventoryServiceClient inventoryServiceClient) {
     this.customerRepository = customerRepository;
     this.inventoryServiceClient = inventoryServiceClient;
+  }
+
+  public UserCreateResponse createUser(final UserCreateRequest request) {
+    System.out.println("Create user called: " + request);
+    Customer customer = new Customer();
+    customer.setName(request.getName());
+    customer.setEmail(request.getEmail());
+
+    Customer savedUser = customerRepository.save(customer);
+
+    return UserCreateResponse.builder()
+      .id(savedUser.getId())
+      .name(savedUser.getName())
+      .email(savedUser.getEmail())
+      .build();
   }
 
   public BookingResponse createBooking(final BookingRequest request) {
