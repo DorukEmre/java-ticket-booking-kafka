@@ -46,6 +46,9 @@ restart_booking_service:
 clean_booking_service:
 	docker exec -it booking-service mvn clean
 
+restart_order_service:
+	docker restart order-service
+
 
 clean_microservices:
 	docker exec -it inventory-service mvn clean
@@ -55,4 +58,5 @@ clean_microservices:
 .PHONY: all down stop prune prune_system routine reset mysql react \
 	create_volumes_dirs clean_microservices \
 	restart_inventory_service clean_inventory_service \
-	restart_booking_service clean_booking_service
+	restart_booking_service clean_booking_service \
+	restart_order_service
