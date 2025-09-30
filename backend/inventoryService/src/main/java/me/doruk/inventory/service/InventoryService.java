@@ -4,6 +4,8 @@ import me.doruk.inventory.entity.Event;
 import me.doruk.inventory.entity.Venue;
 import me.doruk.inventory.repository.EventRepository;
 import me.doruk.inventory.repository.VenueRepository;
+import me.doruk.inventory.request.EventCreateRequest;
+import me.doruk.inventory.request.VenueCreateRequest;
 import me.doruk.inventory.response.EventInventoryResponse;
 import me.doruk.inventory.response.VenueInventoryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,12 +72,12 @@ public class InventoryService {
         .build()).collect(Collectors.toList());
   }
 
-  public VenueInventoryResponse createVenue(final VenueInventoryResponse venueRequest) {
-    System.out.println("Creating venue: " + venueRequest);
+  public VenueInventoryResponse createVenue(final VenueCreateRequest request) {
+    System.out.println("Creating venue: " + request);
     Venue venue = new Venue();
-    venue.setName(venueRequest.getName());
-    venue.setAddress(venueRequest.getAddress());
-    venue.setTotalCapacity(venueRequest.getTotalCapacity());
+    venue.setName(request.getName());
+    venue.setAddress(request.getAddress());
+    venue.setTotalCapacity(request.getTotalCapacity());
 
     Venue savedVenue = venueRepository.save(venue);
 
@@ -84,6 +86,35 @@ public class InventoryService {
         .name(savedVenue.getName())
         .address(savedVenue.getAddress())
         .totalCapacity(savedVenue.getTotalCapacity())
+        .build();
+  }
+
+  public EventInventoryResponse createEvent(final EventCreateRequest request) {
+    System.out.println("Creating event: " + request);
+
+    final Venue venue = venueRepository.findById(request.getVenueId()).orElse(null);
+    if (venue == null) {
+      throw new IllegalArgumentException("Venue with ID " + request.getVenueId() + " does not exist.");
+    }
+    Event event = new Event();
+    event.setName(request.getName());
+    event.setTotalCapacity(request.getTotalCapacity());
+    event.setLeftCapacity(request.getTotalCapacity());
+    event.setVenue(venue);
+    event.setTicketPrice(request.getTicketPrice());
+
+    if (request.getTotalCapacity() > venue.getTotalCapacity()) {
+      throw new IllegalArgumentException("Event capacity cannot exceed venue capacity.");
+    }
+
+    Event savedEvent = eventRepository.save(event);
+
+    return EventInventoryResponse.builder()
+        .eventId(savedEvent.getId())
+        .event(savedEvent.getName())
+        .capacity(savedEvent.getLeftCapacity())
+        .venue(savedEvent.getVenue())
+        .ticketPrice(savedEvent.getTicketPrice())
         .build();
   }
 }

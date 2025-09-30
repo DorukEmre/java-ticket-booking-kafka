@@ -1,5 +1,7 @@
 package me.doruk.inventory.controller;
 
+import me.doruk.inventory.request.EventCreateRequest;
+import me.doruk.inventory.request.VenueCreateRequest;
 import me.doruk.inventory.response.EventInventoryResponse;
 import me.doruk.inventory.response.VenueInventoryResponse;
 import me.doruk.inventory.service.InventoryService;
@@ -45,10 +47,17 @@ public class InventoryController {
     return inventoryService.GetAllVenues();
   }
 
-  @PostMapping("/inventory/add-venue")
-  public ResponseEntity<VenueInventoryResponse> createVenue(@RequestBody VenueInventoryResponse venueRequest) {
+  @PostMapping(value = "/inventory/add-venue", consumes = "application/json", produces = "application/json")
+  public ResponseEntity<VenueInventoryResponse> createVenue(@RequestBody VenueCreateRequest request) {
     System.out.println("POST /api/v1/inventory/add-venue called");
-    VenueInventoryResponse createdVenue = inventoryService.createVenue(venueRequest);
+    VenueInventoryResponse createdVenue = inventoryService.createVenue(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdVenue);
+  }
+
+  @PostMapping(value = "/inventory/add-event", consumes = "application/json", produces = "application/json")
+  public ResponseEntity<EventInventoryResponse> createEvent(@RequestBody EventCreateRequest request) {
+    System.out.println("POST /api/v1/inventory/add-event called");
+    EventInventoryResponse createdEvent = inventoryService.createEvent(request);
+    return ResponseEntity.status(HttpStatus.CREATED).body(createdEvent);
   }
 }
