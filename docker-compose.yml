@@ -106,15 +106,38 @@ services:
     networks:
       - ticket-booking-network
 
+  gatewayapi:
+    build:
+      context: ./backend/gatewayapi
+      dockerfile: Dockerfile
+    image: gatewayapi
+    container_name: gatewayapi
+    volumes:
+      - ./backend/gatewayapi:/app
+    working_dir: /app
+    ports:
+      - 8000:8000
+    command: ["mvn", "spring-boot:run"]
+    depends_on:
+      - mysql
+    environment:
+      SERVER_PORT: "8000"
+      INVENTORY_BASE_URL: "inventory-service:8080"
+      BOOKING_BASE_URL: "booking-service:8080"
+      ORDER_BASE_URL: "order-service:8080"
+    networks:
+      - ticket-booking-network
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
     hostname: zookeeper
     container_name: zookeeper
-    ports:
-      - "2181:2181"
+    expose:
+      - 2181
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 3000
+      KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
     networks:
       - ticket-booking-network
 
@@ -122,9 +145,9 @@ services:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka-broker
     hostname: kafka-broker
-    ports:
-      - "9092:9092"
-      - "29092:29092"
+    expose:
+      - 9092
+      - 29092
     depends_on:
       - zookeeper
     environment:
@@ -133,6 +156,7 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
     networks:
       - ticket-booking-network
 
@@ -147,6 +171,7 @@ services:
       KAFKA_CLUSTERS_NAME: local
       KAFKA_CLUSTERS_BOOTSTRAPSERVERS: kafka-broker:29092
       DYNAMIC_CONFIG_ENABLED: 'true'
+      LOG_LEVEL: WARN
     networks:
       - ticket-booking-network
 
@@ -156,12 +181,15 @@ services:
     container_name: kafka-schema-registry
     depends_on:
       - kafka-broker
-    ports:
-      - "8083:8081"
+    # ports:
+    #   - "8083:8081"
+    expose:
+      - 8081
     environment:
       SCHEMA_REGISTRY_HOST_NAME: kafka-schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'kafka-broker:29092'
       SCHEMA_REGISTRY_LISTENERS: http://kafka-schema-registry:8081
+      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: WARN
     networks:
       - ticket-booking-network
 
