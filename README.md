@@ -4,14 +4,12 @@ All components run in Docker containers.
 
 ## Services
 
-- API Gateway
-- Inventory
-- Booking
-- Order
-
-## Database
-
-Venues can host Events
+Microservices architecture for a ticket booking system:
+  - Frontend: React app
+  - Backend services: Inventory, Booking, Order
+  - API Gateway: gatewayapi
+  - Database: MySQL
+  - Messaging: Kafka + Zookeeper + Schema Registry + Kafka UI
 
 # React + Java + MySQL in Docker Boilerplate
 
@@ -20,6 +18,8 @@ Boilerplate to set up a full-stack application using React for the frontend, Jav
 ## Database
 
 MySQL in Docker container
+
+### Tables
 
 ## Frontend
 
@@ -35,7 +35,7 @@ The backend consists of Java-based microservices (e.g., Inventory) running in se
 
 ### Interactions
 
-- The frontend (React) sends HTTP requests to backend endpoints.
+- The frontend (React) sends HTTP requests to the Gateway API that forwards the allowed routes to backend endpoints.
 - Backend services process requests, interact with the MySQL database, and return responses to the frontend.
 - All services are orchestrated using Docker Compose.
 
@@ -59,8 +59,15 @@ The backend consists of Java-based microservices (e.g., Inventory) running in se
 - **lombok**: For reducing boilerplate code in Java classes.
 - **spring-boot-starter-test**: For testing support.
 
+## Spring Boot Actuator
 
-## Services
+- `http://localhost:8000/actuator/gateway/routes` — View all routes currently configured in the API Gateway, including their IDs, predicates, and target URIs.
 
-- Inventory
-- Booking
+**Note:**  
+Enabled and exposed in the gatewayapi’s `application.properties` using:
+```
+management.endpoints.web.exposure.include=*
+management.endpoint.gateway.access=unrestricted
+```
+
+

@@ -11,19 +11,17 @@ import org.springframework.http.HttpMethod;
 public class BookingServiceRoutes {
 
   @Value("${BOOKING_BASE_URL}")
-  private String bookingBaseUrl;
+  private String baseUrl;
 
   @Bean
-  public RouteLocator myRoutes(RouteLocatorBuilder builder) {
+  public RouteLocator bookingRoutes(RouteLocatorBuilder builder) {
 
-    String uri = "http://" + bookingBaseUrl;
+    String uri = "http://" + baseUrl;
 
     return builder.routes()
         .route("booking-users", r -> r
             .path("/booking/users")
-            .and()
-            .method(HttpMethod.GET)
-            // .filters(f -> f.rewritePath("/booking/users", "/api/v1/booking/users"))
+            .and().method(HttpMethod.GET)
             .filters(f -> f.prefixPath("/api/v1"))
             .uri(uri))
 

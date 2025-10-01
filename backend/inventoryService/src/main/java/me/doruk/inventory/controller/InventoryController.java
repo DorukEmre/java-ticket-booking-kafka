@@ -23,25 +23,25 @@ public class InventoryController {
     this.inventoryService = inventoryService;
   }
 
-  @GetMapping({ "/inventory/event/{eventId}", "/inventory/event/{eventId}/" })
+  @GetMapping("/inventory/event/{eventId}")
   public @ResponseBody EventInventoryResponse inventoryByEventId(@PathVariable("eventId") Long eventId) {
     System.out.println("GET /api/v1/inventory/event/" + eventId + " called");
     return inventoryService.getEventInformation(eventId);
   }
 
-  @GetMapping({ "/inventory/events", "/inventory/events/" })
+  @GetMapping("/inventory/events")
   public @ResponseBody List<EventInventoryResponse> inventoryGetAllEvents() {
     System.out.println("GET /api/v1/inventory/events called");
     return inventoryService.GetAllEvents();
   }
 
-  @GetMapping({ "/inventory/venue/{venueId}", "/inventory/venue/{venueId}/" })
+  @GetMapping("/inventory/venue/{venueId}")
   public @ResponseBody VenueInventoryResponse inventoryByVenueId(@PathVariable("venueId") Long venueId) {
     System.out.println("GET /api/v1/inventory/venue/" + venueId + " called");
     return inventoryService.getVenueInformation(venueId);
   }
 
-  @GetMapping({ "/inventory/venues", "/inventory/venues/" })
+  @GetMapping("/inventory/venues")
   public @ResponseBody List<VenueInventoryResponse> inventoryGetAllVenues() {
     System.out.println("GET /api/v1/inventory/venues called");
     return inventoryService.getAllVenues();

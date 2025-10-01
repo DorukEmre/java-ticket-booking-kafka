@@ -29,10 +29,11 @@ services:
     environment:
       - PUBLIC_URL=/
       - REACT_APP_API_BASE_URL=http://localhost:8080
+      # - REACT_APP_API_BASE_URL=http://gatewayapi:8000
     networks:
       - ticket-booking-network
     volumes:
-      - /app/node_modules # to avoid overwriting node_modules
+      - node_modules:/app/node_modules # to avoid overwriting node_modules
       - ./frontend:/app # for development (for live changes to be reflected)
       # - ./frontend/dist:/app/dist # for production (build directory)
 
@@ -44,9 +45,9 @@ services:
     container_name: inventory-service
     volumes:
       - ./backend/inventoryService:/app
+      - m2-repo:/root/.m2
     working_dir: /app
-    ports:
-      - 8080:8080
+    expose: [8080]
     command: ["mvn", "spring-boot:run"]
     depends_on:
       - mysql
@@ -66,9 +67,9 @@ services:
     container_name: booking-service
     volumes:
       - ./backend/bookingService:/app
+      - m2-repo:/root/.m2
     working_dir: /app
-    ports:
-      - 8081:8081
+    expose: [8081]
     command: ["mvn", "spring-boot:run"]
     depends_on:
       - mysql
@@ -90,9 +91,9 @@ services:
     container_name: order-service
     volumes:
       - ./backend/orderService:/app
+      - m2-repo:/root/.m2
     working_dir: /app
-    ports:
-      - 8082:8082
+    expose: [8082]
     command: ["mvn", "spring-boot:run"]
     depends_on:
       - mysql
@@ -114,6 +115,7 @@ services:
     container_name: gatewayapi
     volumes:
       - ./backend/gatewayapi:/app
+      - m2-repo:/root/.m2
     working_dir: /app
     ports:
       - 8000:8000
@@ -132,8 +134,7 @@ services:
     image: confluentinc/cp-zookeeper:7.5.0
     hostname: zookeeper
     container_name: zookeeper
-    expose:
-      - 2181
+    expose: [2181]
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 3000
@@ -145,9 +146,7 @@ services:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka-broker
     hostname: kafka-broker
-    expose:
-      - 9092
-      - 29092
+    expose: [9092, 29092]
     depends_on:
       - zookeeper
     environment:
@@ -181,10 +180,7 @@ services:
     container_name: kafka-schema-registry
     depends_on:
       - kafka-broker
-    # ports:
-    #   - "8083:8081"
-    expose:
-      - 8081
+    expose: [8081]
     environment:
       SCHEMA_REGISTRY_HOST_NAME: kafka-schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'kafka-broker:29092'
@@ -199,3 +195,5 @@ networks:
 
 volumes:
   db-data:
+  node_modules:
+  m2-repo:
