@@ -123,8 +123,8 @@ services:
     environment:
       SERVER_PORT: "8000"
       INVENTORY_BASE_URL: "inventory-service:8080"
-      BOOKING_BASE_URL: "booking-service:8080"
-      ORDER_BASE_URL: "order-service:8080"
+      BOOKING_BASE_URL: "booking-service:8081"
+      ORDER_BASE_URL: "order-service:8082"
     networks:
       - ticket-booking-network
 

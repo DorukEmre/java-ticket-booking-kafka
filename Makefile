@@ -49,6 +49,9 @@ clean_booking_service:
 restart_order_service:
 	docker restart order-service
 
+restart_gatewayapi:
+	docker restart gatewayapi
+
 
 clean_microservices:
 	docker exec -it inventory-service mvn clean
