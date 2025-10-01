@@ -1,0 +1,23 @@
+meta {
+  name: Add Venue
+  type: http
+  seq: 8
+}
+
+post {
+  url: http://localhost:8000/inventory/add-venue
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "",
+    "address": "",
+    "totalCapacity": 
+  }
+}
+
+settings {
+  encodeUrl: true
+}

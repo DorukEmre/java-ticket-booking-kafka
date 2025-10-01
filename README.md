@@ -70,4 +70,5 @@ management.endpoints.web.exposure.include=*
 management.endpoint.gateway.access=unrestricted
 ```
 
-
+## API Tests (Bruno)
+The `api-tests` folder contains Bruno (API client) collections for testing the REST APIs of all backend services (Booking, Inventory, Order).

@@ -1,0 +1,22 @@
+meta {
+  name: Add user
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:8000/booking/add-user
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "timmy",
+    "email": "a@a.com"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
