@@ -8,9 +8,9 @@ VALUES ("Bob", "bob@email.com");
 
 ### Add event
 ```sql
-SELECT * FROM inventory_db.event;
+SELECT * FROM catalog_db.event;
 
-INSERT INTO inventory_db.event (name, venue_id, total_capacity, remaining_capacity)
+INSERT INTO catalog_db.event (name, venue_id, total_capacity, remaining_capacity)
 VALUES ('Sample Event', 1, 100, 100);
 ```
 

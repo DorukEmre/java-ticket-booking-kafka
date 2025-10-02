@@ -2,7 +2,7 @@ package me.doruk.orderService.service;
 
 import lombok.extern.slf4j.Slf4j;
 import me.doruk.bookingService.event.BookingEvent;
-import me.doruk.orderService.client.InventoryServiceClient;
+import me.doruk.orderService.client.CatalogServiceClient;
 import me.doruk.orderService.dto.TicketCountForEvent;
 import me.doruk.orderService.entity.Customer;
 import me.doruk.orderService.entity.OrderItem;
@@ -29,17 +29,17 @@ public class OrderService {
   private final CustomerRepository customerRepository;
   private final OrderItemRepository orderItemRepository;
   private final OrderRepository orderRepository;
-  private final InventoryServiceClient inventoryServiceClient;
+  private final CatalogServiceClient catalogServiceClient;
 
   @Autowired
   public OrderService(
       final CustomerRepository customerRepository,
       final OrderItemRepository orderItemRepository,
       final OrderRepository orderRepository,
-      final InventoryServiceClient inventoryServiceClient) {
+      final CatalogServiceClient catalogServiceClient) {
 
     this.orderRepository = orderRepository;
-    this.inventoryServiceClient = inventoryServiceClient;
+    this.catalogServiceClient = catalogServiceClient;
     this.customerRepository = customerRepository;
     this.orderItemRepository = orderItemRepository;
   }
@@ -112,8 +112,8 @@ public class OrderService {
             .build())
         .collect(Collectors.toList());
 
-    // Update remaining ticket in Inventory
-    inventoryServiceClient.updateInventory(eventTicketCounts);
+    // Update remaining ticket in CatalogService
+    catalogServiceClient.updateCatalogService(eventTicketCounts);
 
     // TO DO: Delete cart from Redis.
 

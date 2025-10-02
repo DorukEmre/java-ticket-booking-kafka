@@ -1,13 +1,13 @@
 package me.doruk.bookingService.service;
 
 import lombok.extern.slf4j.Slf4j;
-import me.doruk.bookingService.client.InventoryServiceClient;
+import me.doruk.bookingService.client.CatalogServiceClient;
 import me.doruk.bookingService.event.BookingEvent;
 import me.doruk.bookingService.event.BookingEventItem;
 import me.doruk.bookingService.request.BookingRequest;
 import me.doruk.bookingService.request.BookingRequestItem;
 import me.doruk.bookingService.response.BookingResponse;
-import me.doruk.bookingService.response.InventoryResponse;
+import me.doruk.bookingService.response.CatalogServiceResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,14 +21,14 @@ import java.util.List;
 @Slf4j
 public class BookingService {
 
-  private final InventoryServiceClient inventoryServiceClient;
+  private final CatalogServiceClient catalogServiceClient;
   private final KafkaTemplate<String, BookingEvent> kafkaTemplate;
 
   @Autowired
   public BookingService(
-      final InventoryServiceClient inventoryServiceClient,
+      final CatalogServiceClient catalogServiceClient,
       final KafkaTemplate<String, BookingEvent> kafkaTemplate) {
-    this.inventoryServiceClient = inventoryServiceClient;
+    this.catalogServiceClient = catalogServiceClient;
     this.kafkaTemplate = kafkaTemplate;
   }
 
@@ -40,12 +40,12 @@ public class BookingService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Booking request must contain at least one item");
     }
     for (BookingRequestItem item : items) {
-      // check if enough inventory
+      // check if enough catalog
       // --- get event information to also get Venue information
-      final InventoryResponse inventoryResponse = inventoryServiceClient.getInventory(item.getEventId());
-      System.out.println(inventoryResponse);
+      final CatalogServiceResponse catalogResponse = catalogServiceClient.getCatalogService(item.getEventId());
+      System.out.println(catalogResponse);
 
-      if (inventoryResponse.getCapacity() < item.getTicketCount())
+      if (catalogResponse.getCapacity() < item.getTicketCount())
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough tickets available");
     }
 

@@ -36,14 +36,14 @@ services:
       - ./frontend:/app # for development (for live changes to be reflected)
       # - ./frontend/dist:/app/dist # for production (build directory)
 
-  inventory-service:
+  catalog-service:
     build:
-      context: ./backend/inventoryService
+      context: ./backend/catalog-service
       dockerfile: Dockerfile
-    image: inventory-service
-    container_name: inventory-service
+    image: catalog-service
+    container_name: catalog-service
     volumes:
-      - ./backend/inventoryService:/app
+      - ./backend/catalog-service:/app
       - m2-repo:/root/.m2
     working_dir: /app
     expose: [8080]
@@ -52,7 +52,7 @@ services:
       - mysql
     environment:
       SERVER_PORT: "8080"
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_INVENTORY}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_CATALOG}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     networks:
@@ -74,7 +74,7 @@ services:
       - mysql
     environment:
       SERVER_PORT: "8081"
-      INVENTORY_BASE_URL: "inventory-service:8080"
+      CATALOG_BASE_URL: "catalog-service:8080"
       KAFKA_BOOTSTRAP_SERVERS: "kafka-broker:29092"
     networks:
       - ticket-booking-network
@@ -98,7 +98,7 @@ services:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_ORDER}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      INVENTORY_BASE_URL: "inventory-service:8080"
+      CATALOG_BASE_URL: "catalog-service:8080"
       KAFKA_BOOTSTRAP_SERVERS: "kafka-broker:29092"
     networks:
       - ticket-booking-network
@@ -121,7 +121,7 @@ services:
     environment:
       SERVER_PORT: "8000"
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
-      INVENTORY_BASE_URL: "inventory-service:8080"
+      CATALOG_BASE_URL: "catalog-service:8080"
       BOOKING_BASE_URL: "booking-service:8081"
       ORDER_BASE_URL: "order-service:8082"
     networks:
@@ -153,6 +153,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker:29092,PLAINTEXT_HOST://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
+      KAFKA_LOG4J_LOGGERS: 'kafka=WARN,kafka.controller=WARN,kafka.log.LogCleaner=WARN,state.change.logger=WARN,kafka.producer.async.DefaultEventHandler=WARN'
     networks:
       - ticket-booking-network
 

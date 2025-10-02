@@ -34,11 +34,11 @@ react:
 	docker exec -it react sh 
 
 
-restart_inventory_service:
-	docker restart inventory-service
+restart_catalog_service:
+	docker restart catalog-service
 
-clean_inventory_service:
-	docker exec -it inventory-service mvn clean
+clean_catalog_service:
+	docker exec -it catalog-service mvn clean
 
 restart_booking_service:
 	docker restart booking-service
@@ -54,12 +54,12 @@ restart_gatewayapi:
 
 
 clean_microservices:
-	docker exec -it inventory-service mvn clean
+	docker exec -it catalog-service mvn clean
 	docker exec -it booking-service mvn clean
 
 
 .PHONY: all down stop prune prune_system routine reset mysql react \
 	create_volumes_dirs clean_microservices \
-	restart_inventory_service clean_inventory_service \
+	restart_catalog_service clean_catalog_service \
 	restart_booking_service clean_booking_service \
 	restart_order_service

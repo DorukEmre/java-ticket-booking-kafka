@@ -29,7 +29,7 @@ function App() {
   }, []);
 
   const getVenues = () => {
-    let url = `${baseURL}/inventory/venues`;
+    let url = `${baseURL}/catalog/venues`;
     console.log("axios get url: ", url);
     axios.get(url, { withCredentials: true })
       .then(response => {
@@ -43,7 +43,7 @@ function App() {
 
   const addVenue = async (e) => {
     e.preventDefault();
-    let url = `${baseURL}/inventory/add-venue`;
+    let url = `${baseURL}/catalog/add-venue`;
     const formData = new FormData(e.target);
 
     // Convert FormData to JSON

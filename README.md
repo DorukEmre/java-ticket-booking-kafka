@@ -6,7 +6,7 @@ All components run in Docker containers.
 
 Microservices architecture for a ticket booking system:
   - Frontend: React app
-  - Backend services: Inventory, Booking, Order
+  - Backend services: CatalogService, Booking, Order
   - API Gateway: gatewayapi
   - Database: MySQL
   - Messaging: Kafka + Zookeeper + Schema Registry + Kafka UI
@@ -23,11 +23,11 @@ MySQL in Docker container
 
 ## Frontend
 
-Demo set up to make a get and a post request to inventory backend
+Demo set up to make a get and a post request to catalog backend
 
 ## Backend
 
-The backend consists of Java-based microservices (e.g., Inventory) running in separate Docker containers. Each service exposes RESTful APIs for the frontend to interact with. The backend services connect to the MySQL database for data persistence and retrieval.
+The backend consists of Java-based microservices (e.g., CatalogService) running in separate Docker containers. Each service exposes RESTful APIs for the frontend to interact with. The backend services connect to the MySQL database for data persistence and retrieval.
 
 - Each backend service has its own Dockerfile and configuration.
 - Services communicate with the database using JDBC or ORM frameworks.
@@ -71,4 +71,4 @@ management.endpoint.gateway.access=unrestricted
 ```
 
 ## API Tests (Bruno)
-The `api-tests` folder contains Bruno (API client) collections for testing the REST APIs of all backend services (Booking, Inventory, Order).
+The `api-tests` folder contains Bruno (API client) collections for testing the REST APIs of all backend services (Booking, CatalogService, Order).
