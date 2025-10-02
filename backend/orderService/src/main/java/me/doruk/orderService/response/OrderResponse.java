@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.doruk.orderService.entity.OrderItem;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @Builder
@@ -14,8 +16,7 @@ import java.math.BigDecimal;
 public class OrderResponse {
   private Long id;
   private BigDecimal totalPrice;
-  private Long ticketCount;
   private String placedAt;
   private Long customerId;
-  private Long eventId;
+  private List<OrderItem> items;
 }

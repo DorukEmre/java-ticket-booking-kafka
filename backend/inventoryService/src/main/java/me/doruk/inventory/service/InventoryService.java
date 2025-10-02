@@ -12,10 +12,10 @@ import me.doruk.inventory.response.VenueInventoryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Date;
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -137,7 +137,7 @@ public class InventoryService {
         .build();
   }
 
-  public void updateEventCapacity(final Long eventId, final Long ticketBooked) {
+  private void updateEventCapacity(final Long eventId, final Long ticketBooked) {
     final Event event = eventRepository.findById(eventId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
 
@@ -146,6 +146,15 @@ public class InventoryService {
     eventRepository.save(event);
 
     log.info("Updated event capacity for event {} with tickets booked {}", eventId, ticketBooked);
+  }
+
+  public void updateEventsCapacities(final List<AbstractMap.SimpleEntry<Long, Long>> eventTicketCounts) {
+    for (var entry : eventTicketCounts) {
+      Long eventId = entry.getKey();
+      Long ticketsBooked = entry.getValue();
+      updateEventCapacity(eventId, ticketsBooked);
+    }
+    log.info("Updated capacities for all events");
   }
 
 }

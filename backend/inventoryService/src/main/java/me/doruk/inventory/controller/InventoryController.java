@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 
 @RestController
@@ -61,11 +62,9 @@ public class InventoryController {
     return ResponseEntity.status(HttpStatus.CREATED).body(createdEvent);
   }
 
-  @PutMapping(value = "/inventory/event/{eventId}/capacity/{capacity}")
-  public ResponseEntity<Void> updateEventCapacity(
-      @PathVariable("eventId") Long eventId,
-      @PathVariable("capacity") Long ticketBooked) {
-    inventoryService.updateEventCapacity(eventId, ticketBooked);
+  @PutMapping("/events/update-capacities")
+  public ResponseEntity<Void> updateCapacities(@RequestBody List<SimpleEntry<Long, Long>> eventTicketCounts) {
+    inventoryService.updateEventsCapacities(eventTicketCounts);
     return ResponseEntity.ok().build();
   }
 }

@@ -4,8 +4,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
@@ -14,21 +15,26 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "`order`")
-public class Order {
+@Getter
+@Setter
+@Table(name = "order_item")
+public class OrderItem {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")
   private Long id;
 
-  @Column(name = "total")
-  private BigDecimal totalPrice;
+  @Column(name = "order_id")
+  private Long orderId;
 
-  @CreationTimestamp
-  @Column(name = "placed_at", updatable = false, nullable = false)
-  private String placedAt;
+  @Column(name = "event_id")
+  private Long eventId;
 
-  @Column(name = "customer_id")
-  private Long customerId;
+  @Column(name = "quantity")
+  private Long ticketCount;
+
+  @Column(name = "ticket_price")
+  private BigDecimal ticketPrice;
+
 }

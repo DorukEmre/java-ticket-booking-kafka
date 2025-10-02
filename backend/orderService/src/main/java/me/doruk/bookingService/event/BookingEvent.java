@@ -3,17 +3,18 @@ package me.doruk.bookingService.event;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
 public class BookingEvent {
-  private Long userId;
-  private Long eventId;
-  private Long ticketCount;
-  private BigDecimal totalPrice;
+  private String customerName;
+  private String email;
+  private List<BookingEventItem> bookingEventItems;
 }
