@@ -1,7 +1,5 @@
 package me.doruk.bookingService.response;
 
-import java.math.BigDecimal;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,8 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class BookingResponse {
-  private Long userId;
-  private Long eventId;
-  private Long ticketCount;
-  private BigDecimal totalPrice;
+  private String customerName;
+  private int numberOfItems;
 }

@@ -2,10 +2,10 @@ package me.doruk.bookingService.service;
 
 import lombok.extern.slf4j.Slf4j;
 import me.doruk.bookingService.client.InventoryServiceClient;
-import me.doruk.bookingService.entity.Customer;
 import me.doruk.bookingService.event.BookingEvent;
-import me.doruk.bookingService.repository.CustomerRepository;
+import me.doruk.bookingService.event.BookingEventItem;
 import me.doruk.bookingService.request.BookingRequest;
+import me.doruk.bookingService.request.BookingRequestItem;
 import me.doruk.bookingService.response.BookingResponse;
 import me.doruk.bookingService.response.InventoryResponse;
 
@@ -15,42 +15,42 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @Slf4j
 public class BookingService {
 
-  private final CustomerRepository customerRepository;
   private final InventoryServiceClient inventoryServiceClient;
   private final KafkaTemplate<String, BookingEvent> kafkaTemplate;
 
   @Autowired
-  public BookingService(final CustomerRepository customerRepository,
+  public BookingService(
       final InventoryServiceClient inventoryServiceClient,
       final KafkaTemplate<String, BookingEvent> kafkaTemplate) {
-    this.customerRepository = customerRepository;
     this.inventoryServiceClient = inventoryServiceClient;
     this.kafkaTemplate = kafkaTemplate;
   }
 
   public BookingResponse createBooking(final BookingRequest request) {
     System.out.println("Create booking called: " + request);
-    // check if user exists
-    final Customer customer = customerRepository.findById(request.getUserId())
-        .orElseThrow(
-            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-    // check enough inventory
-    // --- get event information to also get Venue information
-    final InventoryResponse inventoryResponse = inventoryServiceClient.getInventory(request.getEventId());
-    System.out.println(inventoryResponse);
+    List<BookingRequestItem> items = request.getItems();
+    if (items == null || items.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Booking request must contain at least one item");
+    }
+    for (BookingRequestItem item : items) {
+      // check if enough inventory
+      // --- get event information to also get Venue information
+      final InventoryResponse inventoryResponse = inventoryServiceClient.getInventory(item.getEventId());
+      System.out.println(inventoryResponse);
 
-    if (inventoryResponse.getCapacity() < request.getTicketCount())
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough tickets available");
+      if (inventoryResponse.getCapacity() < item.getTicketCount())
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough tickets available");
+    }
 
     // create booking
-    final BookingEvent bookingEvent = createBookingEvent(request, customer, inventoryResponse);
+    final BookingEvent bookingEvent = createBookingEvent(request, items);
     System.out.println(bookingEvent);
 
     // send booking to Order Service on a Kafka Topic
@@ -62,22 +62,25 @@ public class BookingService {
         });
 
     return BookingResponse.builder()
-        .userId(bookingEvent.getUserId())
-        .eventId(bookingEvent.getEventId())
-        .ticketCount(bookingEvent.getTicketCount())
-        .totalPrice(bookingEvent.getTotalPrice())
+        .customerName(request.getCustomerName())
+        .numberOfItems(items.size())
         .build();
   }
 
   private BookingEvent createBookingEvent(final BookingRequest request,
-      final Customer customer,
-      final InventoryResponse inventoryResponse) {
+      final List<BookingRequestItem> items) {
 
     return BookingEvent.builder()
-        .userId(customer.getId())
-        .eventId(request.getEventId())
-        .ticketCount(request.getTicketCount())
-        .totalPrice(inventoryResponse.getTicketPrice().multiply(BigDecimal.valueOf(request.getTicketCount())))
+        .id(request.getId())
+        .customerName(request.getCustomerName())
+        .email(request.getEmail())
+        .bookingEventItems(items.stream()
+            .map((BookingRequestItem item) -> BookingEventItem.builder()
+                .eventId(item.getEventId())
+                .ticketCount(item.getTicketCount())
+                .ticketPrice(item.getTicketPrice())
+                .build())
+            .toList())
         .build();
   }
 }

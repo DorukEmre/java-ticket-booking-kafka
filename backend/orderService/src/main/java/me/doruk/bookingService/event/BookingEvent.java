@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 @Getter
 public class BookingEvent {
+  private Long id;
   private String customerName;
   private String email;
   private List<BookingEventItem> bookingEventItems;
