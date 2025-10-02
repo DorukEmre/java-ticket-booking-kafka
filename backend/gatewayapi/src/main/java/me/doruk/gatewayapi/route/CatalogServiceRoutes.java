@@ -20,46 +20,46 @@ public class CatalogServiceRoutes {
 
     return builder.routes()
         .route("catalog-events", r -> r
-            .path("/catalog/events")
+            .path("/events")
             .and().method(HttpMethod.GET)
-            .filters(f -> f.prefixPath("/api/v1"))
+            .filters(f -> f.prefixPath("/api/v1/catalog"))
             .uri(uri))
 
         .route("catalog-venues", r -> r
-            .path("/catalog/venues")
+            .path("/venues")
             .and().method(HttpMethod.GET)
-            .filters(f -> f.prefixPath("/api/v1"))
+            .filters(f -> f.prefixPath("/api/v1/catalog"))
             .uri(uri))
 
         .route("catalog-event-by-id", r -> r
-            .path("/catalog/event/{eventId}")
+            .path("/event/{eventId}")
             .and().method(HttpMethod.GET)
-            .filters(f -> f.rewritePath("/catalog/event/(?<eventId>[^/]+)", "/api/v1/catalog/event/${eventId}"))
+            .filters(f -> f.rewritePath("/event/(?<eventId>[^/]+)", "/api/v1/catalog/event/${eventId}"))
             .uri(uri))
 
         .route("catalog-venue-by-id", r -> r
-            .path("/catalog/venue/{venueId}")
+            .path("/venue/{venueId}")
             .and().method(HttpMethod.GET)
-            .filters(f -> f.rewritePath("/catalog/venue/(?<venueId>[^/]+)", "/api/v1/catalog/venue/${venueId}"))
+            .filters(f -> f.rewritePath("/venue/(?<venueId>[^/]+)", "/api/v1/catalog/venue/${venueId}"))
             .uri(uri))
 
         // admin routes
         .route("catalog-add-venue", r -> r
-            .path("/catalog/add-venue")
+            .path("/venue/new")
             .and().method(HttpMethod.POST)
-            .filters(f -> f.prefixPath("/api/v1"))
+            .filters(f -> f.rewritePath("/venue/new", "/api/v1/catalog/add-venue"))
             .uri(uri))
 
         .route("catalog-add-event", r -> r
-            .path("/catalog/add-event")
+            .path("/event/new")
             .and().method(HttpMethod.POST)
-            .filters(f -> f.prefixPath("/api/v1"))
+            .filters(f -> f.rewritePath("/event/new", "/api/v1/catalog/add-event"))
             .uri(uri))
 
         .route("update-event-capacity", r -> r
-            .path("/catalog/events/update-capacities")
+            .path("/events/update-capacities")
             .and().method(HttpMethod.PUT)
-            .filters(f -> f.prefixPath("/api/v1"))
+            .filters(f -> f.prefixPath("/api/v1/catalog"))
             .uri(uri))
 
         .build();

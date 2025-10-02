@@ -1,20 +1,36 @@
 meta {
   name: Book an event
   type: http
-  seq: 2
+  seq: 1
 }
 
 post {
-  url: http://localhost:8000/booking
+  url: http://localhost:8000/cart
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "userId": 2,
-    "eventId": 3,
-    "ticketCount": 10
+    "customerName": "ccc",
+    "email": "ccc@email.com",
+    "items": [
+      {
+        "eventId": 11,
+        "ticketCount": 1,
+        "ticketPrice": 10
+      },
+      {
+        "eventId": 7,
+        "ticketCount": 2,
+        "ticketPrice": 20
+      },
+      {
+        "eventId": 8,
+        "ticketCount": 3,
+        "ticketPrice": 30
+      }
+    ]
   }
 }
 

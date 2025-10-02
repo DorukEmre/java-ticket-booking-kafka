@@ -1,20 +1,20 @@
 meta {
   name: Add Venue
   type: http
-  seq: 8
+  seq: 1
 }
 
 post {
-  url: http://localhost:8000/inventory/add-venue
+  url: http://localhost:8000/venue/new
   body: json
   auth: inherit
 }
 
 body:json {
   {
-    "name": "",
-    "address": "",
-    "totalCapacity": 
+    "name": "ICI",
+    "address": "PARIS",
+    "totalCapacity": 3
   }
 }
 

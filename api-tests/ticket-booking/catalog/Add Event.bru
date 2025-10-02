@@ -1,0 +1,26 @@
+meta {
+  name: Add Event
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8000/event/new
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Cool Thing",
+    "totalCapacity": 1000,
+    "venueId": 6,
+    "ticketPrice": 80,
+    "description": "This is a really cool event",
+    "eventDate": "2025-11-15"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
