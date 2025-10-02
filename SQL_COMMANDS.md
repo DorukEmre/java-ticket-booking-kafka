@@ -10,7 +10,7 @@ VALUES ("Bob", "bob@email.com");
 ```sql
 SELECT * FROM inventory_db.event;
 
-INSERT INTO inventory_db.event (name, venue_id, total_capacity, left_capacity)
+INSERT INTO inventory_db.event (name, venue_id, total_capacity, remaining_capacity)
 VALUES ('Sample Event', 1, 100, 100);
 ```
 

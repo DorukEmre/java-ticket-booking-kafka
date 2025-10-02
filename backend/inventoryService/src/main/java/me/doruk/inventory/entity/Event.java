@@ -1,18 +1,17 @@
 package me.doruk.inventory.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "event")
 public class Event {
 
@@ -27,8 +26,8 @@ public class Event {
   @Column(name = "total_capacity")
   private Long totalCapacity;
 
-  @Column(name = "left_capacity")
-  private Long leftCapacity;
+  @Column(name = "remaining_capacity")
+  private Long remainingCapacity;
 
   @ManyToOne
   @JoinColumn(name = "venue_id")
@@ -36,4 +35,10 @@ public class Event {
 
   @Column(name = "ticket_price")
   private BigDecimal ticketPrice;
+
+  @Column(name = "event_date")
+  private Date eventDate;
+
+  @Column(name = "description")
+  private String description;
 }

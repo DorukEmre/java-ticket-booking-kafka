@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.sql.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,9 +39,11 @@ public class InventoryService {
     return EventInventoryResponse.builder()
         .eventId(event.getId())
         .event(event.getName())
-        .capacity(event.getLeftCapacity())
+        .capacity(event.getRemainingCapacity())
         .venue(event.getVenue())
         .ticketPrice(event.getTicketPrice())
+        .eventDate(String.valueOf(event.getEventDate()))
+        .description(event.getDescription())
         .build();
   }
 
@@ -50,9 +53,11 @@ public class InventoryService {
     return events.stream().map(event -> EventInventoryResponse.builder()
         .eventId(event.getId())
         .event(event.getName())
-        .capacity(event.getLeftCapacity())
+        .capacity(event.getRemainingCapacity())
         .venue(event.getVenue())
         .ticketPrice(event.getTicketPrice())
+        .eventDate(String.valueOf(event.getEventDate()))
+        .description(event.getDescription())
         .build()).collect(Collectors.toList());
   }
 
@@ -104,26 +109,31 @@ public class InventoryService {
         .orElseThrow(() -> new ResponseStatusException(
             HttpStatus.NOT_FOUND, "Venue with ID " + request.getVenueId() + " does not exist."));
 
-    Event event = new Event();
-    event.setName(request.getName());
-    event.setTotalCapacity(request.getTotalCapacity());
-    event.setLeftCapacity(request.getTotalCapacity());
-    event.setVenue(venue);
-    event.setTicketPrice(request.getTicketPrice());
-
     if (request.getTotalCapacity() > venue.getTotalCapacity()) {
       throw new ResponseStatusException(
           HttpStatus.BAD_REQUEST, "Event capacity cannot exceed venue capacity.");
     }
+
+    Event event = Event.builder()
+        .name(request.getName())
+        .totalCapacity(request.getTotalCapacity())
+        .remainingCapacity(request.getTotalCapacity())
+        .venue(venue)
+        .ticketPrice(request.getTicketPrice())
+        .eventDate(Date.valueOf(request.getEventDate()))
+        .description(request.getDescription())
+        .build();
 
     Event savedEvent = eventRepository.save(event);
 
     return EventInventoryResponse.builder()
         .eventId(savedEvent.getId())
         .event(savedEvent.getName())
-        .capacity(savedEvent.getLeftCapacity())
+        .capacity(savedEvent.getRemainingCapacity())
         .venue(savedEvent.getVenue())
         .ticketPrice(savedEvent.getTicketPrice())
+        .eventDate(String.valueOf(savedEvent.getEventDate()))
+        .description(savedEvent.getDescription())
         .build();
   }
 
@@ -131,7 +141,7 @@ public class InventoryService {
     final Event event = eventRepository.findById(eventId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
 
-    event.setLeftCapacity(event.getLeftCapacity() - ticketBooked);
+    event.setRemainingCapacity(event.getRemainingCapacity() - ticketBooked);
 
     eventRepository.save(event);
 

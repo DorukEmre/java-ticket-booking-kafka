@@ -16,4 +16,6 @@ public class EventCreateRequest {
   private Long totalCapacity;
   private Long venueId;
   private BigDecimal ticketPrice;
+  private String eventDate;
+  private String description;
 }
