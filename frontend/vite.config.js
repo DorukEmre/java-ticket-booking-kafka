@@ -9,7 +9,9 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     define: {
-      'process.env': env
+      'process.env': {
+        // VITE_API_URL: env.VITE_API_URL
+      }
     },
     // Add 'static/' prefix to the base URL in production
     base: mode === 'production' ? '/static/' : '/',

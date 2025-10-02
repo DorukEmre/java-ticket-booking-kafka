@@ -28,8 +28,7 @@ services:
       - .env
     environment:
       - PUBLIC_URL=/
-      - REACT_APP_API_BASE_URL=http://localhost:8080
-      # - REACT_APP_API_BASE_URL=http://gatewayapi:8000
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL}
     networks:
       - ticket-booking-network
     volumes:
@@ -124,6 +123,7 @@ services:
       - mysql
     environment:
       SERVER_PORT: "8000"
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
       INVENTORY_BASE_URL: "inventory-service:8080"
       BOOKING_BASE_URL: "booking-service:8081"
       ORDER_BASE_URL: "order-service:8082"
