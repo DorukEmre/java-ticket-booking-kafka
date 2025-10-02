@@ -7,9 +7,12 @@ import me.doruk.orderService.entity.Customer;
 import me.doruk.orderService.entity.OrderItem;
 import me.doruk.orderService.entity.Order;
 import me.doruk.orderService.repository.OrderRepository;
+import me.doruk.orderService.request.UserCreateRequest;
 import me.doruk.orderService.repository.OrderItemRepository;
 import me.doruk.orderService.repository.CustomerRepository;
 import me.doruk.orderService.response.OrderResponse;
+import me.doruk.orderService.response.UserResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -39,6 +42,31 @@ public class OrderService {
     this.inventoryServiceClient = inventoryServiceClient;
     this.customerRepository = customerRepository;
     this.orderItemRepository = orderItemRepository;
+  }
+
+  public List<UserResponse> GetAllUsers() {
+    final List<Customer> users = customerRepository.findAll();
+
+    return users.stream().map(user -> UserResponse.builder()
+        .id(user.getId())
+        .name(user.getName())
+        .email(user.getEmail())
+        .build()).collect(Collectors.toList());
+  }
+
+  public UserResponse createUser(final UserCreateRequest request) {
+    System.out.println("Create user called: " + request);
+    Customer customer = new Customer();
+    customer.setName(request.getName());
+    customer.setEmail(request.getEmail());
+
+    Customer savedUser = customerRepository.save(customer);
+
+    return UserResponse.builder()
+        .id(savedUser.getId())
+        .name(savedUser.getName())
+        .email(savedUser.getEmail())
+        .build();
   }
 
   @KafkaListener(topics = "booking", groupId = "order-service")

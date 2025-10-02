@@ -6,11 +6,9 @@ import me.doruk.bookingService.entity.Customer;
 import me.doruk.bookingService.event.BookingEvent;
 import me.doruk.bookingService.repository.CustomerRepository;
 import me.doruk.bookingService.request.BookingRequest;
-import me.doruk.bookingService.request.UserCreateRequest;
 import me.doruk.bookingService.response.BookingResponse;
 import me.doruk.bookingService.response.InventoryResponse;
 
-import me.doruk.bookingService.response.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -18,8 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -36,31 +32,6 @@ public class BookingService {
     this.customerRepository = customerRepository;
     this.inventoryServiceClient = inventoryServiceClient;
     this.kafkaTemplate = kafkaTemplate;
-  }
-
-  public List<UserResponse> GetAllUsers() {
-    final List<Customer> users = customerRepository.findAll();
-
-    return users.stream().map(user -> UserResponse.builder()
-        .id(user.getId())
-        .name(user.getName())
-        .email(user.getEmail())
-        .build()).collect(Collectors.toList());
-  }
-
-  public UserResponse createUser(final UserCreateRequest request) {
-    System.out.println("Create user called: " + request);
-    Customer customer = new Customer();
-    customer.setName(request.getName());
-    customer.setEmail(request.getEmail());
-
-    Customer savedUser = customerRepository.save(customer);
-
-    return UserResponse.builder()
-        .id(savedUser.getId())
-        .name(savedUser.getName())
-        .email(savedUser.getEmail())
-        .build();
   }
 
   public BookingResponse createBooking(final BookingRequest request) {

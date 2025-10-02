@@ -1,4 +1,4 @@
-package me.doruk.bookingService.response;
+package me.doruk.orderService.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserResponse {
-  private Long id;
+public class UserCreateRequest {
   private String name;
   private String email;
 }

@@ -25,6 +25,18 @@ public class OrderServiceRoutes {
             .filters(f -> f.prefixPath("/api/v1"))
             .uri(uri))
 
+        .route("users", r -> r
+            .path("/users")
+            .and().method(HttpMethod.GET)
+            .filters(f -> f.prefixPath("/api/v1"))
+            .uri(uri))
+
+        .route("add-user", r -> r
+            .path("/users/new")
+            .and().method(HttpMethod.POST)
+            .filters(f -> f.prefixPath("/api/v1"))
+            .uri(uri))
+
         .build();
   }
 

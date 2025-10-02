@@ -19,17 +19,6 @@ public class BookingServiceRoutes {
     String uri = "http://" + baseUrl;
 
     return builder.routes()
-        .route("booking-users", r -> r
-            .path("/booking/users")
-            .and().method(HttpMethod.GET)
-            .filters(f -> f.prefixPath("/api/v1"))
-            .uri(uri))
-
-        .route("booking-add-user", r -> r
-            .path("/booking/add-user")
-            .and().method(HttpMethod.POST)
-            .filters(f -> f.prefixPath("/api/v1"))
-            .uri(uri))
 
         .route("booking", r -> r
             .path("/booking")
