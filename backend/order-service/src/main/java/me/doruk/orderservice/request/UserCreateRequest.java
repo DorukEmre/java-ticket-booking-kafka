@@ -1,4 +1,4 @@
-package me.doruk.catalogservice.request;
+package me.doruk.orderservice.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class VenueCreateRequest {
+public class UserCreateRequest {
   private String name;
-  private String address;
-  private Long totalCapacity;
+  private String email;
 }

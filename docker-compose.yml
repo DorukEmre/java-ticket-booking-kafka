@@ -81,12 +81,12 @@ services:
 
   order-service:
     build:
-      context: ./backend/orderService
+      context: ./backend/order-service
       dockerfile: Dockerfile
     image: order-service
     container_name: order-service
     volumes:
-      - ./backend/orderService:/app
+      - ./backend/order-service:/app
       - m2-repo:/root/.m2
     working_dir: /app
     expose: [8082]
