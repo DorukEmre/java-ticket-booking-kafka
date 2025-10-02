@@ -1,8 +1,8 @@
 ### Add user/customer
 ```sql
-SELECT * FROM booking_db.customer;
+SELECT * FROM order_db.customer;
 
-INSERT INTO booking_db.customer(name, email)
+INSERT INTO order_db.customer(name, email)
 VALUES ("Bob", "bob@email.com");
 ```
 
@@ -17,7 +17,7 @@ VALUES ('Sample Event', 1, 100, 100);
 ### SQL Commands for failed migration
 For instance:
 ```sql
-DELETE FROM booking_db.flyway_schema_history
+DELETE FROM order_db.flyway_schema_history
 WHERE version = 1;
 
 SET SQL_SAFE_UPDATES = 0;

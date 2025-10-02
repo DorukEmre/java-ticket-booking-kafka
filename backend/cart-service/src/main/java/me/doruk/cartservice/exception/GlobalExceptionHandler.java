@@ -1,4 +1,4 @@
-package me.doruk.orderservice.exception;
+package me.doruk.cartservice.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

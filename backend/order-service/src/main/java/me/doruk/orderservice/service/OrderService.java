@@ -1,7 +1,7 @@
 package me.doruk.orderservice.service;
 
 import lombok.extern.slf4j.Slf4j;
-import me.doruk.bookingService.event.BookingEvent;
+import me.doruk.cartservice.event.CartEvent;
 import me.doruk.orderservice.client.CatalogServiceClient;
 import me.doruk.orderservice.dto.TicketCountForEvent;
 import me.doruk.orderservice.entity.Customer;
@@ -69,19 +69,19 @@ public class OrderService {
         .build();
   }
 
-  @KafkaListener(topics = "booking", groupId = "order-service")
-  public void orderEvent(BookingEvent bookingEvent) {
-    log.info("Received order event: {}", bookingEvent);
+  @KafkaListener(topics = "order-requested", groupId = "order-service")
+  public void orderEvent(CartEvent cartEvent) {
+    log.info("Received order event: {}", cartEvent);
 
     // TO DO: Validate cart exists in Redis
     // TO DO: Idempotency check: skip if order for this event already exists
 
     // Create or get Customer
-    Customer customer = customerRepository.findByEmail(bookingEvent.getEmail())
+    Customer customer = customerRepository.findByEmail(cartEvent.getEmail())
         .orElseGet(() -> {
           Customer newCustomer = Customer.builder()
-              .name(bookingEvent.getCustomerName())
-              .email(bookingEvent.getEmail())
+              .name(cartEvent.getCustomerName())
+              .email(cartEvent.getEmail())
               .build();
           customerRepository.saveAndFlush(newCustomer);
           log.info("Created new customer: {}", newCustomer);
@@ -89,7 +89,7 @@ public class OrderService {
         });
 
     // Create OrderItems
-    List<OrderItem> orderItems = createOrderItems(bookingEvent);
+    List<OrderItem> orderItems = createOrderItems(cartEvent);
 
     // Calculate total price
     BigDecimal totalPrice = orderItems.stream()
@@ -121,8 +121,8 @@ public class OrderService {
 
   }
 
-  private List<OrderItem> createOrderItems(BookingEvent bookingEvent) {
-    return bookingEvent.getBookingEventItems().stream()
+  private List<OrderItem> createOrderItems(CartEvent cartEvent) {
+    return cartEvent.getItems().stream()
         .map(item -> OrderItem.builder()
             .eventId(item.getEventId())
             .ticketCount(item.getTicketCount())

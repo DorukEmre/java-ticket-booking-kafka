@@ -6,7 +6,7 @@ All components run in Docker containers.
 
 Microservices architecture for a ticket booking system:
   - Frontend: React app
-  - Backend services: CatalogService, Booking, Order
+  - Backend services: Catalog, Cart, Order
   - API Gateway: gatewayapi
   - Database: MySQL
   - Messaging: Kafka + Zookeeper + Schema Registry + Kafka UI
@@ -71,4 +71,4 @@ management.endpoint.gateway.access=unrestricted
 ```
 
 ## API Tests (Bruno)
-The `api-tests` folder contains Bruno (API client) collections for testing the REST APIs of all backend services (Booking, CatalogService, Order).
+The `api-tests` folder contains Bruno (API client) collections for testing the REST APIs of all backend services.

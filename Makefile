@@ -37,14 +37,8 @@ react:
 restart_catalog_service:
 	docker restart catalog-service
 
-clean_catalog_service:
-	docker exec -it catalog-service mvn clean
-
-restart_booking_service:
-	docker restart booking-service
-
-clean_booking_service:
-	docker exec -it booking-service mvn clean
+restart_cart_service:
+	docker restart cart-service
 
 restart_order_service:
 	docker restart order-service
@@ -53,13 +47,9 @@ restart_gatewayapi:
 	docker restart gatewayapi
 
 
-clean_microservices:
-	docker exec -it catalog-service mvn clean
-	docker exec -it booking-service mvn clean
-
-
 .PHONY: all down stop prune prune_system routine reset mysql react \
-	create_volumes_dirs clean_microservices \
-	restart_catalog_service clean_catalog_service \
-	restart_booking_service clean_booking_service \
-	restart_order_service
+	create_volumes_dirs \
+	restart_catalog_service restart_cart_service \
+	restart_order_service restart_gatewayapi
+
+.DEFAULT_GOAL := all
