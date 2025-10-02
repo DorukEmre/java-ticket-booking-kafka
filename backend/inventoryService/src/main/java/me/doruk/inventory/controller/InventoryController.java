@@ -5,12 +5,13 @@ import me.doruk.inventory.request.VenueCreateRequest;
 import me.doruk.inventory.response.EventInventoryResponse;
 import me.doruk.inventory.response.VenueInventoryResponse;
 import me.doruk.inventory.service.InventoryService;
+import me.doruk.inventory.dto.TicketCountForEvent;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 
 @RestController
@@ -62,8 +63,12 @@ public class InventoryController {
     return ResponseEntity.status(HttpStatus.CREATED).body(createdEvent);
   }
 
-  @PutMapping("/events/update-capacities")
-  public ResponseEntity<Void> updateCapacities(@RequestBody List<SimpleEntry<Long, Long>> eventTicketCounts) {
+  @PutMapping("/inventory/events/update-capacities")
+  public ResponseEntity<Void> updateCapacities(@RequestBody List<TicketCountForEvent> eventTicketCounts) {
+
+    // if (eventTicketCounts.size() > 0)
+    // throw new IllegalArgumentException("Test exception for debugging");
+
     inventoryService.updateEventsCapacities(eventTicketCounts);
     return ResponseEntity.ok().build();
   }

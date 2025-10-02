@@ -9,13 +9,14 @@ import me.doruk.inventory.request.EventCreateRequest;
 import me.doruk.inventory.request.VenueCreateRequest;
 import me.doruk.inventory.response.EventInventoryResponse;
 import me.doruk.inventory.response.VenueInventoryResponse;
+import me.doruk.inventory.dto.TicketCountForEvent;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Date;
-import java.util.AbstractMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -148,11 +149,10 @@ public class InventoryService {
     log.info("Updated event capacity for event {} with tickets booked {}", eventId, ticketBooked);
   }
 
-  public void updateEventsCapacities(final List<AbstractMap.SimpleEntry<Long, Long>> eventTicketCounts) {
+  public void updateEventsCapacities(final List<TicketCountForEvent> eventTicketCounts) {
+    System.out.println("Updating event capacities: " + eventTicketCounts);
     for (var entry : eventTicketCounts) {
-      Long eventId = entry.getKey();
-      Long ticketsBooked = entry.getValue();
-      updateEventCapacity(eventId, ticketsBooked);
+      updateEventCapacity(entry.getEventId(), entry.getTicketCount());
     }
     log.info("Updated capacities for all events");
   }

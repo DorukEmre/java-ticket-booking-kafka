@@ -43,6 +43,7 @@ public class InventoryServiceRoutes {
             .filters(f -> f.rewritePath("/inventory/venue/(?<venueId>[^/]+)", "/api/v1/inventory/venue/${venueId}"))
             .uri(uri))
 
+        // admin routes
         .route("inventory-add-venue", r -> r
             .path("/inventory/add-venue")
             .and().method(HttpMethod.POST)
@@ -55,12 +56,10 @@ public class InventoryServiceRoutes {
             .filters(f -> f.prefixPath("/api/v1"))
             .uri(uri))
 
-        .route("inventory-update-event-capacity", r -> r
-            .path("/inventory/event/{eventId}/capacity/{capacityId}")
+        .route("update-event-capacity", r -> r
+            .path("/inventory/events/update-capacities")
             .and().method(HttpMethod.PUT)
-            .filters(f -> f.rewritePath(
-                "/inventory/event/(?<eventId>[^/]+)/capacity/(?<capacityId>[^/]+)",
-                "/api/v1/inventory/event/${eventId}/capacity/${capacityId}"))
+            .filters(f -> f.prefixPath("/api/v1"))
             .uri(uri))
 
         .build();

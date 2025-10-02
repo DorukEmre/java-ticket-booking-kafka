@@ -3,6 +3,7 @@ package me.doruk.orderService.service;
 import lombok.extern.slf4j.Slf4j;
 import me.doruk.bookingService.event.BookingEvent;
 import me.doruk.orderService.client.InventoryServiceClient;
+import me.doruk.orderService.dto.TicketCountForEvent;
 import me.doruk.orderService.entity.Customer;
 import me.doruk.orderService.entity.OrderItem;
 import me.doruk.orderService.entity.Order;
@@ -18,7 +19,6 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.AbstractMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,6 +73,9 @@ public class OrderService {
   public void orderEvent(BookingEvent bookingEvent) {
     log.info("Received order event: {}", bookingEvent);
 
+    // TO DO: Validate cart exists in Redis
+    // TO DO: Idempotency check: skip if order for this event already exists
+
     // Create or get Customer
     Customer customer = customerRepository.findByEmail(bookingEvent.getEmail())
         .orElseGet(() -> {
@@ -102,12 +105,19 @@ public class OrderService {
     orderItemRepository.saveAllAndFlush(orderItems);
 
     // Create a list of event ids and ticket counts
-    List<AbstractMap.SimpleEntry<Long, Long>> eventTicketCounts = orderItems.stream()
-        .map(item -> new AbstractMap.SimpleEntry<>(item.getEventId(), item.getTicketCount()))
+    List<TicketCountForEvent> eventTicketCounts = orderItems.stream()
+        .map(item -> TicketCountForEvent.builder()
+            .eventId(item.getEventId())
+            .ticketCount(item.getTicketCount())
+            .build())
         .collect(Collectors.toList());
 
     // Update remaining ticket in Inventory
     inventoryServiceClient.updateInventory(eventTicketCounts);
+
+    // TO DO: Delete cart from Redis.
+
+    // TO DO: Return orderId and order details.
 
   }
 
