@@ -12,15 +12,25 @@ function App() {
   const [allVenues, setAllVenues] = useState([]);
 
   let nodeenv = process.env.NODE_ENV;
-  const baseURL = process.env.REACT_APP_API_BASE_URL + '/api/v1' || '';
+  const baseURL = import.meta.env.VITE_API_BASE_URL || '';
 
 
   useEffect(() => {
+    let url = `${baseURL}`;
+    console.log("axios get url: ", url);
+    axios.get(url, { withCredentials: true })
+      .then(response => {
+        console.log("response.data: ", response.data);
+        setAllVenues(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error making the request', error);
+      });
   }, []);
 
   const getVenues = () => {
     let url = `${baseURL}/inventory/venues`;
-    // console.log("axios get url: ", url);
+    console.log("axios get url: ", url);
     axios.get(url, { withCredentials: true })
       .then(response => {
         console.log("response.data: ", response.data);
