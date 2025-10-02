@@ -12,8 +12,10 @@ import me.doruk.bookingService.response.InventoryResponse;
 
 import me.doruk.bookingService.response.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -64,16 +66,17 @@ public class BookingService {
   public BookingResponse createBooking(final BookingRequest request) {
     System.out.println("Create booking called: " + request);
     // check if user exists
-    final Customer customer = customerRepository.findById(request.getUserId()).orElse(null);
-    if (customer == null)
-      throw new RuntimeException("User not found");
+    final Customer customer = customerRepository.findById(request.getUserId())
+        .orElseThrow(
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
     // check enough inventory
     // --- get event information to also get Venue information
     final InventoryResponse inventoryResponse = inventoryServiceClient.getInventory(request.getEventId());
     System.out.println(inventoryResponse);
+
     if (inventoryResponse.getCapacity() < request.getTicketCount())
-      throw new RuntimeException("Not enough tickets available");
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough tickets available");
 
     // create booking
     final BookingEvent bookingEvent = createBookingEvent(request, customer, inventoryResponse);
@@ -98,6 +101,7 @@ public class BookingService {
   private BookingEvent createBookingEvent(final BookingRequest request,
       final Customer customer,
       final InventoryResponse inventoryResponse) {
+
     return BookingEvent.builder()
         .userId(customer.getId())
         .eventId(request.getEventId())

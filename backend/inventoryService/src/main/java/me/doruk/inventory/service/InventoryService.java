@@ -10,8 +10,10 @@ import me.doruk.inventory.request.VenueCreateRequest;
 import me.doruk.inventory.response.EventInventoryResponse;
 import me.doruk.inventory.response.VenueInventoryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,7 +32,8 @@ public class InventoryService {
   }
 
   public EventInventoryResponse getEventInformation(final Long eventId) {
-    final Event event = eventRepository.findById(eventId).orElse(null);
+    final Event event = eventRepository.findById(eventId)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
 
     return EventInventoryResponse.builder()
         .eventId(event.getId())
@@ -54,8 +57,10 @@ public class InventoryService {
   }
 
   public VenueInventoryResponse getVenueInformation(final Long venueId) {
-    final Venue venue = venueRepository.findById(venueId).orElse(null);
-
+    System.out.println("Fetching venue information for venueId: " + venueId);
+    final Venue venue = venueRepository.findById(venueId)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Venue not found"));
+    System.out.println("Found venue: " + venue);
     return VenueInventoryResponse.builder()
         .venueId(venue.getId())
         .name(venue.getName())
@@ -95,10 +100,10 @@ public class InventoryService {
   public EventInventoryResponse createEvent(final EventCreateRequest request) {
     System.out.println("Creating event: " + request);
 
-    final Venue venue = venueRepository.findById(request.getVenueId()).orElse(null);
-    if (venue == null) {
-      throw new IllegalArgumentException("Venue with ID " + request.getVenueId() + " does not exist.");
-    }
+    final Venue venue = venueRepository.findById(request.getVenueId())
+        .orElseThrow(() -> new ResponseStatusException(
+            HttpStatus.NOT_FOUND, "Venue with ID " + request.getVenueId() + " does not exist."));
+
     Event event = new Event();
     event.setName(request.getName());
     event.setTotalCapacity(request.getTotalCapacity());
@@ -107,7 +112,8 @@ public class InventoryService {
     event.setTicketPrice(request.getTicketPrice());
 
     if (request.getTotalCapacity() > venue.getTotalCapacity()) {
-      throw new IllegalArgumentException("Event capacity cannot exceed venue capacity.");
+      throw new ResponseStatusException(
+          HttpStatus.BAD_REQUEST, "Event capacity cannot exceed venue capacity.");
     }
 
     Event savedEvent = eventRepository.save(event);
@@ -122,9 +128,13 @@ public class InventoryService {
   }
 
   public void updateEventCapacity(final Long eventId, final Long ticketBooked) {
-    final Event event = eventRepository.findById(eventId).orElse(null);
+    final Event event = eventRepository.findById(eventId)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
+
     event.setLeftCapacity(event.getLeftCapacity() - ticketBooked);
+
     eventRepository.save(event);
+
     log.info("Updated event capacity for event {} with tickets booked {}", eventId, ticketBooked);
   }
 
