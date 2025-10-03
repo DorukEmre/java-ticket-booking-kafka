@@ -1,7 +1,7 @@
 package me.doruk.orderservice.service;
 
 import lombok.extern.slf4j.Slf4j;
-import me.doruk.ticketingcommonlibrary.event.InventoryReservationRequested;
+import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
 import me.doruk.orderservice.client.CatalogServiceClient;
 import me.doruk.orderservice.entity.Customer;
@@ -105,8 +105,8 @@ public class OrderService {
     orderItemRepository.saveAllAndFlush(orderItems);
 
     // Create a list of event ids and ticket counts
-    List<InventoryReservationRequested> eventTicketCounts = orderItems.stream()
-        .map(item -> InventoryReservationRequested.builder()
+    List<ReserveInventory> eventTicketCounts = orderItems.stream()
+        .map(item -> ReserveInventory.builder()
             .eventId(item.getEventId())
             .ticketCount(item.getTicketCount())
             .build())

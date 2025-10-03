@@ -1,5 +1,5 @@
 package me.doruk.ticketingcommonlibrary.event;
 
-public class InventoryReserved {
+public class InventoryReservationSucceeded {
 
 }

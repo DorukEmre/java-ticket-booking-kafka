@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InventoryReservationRequested {
+public class ReserveInventory {
   Long eventId;
   Long ticketCount;
 }

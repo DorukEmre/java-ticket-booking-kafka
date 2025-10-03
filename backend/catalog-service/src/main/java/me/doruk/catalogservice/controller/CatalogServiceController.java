@@ -5,7 +5,7 @@ import me.doruk.catalogservice.request.VenueCreateRequest;
 import me.doruk.catalogservice.response.EventCatalogServiceResponse;
 import me.doruk.catalogservice.response.VenueCatalogServiceResponse;
 import me.doruk.catalogservice.service.CatalogService;
-import me.doruk.ticketingcommonlibrary.event.InventoryReservationRequested;
+import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -64,7 +64,7 @@ public class CatalogServiceController {
   }
 
   @PutMapping("/catalog/events/update-capacities")
-  public ResponseEntity<Void> updateCapacities(@RequestBody List<InventoryReservationRequested> eventTicketCounts) {
+  public ResponseEntity<Void> updateCapacities(@RequestBody List<ReserveInventory> eventTicketCounts) {
 
     // if (eventTicketCounts.size() > 0)
     // throw new IllegalArgumentException("Test exception for debugging");
