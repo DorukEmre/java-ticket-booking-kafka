@@ -33,6 +33,11 @@ mysql:
 react:
 	docker exec -it react sh 
 
+cart_service:
+	docker exec -it cart-service sh
+cart_service_redis_cli:
+	docker exec -it cart-service redis-cli -h redis -p 6379
+
 
 restart_catalog_service:
 	docker restart catalog-service
@@ -50,6 +55,7 @@ restart_gatewayapi:
 .PHONY: all down stop prune prune_system routine reset mysql react \
 	create_volumes_dirs \
 	restart_catalog_service restart_cart_service \
-	restart_order_service restart_gatewayapi
+	restart_order_service restart_gatewayapi \
+	cart-service cart-service-redis-cli
 
 .DEFAULT_GOAL := all

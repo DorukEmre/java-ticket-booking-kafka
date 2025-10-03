@@ -72,10 +72,13 @@ services:
     command: ["mvn", "spring-boot:run"]
     depends_on:
       - mysql
+      - redis
     environment:
       SERVER_PORT: "8081"
       CATALOG_BASE_URL: "catalog-service:8080"
       KAFKA_BOOTSTRAP_SERVERS: "kafka-broker:29092"
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     networks:
       - ticket-booking-network
 
@@ -184,6 +187,14 @@ services:
       KAFKA_CLUSTERS_BOOTSTRAPSERVERS: kafka-broker:29092
       DYNAMIC_CONFIG_ENABLED: 'true'
       LOG_LEVEL: WARN
+    networks:
+      - ticket-booking-network
+
+  redis:
+    image: redis:8.2.1-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
     networks:
       - ticket-booking-network
       
