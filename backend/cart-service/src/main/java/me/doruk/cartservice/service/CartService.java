@@ -8,7 +8,6 @@ import me.doruk.cartservice.request.CheckoutRequest;
 import me.doruk.cartservice.response.CartResponse;
 import me.doruk.cartservice.response.CatalogServiceResponse;
 import me.doruk.cartservice.response.CheckoutResponse;
-import me.doruk.cartservice.response.ItemResponse;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
 import me.doruk.ticketingcommonlibrary.event.CartItem;
 
@@ -77,7 +76,7 @@ public class CartService {
         .build();
   }
 
-  public ItemResponse addItem(final UUID cartId, final CartItem item) {
+  public CartResponse addItem(final UUID cartId, final CartItem item) {
     System.out.println("Add item called: " + cartId + ", " + item);
     Cart cart = getCart(cartId);
     if (cart == null) {
@@ -103,7 +102,7 @@ public class CartService {
 
     log.info("Updated items in cart: {}", getCart(cartId));
 
-    return ItemResponse.builder()
+    return CartResponse.builder()
         .cartId(cartId)
         .message("ok")
         .build();
