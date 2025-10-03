@@ -26,6 +26,18 @@ public class CartServiceRoutes {
             .filters(f -> f.prefixPath("/api/v1"))
             .uri(uri))
 
+        .route("addItem", r -> r
+            .path("/cart/*/items")
+            .and().method(HttpMethod.POST)
+            .filters(f -> f.prefixPath("/api/v1"))
+            .uri(uri))
+
+        .route("checkout", r -> r
+            .path("/cart/*/checkout")
+            .and().method(HttpMethod.POST)
+            .filters(f -> f.prefixPath("/api/v1"))
+            .uri(uri))
+
         .build();
   }
 
