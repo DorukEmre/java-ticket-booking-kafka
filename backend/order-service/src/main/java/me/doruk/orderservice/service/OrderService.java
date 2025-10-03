@@ -1,9 +1,9 @@
 package me.doruk.orderservice.service;
 
 import lombok.extern.slf4j.Slf4j;
-import me.doruk.cartservice.event.CartEvent;
+import me.doruk.ticketingcommonlibrary.event.InventoryReservationRequested;
+import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
 import me.doruk.orderservice.client.CatalogServiceClient;
-import me.doruk.orderservice.dto.TicketCountForEvent;
 import me.doruk.orderservice.entity.Customer;
 import me.doruk.orderservice.entity.OrderItem;
 import me.doruk.orderservice.entity.Order;
@@ -70,18 +70,18 @@ public class OrderService {
   }
 
   @KafkaListener(topics = "order-requested", groupId = "order-service")
-  public void orderEvent(CartEvent cartEvent) {
-    log.info("Received order event: {}", cartEvent);
+  public void orderEvent(OrderCreationRequested orderCreationRequested) {
+    log.info("Received order event: {}", orderCreationRequested);
 
     // TO DO: Validate cart exists in Redis
     // TO DO: Idempotency check: skip if order for this event already exists
 
     // Create or get Customer
-    Customer customer = customerRepository.findByEmail(cartEvent.getEmail())
+    Customer customer = customerRepository.findByEmail(orderCreationRequested.getEmail())
         .orElseGet(() -> {
           Customer newCustomer = Customer.builder()
-              .name(cartEvent.getCustomerName())
-              .email(cartEvent.getEmail())
+              .name(orderCreationRequested.getCustomerName())
+              .email(orderCreationRequested.getEmail())
               .build();
           customerRepository.saveAndFlush(newCustomer);
           log.info("Created new customer: {}", newCustomer);
@@ -89,7 +89,7 @@ public class OrderService {
         });
 
     // Create OrderItems
-    List<OrderItem> orderItems = createOrderItems(cartEvent);
+    List<OrderItem> orderItems = createOrderItems(orderCreationRequested);
 
     // Calculate total price
     BigDecimal totalPrice = orderItems.stream()
@@ -105,8 +105,8 @@ public class OrderService {
     orderItemRepository.saveAllAndFlush(orderItems);
 
     // Create a list of event ids and ticket counts
-    List<TicketCountForEvent> eventTicketCounts = orderItems.stream()
-        .map(item -> TicketCountForEvent.builder()
+    List<InventoryReservationRequested> eventTicketCounts = orderItems.stream()
+        .map(item -> InventoryReservationRequested.builder()
             .eventId(item.getEventId())
             .ticketCount(item.getTicketCount())
             .build())
@@ -121,8 +121,8 @@ public class OrderService {
 
   }
 
-  private List<OrderItem> createOrderItems(CartEvent cartEvent) {
-    return cartEvent.getItems().stream()
+  private List<OrderItem> createOrderItems(OrderCreationRequested orderCreationRequested) {
+    return orderCreationRequested.getItems().stream()
         .map(item -> OrderItem.builder()
             .eventId(item.getEventId())
             .ticketCount(item.getTicketCount())

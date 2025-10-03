@@ -1,4 +1,4 @@
-package me.doruk.catalogservice.dto;
+package me.doruk.ticketingcommonlibrary.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TicketCountForEvent {
+public class InventoryReservationRequested {
   Long eventId;
   Long ticketCount;
-
 }

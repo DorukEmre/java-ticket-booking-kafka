@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import me.doruk.orderservice.dto.TicketCountForEvent;
+import me.doruk.ticketingcommonlibrary.event.InventoryReservationRequested;
 
 @Service
 public class CatalogServiceClient {
@@ -16,7 +16,7 @@ public class CatalogServiceClient {
   private String catalogServiceUrl;
 
   // Send the list as JSON
-  public ResponseEntity<Void> updateCatalogService(List<TicketCountForEvent> eventTicketCounts) {
+  public ResponseEntity<Void> updateCatalogService(List<InventoryReservationRequested> eventTicketCounts) {
     final RestTemplate restTemplate = new RestTemplate();
 
     String url = catalogServiceUrl + "/events/update-capacities";

@@ -1,4 +1,4 @@
-package me.doruk.cartservice.event;
+package me.doruk.ticketingcommonlibrary.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,9 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Getter
-public class CartEvent {
+public class OrderCreationRequested {
   private Long id;
   private String customerName;
   private String email;
-  private List<CartEventItem> items;
+  private List<CartItem> items;
 }

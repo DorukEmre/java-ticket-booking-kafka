@@ -2,12 +2,12 @@ package me.doruk.cartservice.service;
 
 import lombok.extern.slf4j.Slf4j;
 import me.doruk.cartservice.client.CatalogServiceClient;
-import me.doruk.cartservice.event.CartEvent;
-import me.doruk.cartservice.event.CartEventItem;
 import me.doruk.cartservice.request.CartRequest;
 import me.doruk.cartservice.request.CartRequestItem;
 import me.doruk.cartservice.response.CartResponse;
 import me.doruk.cartservice.response.CatalogServiceResponse;
+import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
+import me.doruk.ticketingcommonlibrary.event.CartItem;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,12 +22,12 @@ import java.util.List;
 public class CartService {
 
   private final CatalogServiceClient catalogServiceClient;
-  private final KafkaTemplate<String, CartEvent> kafkaTemplate;
+  private final KafkaTemplate<String, OrderCreationRequested> kafkaTemplate;
 
   @Autowired
   public CartService(
       final CatalogServiceClient catalogServiceClient,
-      final KafkaTemplate<String, CartEvent> kafkaTemplate) {
+      final KafkaTemplate<String, OrderCreationRequested> kafkaTemplate) {
     this.catalogServiceClient = catalogServiceClient;
     this.kafkaTemplate = kafkaTemplate;
   }
@@ -50,14 +50,14 @@ public class CartService {
     }
 
     // create cart
-    final CartEvent cartEvent = createCartEvent(request, items);
-    System.out.println(cartEvent);
+    final OrderCreationRequested orderCreationRequested = createOrder(request, items);
+    System.out.println(orderCreationRequested);
 
     // send cart to Order Service on a Kafka Topic
-    kafkaTemplate.send("order-requested", cartEvent)
-        .thenAccept(result -> log.info("Cart event sent successfully: {}", cartEvent))
+    kafkaTemplate.send("order-requested", orderCreationRequested)
+        .thenAccept(result -> log.info("Cart event sent successfully: {}", orderCreationRequested))
         .exceptionally(ex -> {
-          log.error("Failed to send order-requested event: {}", cartEvent, ex);
+          log.error("Failed to send order-requested event: {}", orderCreationRequested, ex);
           return null;
         });
 
@@ -67,15 +67,15 @@ public class CartService {
         .build();
   }
 
-  private CartEvent createCartEvent(final CartRequest request,
+  private OrderCreationRequested createOrder(final CartRequest request,
       final List<CartRequestItem> items) {
 
-    return CartEvent.builder()
+    return OrderCreationRequested.builder()
         .id(request.getId())
         .customerName(request.getCustomerName())
         .email(request.getEmail())
         .items(items.stream()
-            .map((CartRequestItem item) -> CartEventItem.builder()
+            .map((CartRequestItem item) -> CartItem.builder()
                 .eventId(item.getEventId())
                 .ticketCount(item.getTicketCount())
                 .ticketPrice(item.getTicketPrice())

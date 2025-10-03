@@ -9,7 +9,7 @@ import me.doruk.catalogservice.request.EventCreateRequest;
 import me.doruk.catalogservice.request.VenueCreateRequest;
 import me.doruk.catalogservice.response.EventCatalogServiceResponse;
 import me.doruk.catalogservice.response.VenueCatalogServiceResponse;
-import me.doruk.catalogservice.dto.TicketCountForEvent;
+import me.doruk.ticketingcommonlibrary.event.InventoryReservationRequested;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -149,7 +149,7 @@ public class CatalogService {
     log.info("Updated event capacity for event {} with tickets booked {}", eventId, ticketBooked);
   }
 
-  public void updateEventsCapacities(final List<TicketCountForEvent> eventTicketCounts) {
+  public void updateEventsCapacities(final List<InventoryReservationRequested> eventTicketCounts) {
     System.out.println("Updating event capacities: " + eventTicketCounts);
     for (var entry : eventTicketCounts) {
       updateEventCapacity(entry.getEventId(), entry.getTicketCount());

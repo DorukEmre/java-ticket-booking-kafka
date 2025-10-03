@@ -1,4 +1,4 @@
-package me.doruk.cartservice.event;
+package me.doruk.ticketingcommonlibrary.event;
 
 import java.math.BigDecimal;
 
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Builder
-public class CartEventItem {
+public class CartItem {
   private Long eventId;
   private Long ticketCount;
   private BigDecimal ticketPrice;
