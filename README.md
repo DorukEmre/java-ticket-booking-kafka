@@ -39,7 +39,32 @@ The backend consists of Java-based microservices (e.g., CatalogService) running 
 - Backend services process requests, interact with the MySQL database, and return responses to the frontend.
 - All services are orchestrated using Docker Compose.
 
-### Structure
+## Purchase Flow
+Ticket purchase request flow through the system. Each service communicates via Kafka events to ensure reliable and decoupled processing.
+
+1) Frontend → Cart Service (HTTP)
+    
+   → emit `OrderRequestedEvent`
+
+2) Order Service consumes
+- Save Order(`PENDING`)
+
+  → emit `InventoryReservationRequested`
+
+3) Catalog Service consumes
+- Deduct tickets
+  
+  → emit `InventoryReserved` OR `InventoryReservationFailed`
+
+4) Order Service consumes
+- If success: update Order(`CONFIRMED`), emit `OrderCreatedEvent`
+- If fail: update Order(`FAILED`), emit `OrderFailedEvent`
+
+5) Cart Service consumes
+- Update cart/order status, return status to frontend (HTTP)
+
+
+## Microservice Structure
 
 - **Controller**: Handles incoming HTTP requests, maps them to service methods, and returns responses. Defines API endpoints.
 - **Entity**: Represents a table in the database. Each entity is a Java class annotated for ORM (e.g., JPA/Hibernate).
