@@ -35,7 +35,7 @@ public class CartController {
   }
 
   @PostMapping(value = "/cart/{cartId}/checkout", consumes = "application/json", produces = "application/json")
-  public CheckoutResponse checkout(@PathVariable("cartId") Long cartId, @RequestBody CheckoutRequest request) {
+  public CheckoutResponse checkout(@PathVariable("cartId") UUID cartId, @RequestBody CheckoutRequest request) {
     System.out.println("POST /api/v1/cart/{cartId}/checkout called");
     return cartService.checkout(cartId, request);
   }

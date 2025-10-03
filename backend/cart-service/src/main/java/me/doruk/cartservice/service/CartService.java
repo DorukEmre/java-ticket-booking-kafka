@@ -3,7 +3,6 @@ package me.doruk.cartservice.service;
 import lombok.extern.slf4j.Slf4j;
 import me.doruk.cartservice.client.CatalogServiceClient;
 import me.doruk.cartservice.model.Cart;
-import me.doruk.cartservice.request.CartRequestItem;
 import me.doruk.cartservice.request.CheckoutRequest;
 import me.doruk.cartservice.response.CartResponse;
 import me.doruk.cartservice.response.CatalogServiceResponse;
@@ -108,25 +107,26 @@ public class CartService {
         .build();
   }
 
-  public CheckoutResponse checkout(final Long cartId, final CheckoutRequest request) {
+  public CheckoutResponse checkout(final UUID cartId, final CheckoutRequest request) {
     System.out.println("Create cart called: " + request);
 
-    List<CartRequestItem> items = request.getItems();
-    if (items == null || items.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart request must contain at least one item");
+    Cart cart = getCart(cartId);
+    if (cart == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found");
     }
-    for (CartRequestItem item : items) {
-      // check if enough catalog
-      // --- get event information to also get Venue information
-      final CatalogServiceResponse catalogResponse = catalogServiceClient.getCatalogService(item.getEventId());
-      System.out.println(catalogResponse);
+    // if (request.getItems() == null || request.getItems().isEmpty()) {
+    // throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart request must
+    // contain at least one item");
+    // }
+    if (cart.getItems() == null || cart.getItems().isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart is empty");
+    }
 
-      if (catalogResponse.getCapacity() < item.getTicketCount())
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not enough tickets available");
-    }
+    // validate items
+    catalogServiceClient.checkAvailabilityAndReserveTickets(cart);
 
     // create cart
-    final OrderCreationRequested orderCreationRequested = createOrder(request, items);
+    final OrderCreationRequested orderCreationRequested = createOrder(request, cart);
     System.out.println(orderCreationRequested);
 
     // send cart to Order Service on a Kafka Topic
@@ -139,19 +139,19 @@ public class CartService {
 
     return CheckoutResponse.builder()
         .customerName(request.getCustomerName())
-        .numberOfItems(items.size())
+        .numberOfItems(cart.getItems().size())
         .build();
   }
 
   private OrderCreationRequested createOrder(final CheckoutRequest request,
-      final List<CartRequestItem> items) {
+      final Cart cart) {
 
     return OrderCreationRequested.builder()
-        .id(request.getId())
+        .cartId(cart.getCartId())
         .customerName(request.getCustomerName())
         .email(request.getEmail())
-        .items(items.stream()
-            .map((CartRequestItem item) -> CartItem.builder()
+        .items(cart.getItems().stream()
+            .map((CartItem item) -> CartItem.builder()
                 .eventId(item.getEventId())
                 .ticketCount(item.getTicketCount())
                 .ticketPrice(item.getTicketPrice())

@@ -6,14 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import me.doruk.ticketingcommonlibrary.event.CartItem;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class CheckoutRequest {
-  private Long id;
   private String customerName;
   private String email;
-  private List<CartRequestItem> items;
+  private List<CartItem> items;
 }

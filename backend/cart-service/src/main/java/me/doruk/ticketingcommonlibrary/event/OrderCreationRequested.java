@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -14,7 +15,7 @@ import java.util.List;
 @Builder
 @Getter
 public class OrderCreationRequested {
-  private Long id;
+  private UUID cartId;
   private String customerName;
   private String email;
   private List<CartItem> items;
