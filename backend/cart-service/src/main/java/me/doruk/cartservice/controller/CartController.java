@@ -1,11 +1,11 @@
 package me.doruk.cartservice.controller;
 
 import me.doruk.cartservice.request.CheckoutRequest;
-import me.doruk.cartservice.request.ItemRequest;
 import me.doruk.cartservice.response.CartResponse;
 import me.doruk.cartservice.response.CheckoutResponse;
 import me.doruk.cartservice.response.ItemResponse;
 import me.doruk.cartservice.service.CartService;
+import me.doruk.ticketingcommonlibrary.event.CartItem;
 
 import java.util.UUID;
 
@@ -30,7 +30,7 @@ public class CartController {
   }
 
   @PostMapping(value = "/cart/{cartId}/items", consumes = "application/json", produces = "application/json")
-  public ItemResponse addItem(@PathVariable("cartId") UUID cartId, @RequestBody ItemRequest request) {
+  public ItemResponse addItem(@PathVariable("cartId") UUID cartId, @RequestBody CartItem request) {
     System.out.println("POST /api/v1/cart/{cartId}/items called");
     return cartService.addItem(cartId, request);
   }

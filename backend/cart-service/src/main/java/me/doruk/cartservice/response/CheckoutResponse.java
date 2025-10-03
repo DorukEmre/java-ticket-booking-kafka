@@ -1,7 +1,5 @@
 package me.doruk.cartservice.response;
 
-import java.util.UUID;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,7 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CartResponse {
-  private UUID cartId;
-  private String message;
+public class CheckoutResponse {
+  private String customerName;
+  private int numberOfItems;
+
 }

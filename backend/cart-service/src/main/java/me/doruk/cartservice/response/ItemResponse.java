@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CartResponse {
+public class ItemResponse {
   private UUID cartId;
   private String message;
+
 }
