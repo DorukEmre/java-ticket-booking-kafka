@@ -31,4 +31,7 @@ public class Order {
 
   @Column(name = "customer_id")
   private Long customerId;
+
+  @Column(name = "status")
+  private String status;
 }

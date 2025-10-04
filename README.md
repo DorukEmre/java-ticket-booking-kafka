@@ -47,6 +47,7 @@ Ticket purchase request flow through the system. Each service communicates via K
    → emit `OrderCreationRequested`
 
 2) Order Service consumes
+- Check cart not already processed
 - Save Order(`PENDING`)
 
   → emit `ReserveInventory`

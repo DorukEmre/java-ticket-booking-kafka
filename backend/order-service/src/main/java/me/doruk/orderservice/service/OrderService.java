@@ -6,8 +6,10 @@ import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
 import me.doruk.orderservice.client.CatalogServiceClient;
 import me.doruk.orderservice.entity.Customer;
 import me.doruk.orderservice.entity.OrderItem;
+import me.doruk.orderservice.entity.ProcessedCartId;
 import me.doruk.orderservice.entity.Order;
 import me.doruk.orderservice.repository.OrderRepository;
+import me.doruk.orderservice.repository.ProcessedCartIdRepository;
 import me.doruk.orderservice.request.UserCreateRequest;
 import me.doruk.orderservice.repository.OrderItemRepository;
 import me.doruk.orderservice.repository.CustomerRepository;
@@ -20,27 +22,31 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
 public class OrderService {
 
+  private final ProcessedCartIdRepository processedCartIdRepository;
   private final CustomerRepository customerRepository;
-  private final OrderItemRepository orderItemRepository;
   private final OrderRepository orderRepository;
+  private final OrderItemRepository orderItemRepository;
   private final CatalogServiceClient catalogServiceClient;
 
   @Autowired
   public OrderService(
+      final ProcessedCartIdRepository processedCartIdRepository,
       final CustomerRepository customerRepository,
-      final OrderItemRepository orderItemRepository,
       final OrderRepository orderRepository,
+      final OrderItemRepository orderItemRepository,
       final CatalogServiceClient catalogServiceClient) {
 
-    this.orderRepository = orderRepository;
-    this.catalogServiceClient = catalogServiceClient;
+    this.processedCartIdRepository = processedCartIdRepository;
     this.customerRepository = customerRepository;
+    this.orderRepository = orderRepository;
     this.orderItemRepository = orderItemRepository;
+    this.catalogServiceClient = catalogServiceClient;
   }
 
   public List<UserResponse> GetAllUsers() {
@@ -69,18 +75,28 @@ public class OrderService {
   }
 
   @KafkaListener(topics = "order-requested", groupId = "order-service")
-  public void orderEvent(OrderCreationRequested orderCreationRequested) {
-    log.info("Received order event: {}", orderCreationRequested);
+  public void orderEvent(OrderCreationRequested request) {
+    log.info("Received order event: {}", request);
 
-    // TO DO: Validate cart exists in Redis
-    // TO DO: Idempotency check: skip if order for this event already exists
+    // Idempotency check: skip if order for this cart already exists
+    UUID cartId = request.getCartId();
+    if (processedCartIdRepository.existsById(cartId)) {
+      log.info("Duplicate message for cartId={}, skipping.", cartId);
+      return;
+    }
+
+    // Mark cart as processed
+    processedCartIdRepository
+        .save(ProcessedCartId.builder()
+            .cartId(cartId)
+            .build());
 
     // Create or get Customer
-    Customer customer = customerRepository.findByEmail(orderCreationRequested.getEmail())
+    Customer customer = customerRepository.findByEmail(request.getEmail())
         .orElseGet(() -> {
           Customer newCustomer = Customer.builder()
-              .name(orderCreationRequested.getCustomerName())
-              .email(orderCreationRequested.getEmail())
+              .name(request.getCustomerName())
+              .email(request.getEmail())
               .build();
           customerRepository.saveAndFlush(newCustomer);
           log.info("Created new customer: {}", newCustomer);
@@ -88,7 +104,7 @@ public class OrderService {
         });
 
     // Create OrderItems
-    List<OrderItem> orderItems = createOrderItems(orderCreationRequested);
+    List<OrderItem> orderItems = createOrderItems(request);
 
     // Calculate total price
     BigDecimal totalPrice = orderItems.stream()
@@ -120,8 +136,8 @@ public class OrderService {
 
   }
 
-  private List<OrderItem> createOrderItems(OrderCreationRequested orderCreationRequested) {
-    return orderCreationRequested.getItems().stream()
+  private List<OrderItem> createOrderItems(OrderCreationRequested request) {
+    return request.getItems().stream()
         .map(item -> OrderItem.builder()
             .eventId(item.getEventId())
             .ticketCount(item.getTicketCount())
@@ -135,6 +151,7 @@ public class OrderService {
     return Order.builder()
         .customerId(customerId)
         .totalPrice(totalPrice)
+        .status("PENDING")
         .build();
   }
 
@@ -146,6 +163,7 @@ public class OrderService {
         .customerId(order.getCustomerId())
         .totalPrice(order.getTotalPrice())
         .placedAt(order.getPlacedAt())
+        .status(order.getStatus())
         .items(getOrderItems(order.getId()))
         .build()).toList();
   }

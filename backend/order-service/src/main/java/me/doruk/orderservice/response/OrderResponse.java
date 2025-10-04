@@ -18,5 +18,6 @@ public class OrderResponse {
   private BigDecimal totalPrice;
   private String placedAt;
   private Long customerId;
+  private String status;
   private List<OrderItem> items;
 }
