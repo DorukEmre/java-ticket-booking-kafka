@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import me.doruk.cartservice.client.CatalogServiceClient;
 import me.doruk.cartservice.request.CheckoutRequest;
 import me.doruk.cartservice.response.CartResponse;
+import me.doruk.cartservice.response.InvalidCheckoutResponse;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
 import me.doruk.ticketingcommonlibrary.model.Cart;
 import me.doruk.ticketingcommonlibrary.model.CartItem;
@@ -18,6 +19,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -106,7 +109,7 @@ public class CartService {
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
-  public ResponseEntity<Void> checkout(final UUID cartId, final CheckoutRequest request) {
+  public ResponseEntity<?> checkout(final UUID cartId, final CheckoutRequest request) {
     System.out.println("Create cart called: " + request);
 
     Cart cart = getCart(cartId);
@@ -121,10 +124,21 @@ public class CartService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart is empty");
     }
 
-    // Validate items on catalog-service
-    boolean allAvailable = catalogServiceClient.validateCart(cart);
-    if (!allAvailable) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "One or more events are sold out or invalid");
+    // Validate items in catalog-service
+    Map<Long, Boolean> itemsValidity = catalogServiceClient.validateCart(cart);
+    boolean allValid = itemsValidity.values().stream().allMatch(Boolean::booleanValue);
+    System.out.println("Items validity: " + itemsValidity);
+
+    if (!allValid) {
+      List<Long> invalidItemIds = itemsValidity.entrySet().stream()
+          .filter(entry -> !entry.getValue())
+          .map(Map.Entry::getKey)
+          .toList();
+
+      log.warn("Invalid items found during checkout: {}", invalidItemIds);
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+          .body(InvalidCheckoutResponse.builder().invalidItemIds(invalidItemIds)
+              .build());
     }
 
     // Create order-requested event

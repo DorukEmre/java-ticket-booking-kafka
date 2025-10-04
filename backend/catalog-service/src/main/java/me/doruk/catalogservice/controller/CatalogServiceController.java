@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1")
@@ -75,8 +76,8 @@ public class CatalogServiceController {
   }
 
   @PostMapping("/catalog/validate-cart")
-  public ResponseEntity<Boolean> validateCart(@RequestBody Cart cart) {
-    boolean allAvailable = catalogService.validateCart(cart);
-    return ResponseEntity.ok(allAvailable);
+  public ResponseEntity<Map<Long, Boolean>> validateCart(@RequestBody Cart cart) {
+    Map<Long, Boolean> result = catalogService.validateCart(cart);
+    return ResponseEntity.ok(result);
   }
 }

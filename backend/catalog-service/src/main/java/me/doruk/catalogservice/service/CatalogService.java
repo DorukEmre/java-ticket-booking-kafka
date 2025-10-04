@@ -11,6 +11,7 @@ import me.doruk.catalogservice.response.EventCatalogServiceResponse;
 import me.doruk.catalogservice.response.VenueCatalogServiceResponse;
 import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
 import me.doruk.ticketingcommonlibrary.model.Cart;
+import me.doruk.ticketingcommonlibrary.model.CartItem;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,8 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -60,7 +62,7 @@ public class CatalogService {
         .ticketPrice(event.getTicketPrice())
         .eventDate(String.valueOf(event.getEventDate()))
         .description(event.getDescription())
-        .build()).collect(Collectors.toList());
+        .build()).toList();
   }
 
   public VenueCatalogServiceResponse getVenueInformation(final Long venueId) {
@@ -84,7 +86,7 @@ public class CatalogService {
         .name(venue.getName())
         .address(venue.getAddress())
         .totalCapacity(venue.getTotalCapacity())
-        .build()).collect(Collectors.toList());
+        .build()).toList();
   }
 
   public VenueCatalogServiceResponse createVenue(final VenueCreateRequest request) {
@@ -152,25 +154,35 @@ public class CatalogService {
 
   public void updateEventsCapacities(final List<ReserveInventory> eventTicketCounts) {
     System.out.println("Updating event capacities: " + eventTicketCounts);
-    for (var entry : eventTicketCounts) {
+    for (ReserveInventory entry : eventTicketCounts) {
       updateEventCapacity(entry.getEventId(), entry.getTicketCount());
     }
     log.info("Updated capacities for all events");
   }
 
   // Validate cart from cart-service
-  public boolean validateCart(final Cart cart) {
-    for (var item : cart.getItems()) {
-      // Check if each item is a valid event and has enough capacity
+  public Map<Long, Boolean> validateCart(final Cart cart) {
+    Map<Long, Boolean> result = new HashMap<>();
+
+    // Check if each item is a valid event and has enough capacity
+    for (CartItem item : cart.getItems()) {
       final Event event = eventRepository.findById(item.getEventId())
           .orElse(null);
 
-      if (event == null
-          || event.getRemainingCapacity() < item.getTicketCount()) {
-        return false;
-      }
+      boolean isValid = event != null
+          && item.getTicketCount() != null
+          && item.getTicketCount() > 0
+          && event.getRemainingCapacity() >= item.getTicketCount();
+
+      log.warn("Item " + item + " is valid: " + isValid
+          + ". Event null? " + (event == null)
+          + ", remaining capacity: " + (event != null ? event.getRemainingCapacity() : "N/A")
+          + ", requested: " + item.getTicketCount());
+
+      result.put(item.getEventId(), isValid);
     }
-    return true;
+
+    return result;
   }
 
 }
