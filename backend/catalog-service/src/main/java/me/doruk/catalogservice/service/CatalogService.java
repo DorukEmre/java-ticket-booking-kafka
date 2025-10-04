@@ -9,15 +9,20 @@ import me.doruk.catalogservice.request.EventCreateRequest;
 import me.doruk.catalogservice.request.VenueCreateRequest;
 import me.doruk.catalogservice.response.EventCatalogServiceResponse;
 import me.doruk.catalogservice.response.VenueCatalogServiceResponse;
+import me.doruk.ticketingcommonlibrary.event.InventoryReservationFailed;
+import me.doruk.ticketingcommonlibrary.event.InventoryReservationSucceeded;
 import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
 import me.doruk.ticketingcommonlibrary.model.Cart;
 import me.doruk.ticketingcommonlibrary.model.CartItem;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -29,11 +34,16 @@ public class CatalogService {
 
   private final EventRepository eventRepository;
   private final VenueRepository venueRepository;
+  private final KafkaTemplate<String, Object> kafkaTemplate;
 
   @Autowired
-  public CatalogService(final EventRepository eventRepository, final VenueRepository venueRepository) {
+  public CatalogService(
+      final EventRepository eventRepository,
+      final VenueRepository venueRepository,
+      final KafkaTemplate<String, Object> kafkaTemplate) {
     this.eventRepository = eventRepository;
     this.venueRepository = venueRepository;
+    this.kafkaTemplate = kafkaTemplate;
   }
 
   public EventCatalogServiceResponse getEventInformation(final Long eventId) {
@@ -141,25 +151,6 @@ public class CatalogService {
         .build();
   }
 
-  private void updateEventCapacity(final Long eventId, final Long ticketBooked) {
-    final Event event = eventRepository.findById(eventId)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
-
-    event.setRemainingCapacity(event.getRemainingCapacity() - ticketBooked);
-
-    eventRepository.save(event);
-
-    log.info("Updated event capacity for event {} with tickets booked {}", eventId, ticketBooked);
-  }
-
-  public void updateEventsCapacities(final List<ReserveInventory> eventTicketCounts) {
-    System.out.println("Updating event capacities: " + eventTicketCounts);
-    for (ReserveInventory entry : eventTicketCounts) {
-      // updateEventCapacity(entry.getEventId(), entry.getTicketCount());
-    }
-    log.info("Updated capacities for all events");
-  }
-
   // Validate cart from cart-service
   public Map<Long, Boolean> validateCart(final Cart cart) {
     Map<Long, Boolean> result = new HashMap<>();
@@ -178,11 +169,82 @@ public class CatalogService {
           + ". Event null? " + (event == null)
           + ", remaining capacity: " + (event != null ? event.getRemainingCapacity() : "N/A")
           + ", requested: " + item.getTicketCount());
-
+      // isValid = true; // TEMPORARY FOR TESTING
       result.put(item.getEventId(), isValid);
     }
 
     return result;
+  }
+
+  // Listen for ReserveInventory events from order-service
+  @KafkaListener(topics = "reserve-inventory", groupId = "catalog-service")
+  public void reserveInventory(ReserveInventory request) {
+    System.out.println("Received reserve inventory: " + request);
+
+    List<CartItem> items = request.getItems();
+    List<Event> eventsToUpdate = eventRepository.findAllById(
+        items.stream().map(CartItem::getEventId).toList());
+
+    // Check all events have enough capacity
+    boolean allValid = true;
+    for (CartItem item : items) {
+      Event event = eventsToUpdate.stream()
+          .filter(e -> e.getId().equals(item.getEventId()))
+          .findFirst()
+          .orElse(null);
+
+      if (event == null || event.getRemainingCapacity() < item.getTicketCount()) {
+        allValid = false;
+        break;
+      }
+    }
+
+    // If not all valid, send InventoryReservationFailed and return
+    if (!allValid) {
+      log.warn("Reservation failed due to insufficient capacity.");
+
+      kafkaTemplate.send("inventory-reservation-failed", InventoryReservationFailed.builder()
+          .orderId(request.getOrderId())
+          .build());
+
+      return;
+    }
+
+    // If all valid, update capacities
+    for (CartItem item : items) {
+      Event event = eventsToUpdate.stream()
+          .filter(e -> e.getId().equals(item.getEventId()))
+          .findFirst()
+          .orElse(null);
+
+      if (event != null) {
+        event.setRemainingCapacity(
+            event.getRemainingCapacity() - item.getTicketCount());
+      }
+    }
+
+    eventRepository.saveAll(eventsToUpdate);
+    log.info("Successfully reserved inventory for order " + request.getOrderId());
+
+    // Add ticket price to items
+    List<CartItem> updatedItems = items.stream()
+        .map(item -> CartItem.builder()
+            .eventId(item.getEventId())
+            .ticketCount(item.getTicketCount())
+            .ticketPrice(eventsToUpdate.stream()
+                .filter(e -> e.getId().equals(item.getEventId()))
+                .findFirst()
+                .map(Event::getTicketPrice)
+                .orElse(BigDecimal.ZERO))
+            .build())
+        .toList();
+
+    // Send InventoryReservationSucceeded event
+    kafkaTemplate.send("inventory-reservation-succeeded", InventoryReservationSucceeded.builder()
+        .orderId(request.getOrderId())
+        .items(updatedItems)
+        .build());
+
   }
 
 }

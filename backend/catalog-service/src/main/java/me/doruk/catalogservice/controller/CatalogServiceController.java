@@ -5,7 +5,6 @@ import me.doruk.catalogservice.request.VenueCreateRequest;
 import me.doruk.catalogservice.response.EventCatalogServiceResponse;
 import me.doruk.catalogservice.response.VenueCatalogServiceResponse;
 import me.doruk.catalogservice.service.CatalogService;
-import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
 import me.doruk.ticketingcommonlibrary.model.Cart;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,16 +62,6 @@ public class CatalogServiceController {
     System.out.println("POST /api/v1/catalog/add-event called");
     EventCatalogServiceResponse createdEvent = catalogService.createEvent(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdEvent);
-  }
-
-  @PutMapping("/catalog/events/update-capacities")
-  public ResponseEntity<Void> updateCapacities(@RequestBody List<ReserveInventory> eventTicketCounts) {
-
-    // if (eventTicketCounts.size() > 0)
-    // throw new IllegalArgumentException("Test exception for debugging");
-
-    catalogService.updateEventsCapacities(eventTicketCounts);
-    return ResponseEntity.ok().build();
   }
 
   @PostMapping("/catalog/validate-cart")

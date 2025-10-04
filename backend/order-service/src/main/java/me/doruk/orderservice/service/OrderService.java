@@ -143,8 +143,7 @@ public class OrderService {
     System.out.println("Sending reserve inventory: " + reserveInventory);
 
     // Update inventory in catalog-service
-    // kafkaTemplate.send("reserve-inventory", reserveInventory);
-    return;
+    kafkaTemplate.send("reserve-inventory", reserveInventory);
   }
 
   private List<OrderItem> createOrderItems(OrderCreationRequested request) {
