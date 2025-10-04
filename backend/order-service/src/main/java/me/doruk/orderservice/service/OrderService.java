@@ -3,7 +3,7 @@ package me.doruk.orderservice.service;
 import lombok.extern.slf4j.Slf4j;
 import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
-import me.doruk.orderservice.client.CatalogServiceClient;
+import me.doruk.ticketingcommonlibrary.model.CartItem;
 import me.doruk.orderservice.entity.Customer;
 import me.doruk.orderservice.entity.OrderItem;
 import me.doruk.orderservice.entity.ProcessedCartId;
@@ -18,6 +18,7 @@ import me.doruk.orderservice.response.UserResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -32,7 +33,7 @@ public class OrderService {
   private final CustomerRepository customerRepository;
   private final OrderRepository orderRepository;
   private final OrderItemRepository orderItemRepository;
-  private final CatalogServiceClient catalogServiceClient;
+  private final KafkaTemplate<String, ReserveInventory> kafkaTemplate;
 
   @Autowired
   public OrderService(
@@ -40,13 +41,13 @@ public class OrderService {
       final CustomerRepository customerRepository,
       final OrderRepository orderRepository,
       final OrderItemRepository orderItemRepository,
-      final CatalogServiceClient catalogServiceClient) {
+      final KafkaTemplate<String, ReserveInventory> kafkaTemplate) {
 
     this.processedCartIdRepository = processedCartIdRepository;
     this.customerRepository = customerRepository;
     this.orderRepository = orderRepository;
     this.orderItemRepository = orderItemRepository;
-    this.catalogServiceClient = catalogServiceClient;
+    this.kafkaTemplate = kafkaTemplate;
   }
 
   public List<UserResponse> GetAllUsers() {
@@ -85,11 +86,15 @@ public class OrderService {
       return;
     }
 
+    System.out.println("Idempotency check passed for cartId=" + cartId);
+
     // Mark cart as processed
     processedCartIdRepository
         .save(ProcessedCartId.builder()
             .cartId(cartId)
             .build());
+
+    System.out.println("Marked cartId as processed.");
 
     // Create or get Customer
     Customer customer = customerRepository.findByEmail(request.getEmail())
@@ -119,21 +124,25 @@ public class OrderService {
     orderItems.forEach(item -> item.setOrderId(order.getId()));
     orderItemRepository.saveAllAndFlush(orderItems);
 
+    System.out.println("Order saved with id=" + order.getId());
+
     // Create a list of event ids and ticket counts
-    List<ReserveInventory> eventTicketCounts = orderItems.stream()
-        .map(item -> ReserveInventory.builder()
+    List<CartItem> reserveItems = orderItems.stream()
+        .map(item -> CartItem.builder()
             .eventId(item.getEventId())
             .ticketCount(item.getTicketCount())
             .build())
         .toList();
 
-    // Update remaining ticket in CatalogService
-    catalogServiceClient.updateCatalogService(eventTicketCounts);
+    ReserveInventory reserveInventory = ReserveInventory.builder()
+        .orderId(order.getId())
+        .items(reserveItems)
+        .build();
 
-    // TO DO: Delete cart from Redis.
+    System.out.println("Sending reserve inventory: " + reserveInventory);
 
-    // TO DO: Return orderId and order details.
-
+    // Update inventory in catalog-service
+    kafkaTemplate.send("reserve-inventory", reserveInventory);
   }
 
   private List<OrderItem> createOrderItems(OrderCreationRequested request) {
