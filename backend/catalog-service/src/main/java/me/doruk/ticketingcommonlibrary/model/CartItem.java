@@ -1,4 +1,4 @@
-package me.doruk.ticketingcommonlibrary.event;
+package me.doruk.ticketingcommonlibrary.model;
 
 import java.math.BigDecimal;
 

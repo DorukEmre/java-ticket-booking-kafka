@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.doruk.ticketingcommonlibrary.event.CartItem;
+import me.doruk.ticketingcommonlibrary.model.CartItem;
 
 @Data
 @AllArgsConstructor

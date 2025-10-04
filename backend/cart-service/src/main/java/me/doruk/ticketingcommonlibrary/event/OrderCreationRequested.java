@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.doruk.ticketingcommonlibrary.model.CartItem;
 
 import java.util.List;
 import java.util.UUID;
