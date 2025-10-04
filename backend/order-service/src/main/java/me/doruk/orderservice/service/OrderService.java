@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -51,7 +50,7 @@ public class OrderService {
         .id(user.getId())
         .name(user.getName())
         .email(user.getEmail())
-        .build()).collect(Collectors.toList());
+        .build()).toList();
   }
 
   public UserResponse createUser(final UserCreateRequest request) {
@@ -110,7 +109,7 @@ public class OrderService {
             .eventId(item.getEventId())
             .ticketCount(item.getTicketCount())
             .build())
-        .collect(Collectors.toList());
+        .toList();
 
     // Update remaining ticket in CatalogService
     catalogServiceClient.updateCatalogService(eventTicketCounts);
@@ -128,7 +127,7 @@ public class OrderService {
             .ticketCount(item.getTicketCount())
             .ticketPrice(item.getTicketPrice())
             .build())
-        .collect(Collectors.toList());
+        .toList();
   }
 
   private Order createOrder(Long customerId, BigDecimal totalPrice) {
@@ -148,7 +147,7 @@ public class OrderService {
         .totalPrice(order.getTotalPrice())
         .placedAt(order.getPlacedAt())
         .items(getOrderItems(order.getId()))
-        .build()).collect(Collectors.toList());
+        .build()).toList();
   }
 
   private List<OrderItem> getOrderItems(Long orderId) {
