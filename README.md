@@ -53,7 +53,7 @@ Ticket purchase request flow through the system. Each service communicates via K
   → emit `ReserveInventory`
 
 3) Catalog Service consumes
-- Checks availability, updates stock
+- Checks availability and updates stock
 
   → emit `InventoryReservationSucceeded` OR `InventoryReservationFailed`
 
@@ -64,7 +64,7 @@ Ticket purchase request flow through the system. Each service communicates via K
   → emit `OrderCreationFailed`
 
 5) Cart Service consumes
-- Update cart/order status, return status to frontend (HTTP)
+- Update cart/order status
 
 6) Frontend Cart Update
   - Poll `/cart/status/{cartId}` (or subscribe via WebSocket for real-time updates)
