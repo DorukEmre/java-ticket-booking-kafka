@@ -155,7 +155,7 @@ public class CatalogService {
   public void updateEventsCapacities(final List<ReserveInventory> eventTicketCounts) {
     System.out.println("Updating event capacities: " + eventTicketCounts);
     for (ReserveInventory entry : eventTicketCounts) {
-      updateEventCapacity(entry.getEventId(), entry.getTicketCount());
+      // updateEventCapacity(entry.getEventId(), entry.getTicketCount());
     }
     log.info("Updated capacities for all events");
   }

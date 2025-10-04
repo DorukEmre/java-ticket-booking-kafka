@@ -112,12 +112,13 @@ public class OrderService {
     List<OrderItem> orderItems = createOrderItems(request);
 
     // Calculate total price
-    BigDecimal totalPrice = orderItems.stream()
-        .map(item -> item.getTicketPrice().multiply(BigDecimal.valueOf(item.getTicketCount())))
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
+    // BigDecimal totalPrice = orderItems.stream()
+    // .map(item ->
+    // item.getTicketPrice().multiply(BigDecimal.valueOf(item.getTicketCount())))
+    // .reduce(BigDecimal.ZERO, BigDecimal::add);
 
     // Create Order object and save to db
-    Order order = createOrder(customer.getId(), totalPrice);
+    Order order = createOrder(customer.getId());
     orderRepository.saveAndFlush(order);
 
     // Add order id to each order item and save to db
@@ -142,7 +143,8 @@ public class OrderService {
     System.out.println("Sending reserve inventory: " + reserveInventory);
 
     // Update inventory in catalog-service
-    kafkaTemplate.send("reserve-inventory", reserveInventory);
+    // kafkaTemplate.send("reserve-inventory", reserveInventory);
+    return;
   }
 
   private List<OrderItem> createOrderItems(OrderCreationRequested request) {
@@ -150,16 +152,14 @@ public class OrderService {
         .map(item -> OrderItem.builder()
             .eventId(item.getEventId())
             .ticketCount(item.getTicketCount())
-            .ticketPrice(item.getTicketPrice())
             .build())
         .toList();
   }
 
-  private Order createOrder(Long customerId, BigDecimal totalPrice) {
+  private Order createOrder(Long customerId) {
 
     return Order.builder()
         .customerId(customerId)
-        .totalPrice(totalPrice)
         .status("PENDING")
         .build();
   }

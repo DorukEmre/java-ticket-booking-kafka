@@ -1,0 +1,3 @@
+ALTER TABLE `order`
+MODIFY total DECIMAL(10,2),
+ADD CHECK (status = 'PENDING' OR total IS NOT NULL);
