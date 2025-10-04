@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import me.doruk.cartservice.client.CatalogServiceClient;
 import me.doruk.cartservice.request.CheckoutRequest;
 import me.doruk.cartservice.response.CartResponse;
-import me.doruk.cartservice.response.CheckoutResponse;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
 import me.doruk.ticketingcommonlibrary.model.Cart;
 import me.doruk.ticketingcommonlibrary.model.CartItem;
@@ -54,7 +53,7 @@ public class CartService {
     redisTemplate.opsForValue().set(key(cartId), cart, CART_TTL_SECONDS, TimeUnit.SECONDS);
   }
 
-  public CartResponse createCart() {
+  public ResponseEntity<CartResponse> createCart() {
     UUID cartId = UUID.randomUUID();
     System.out.println("createCart > Generated cartId: " + cartId);
 
@@ -68,13 +67,13 @@ public class CartService {
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to connect to Redis");
     }
 
-    return CartResponse.builder()
-        .cartId(cartId)
-        .message("ok")
-        .build();
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(CartResponse.builder()
+            .cartId(cartId)
+            .build());
   }
 
-  public CartResponse addItem(final UUID cartId, final CartItem item) {
+  public ResponseEntity<Void> addItem(final UUID cartId, final CartItem item) {
     System.out.println("Add item called: " + cartId + ", " + item);
     Cart cart = getCart(cartId);
     if (cart == null) {
@@ -96,17 +95,18 @@ public class CartService {
             existing -> existing.setTicketCount(item.getTicketCount()),
             () -> cart.getItems().add(item));
 
-    saveCartToRedis(cartId, cart);
+    try {
+      saveCartToRedis(cartId, cart);
+      log.info("Updated items in cart: {}", cart);
+    } catch (Exception e) {
+      log.error("Error interacting with Redis", e);
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to connect to Redis");
+    }
 
-    log.info("Updated items in cart: {}", getCart(cartId));
-
-    return CartResponse.builder()
-        .cartId(cartId)
-        .message("ok")
-        .build();
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
-  public ResponseEntity<CheckoutResponse> checkout(final UUID cartId, final CheckoutRequest request) {
+  public ResponseEntity<Void> checkout(final UUID cartId, final CheckoutRequest request) {
     System.out.println("Create cart called: " + request);
 
     Cart cart = getCart(cartId);
@@ -139,11 +139,7 @@ public class CartService {
           return null;
         });
 
-    return ResponseEntity.ok(
-        CheckoutResponse.builder()
-            .customerName(request.getCustomerName())
-            .numberOfItems(cart.getItems().size())
-            .build());
+    return ResponseEntity.status(HttpStatus.ACCEPTED).build();
   }
 
   private OrderCreationRequested createOrder(final CheckoutRequest request,

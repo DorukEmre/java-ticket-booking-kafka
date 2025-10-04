@@ -2,7 +2,6 @@ package me.doruk.cartservice.controller;
 
 import me.doruk.cartservice.request.CheckoutRequest;
 import me.doruk.cartservice.response.CartResponse;
-import me.doruk.cartservice.response.CheckoutResponse;
 import me.doruk.cartservice.service.CartService;
 import me.doruk.ticketingcommonlibrary.model.CartItem;
 
@@ -24,19 +23,19 @@ public class CartController {
   }
 
   @PostMapping(value = "/cart", produces = "application/json")
-  public CartResponse createCart() {
+  public ResponseEntity<CartResponse> createCart() {
     System.out.println("POST /api/v1/cart called");
     return cartService.createCart();
   }
 
   @PostMapping(value = "/cart/{cartId}/items", consumes = "application/json", produces = "application/json")
-  public CartResponse addItem(@PathVariable("cartId") UUID cartId, @RequestBody CartItem request) {
+  public ResponseEntity<Void> addItem(@PathVariable("cartId") UUID cartId, @RequestBody CartItem request) {
     System.out.println("POST /api/v1/cart/{cartId}/items called");
     return cartService.addItem(cartId, request);
   }
 
   @PostMapping(value = "/cart/{cartId}/checkout", consumes = "application/json", produces = "application/json")
-  public ResponseEntity<CheckoutResponse> checkout(@PathVariable("cartId") UUID cartId,
+  public ResponseEntity<Void> checkout(@PathVariable("cartId") UUID cartId,
       @RequestBody CheckoutRequest request) {
     System.out.println("POST /api/v1/cart/{cartId}/checkout called");
     return cartService.checkout(cartId, request);
