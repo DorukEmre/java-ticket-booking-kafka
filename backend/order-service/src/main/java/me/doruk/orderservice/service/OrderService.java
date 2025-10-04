@@ -2,7 +2,11 @@ package me.doruk.orderservice.service;
 
 import lombok.extern.slf4j.Slf4j;
 import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
+import me.doruk.ticketingcommonlibrary.event.InventoryReservationFailed;
+import me.doruk.ticketingcommonlibrary.event.InventoryReservationSucceeded;
+import me.doruk.ticketingcommonlibrary.event.OrderCreationFailed;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
+import me.doruk.ticketingcommonlibrary.event.OrderCreationSucceeded;
 import me.doruk.ticketingcommonlibrary.model.CartItem;
 import me.doruk.orderservice.entity.Customer;
 import me.doruk.orderservice.entity.OrderItem;
@@ -33,7 +37,7 @@ public class OrderService {
   private final CustomerRepository customerRepository;
   private final OrderRepository orderRepository;
   private final OrderItemRepository orderItemRepository;
-  private final KafkaTemplate<String, ReserveInventory> kafkaTemplate;
+  private final KafkaTemplate<String, Object> kafkaTemplate;
 
   @Autowired
   public OrderService(
@@ -41,7 +45,7 @@ public class OrderService {
       final CustomerRepository customerRepository,
       final OrderRepository orderRepository,
       final OrderItemRepository orderItemRepository,
-      final KafkaTemplate<String, ReserveInventory> kafkaTemplate) {
+      final KafkaTemplate<String, Object> kafkaTemplate) {
 
     this.processedCartIdRepository = processedCartIdRepository;
     this.customerRepository = customerRepository;
@@ -111,12 +115,6 @@ public class OrderService {
     // Create OrderItems
     List<OrderItem> orderItems = createOrderItems(request);
 
-    // Calculate total price
-    // BigDecimal totalPrice = orderItems.stream()
-    // .map(item ->
-    // item.getTicketPrice().multiply(BigDecimal.valueOf(item.getTicketCount())))
-    // .reduce(BigDecimal.ZERO, BigDecimal::add);
-
     // Create Order object and save to db
     Order order = createOrder(customer.getId());
     orderRepository.saveAndFlush(order);
@@ -178,6 +176,69 @@ public class OrderService {
 
   private List<OrderItem> getOrderItems(Long orderId) {
     return orderItemRepository.findAllByOrderId(orderId).orElse(List.of());
+  }
+
+  // Listen for InventoryReservationFailed events from order-service
+  @KafkaListener(topics = "inventory-reservation-failed", groupId = "order-service")
+  public void handleInventoryReservationFailed(InventoryReservationFailed request) {
+    System.out.println("Received inventory reservation failed for orderId: " + request.getOrderId());
+
+    // Update order status to FAILED
+    Order order = orderRepository.findById(request.getOrderId()).orElse(null);
+
+    order.setStatus("FAILED");
+    orderRepository.save(order);
+
+    log.info("Order {} marked as FAILED due to inventory reservation failure.", order.getId());
+
+    kafkaTemplate.send("order-failed", OrderCreationFailed.builder()
+        .build());
+
+  }
+
+  // Listen for InventoryReservationSucceeded events from order-service
+  @KafkaListener(topics = "inventory-reservation-succeeded", groupId = "order-service")
+  public void handleInventoryReservationSucceeded(InventoryReservationSucceeded request) {
+    System.out.println("Received inventory reservation succeeded for orderId: " + request);
+
+    // Get OrderItems
+    List<OrderItem> orderItems = orderItemRepository.findAllByOrderId(request.getOrderId()).orElse(List.of());
+
+    System.out.println("Fetched order items: " + orderItems);
+
+    // Update ticket prices in OrderItems
+    orderItems.forEach(item -> {
+      BigDecimal ticketPrice = request.getItems().stream()
+          .filter(cartItem -> cartItem.getEventId().equals(item.getEventId()))
+          .findFirst()
+          .map(CartItem::getTicketPrice)
+          .orElse(BigDecimal.ZERO);
+
+      item.setTicketPrice(ticketPrice);
+    });
+    orderItemRepository.saveAll(orderItems);
+
+    System.out.println("Updated order items ticket price: " + orderItems);
+
+    // Calculate total price
+    BigDecimal totalPrice = orderItems.stream()
+        .map(item -> item.getTicketPrice().multiply(BigDecimal.valueOf(item.getTicketCount())))
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    System.out.println("Calculated total price: " + totalPrice);
+
+    // Update order status to COMPLETED
+    Order order = orderRepository.findById(request.getOrderId()).orElse(null);
+
+    order.setTotalPrice(totalPrice);
+    order.setStatus("COMPLETED");
+    orderRepository.save(order);
+
+    log.info("Order {} marked as COMPLETED.", order.getId());
+
+    kafkaTemplate.send("order-succeeded", OrderCreationSucceeded.builder()
+        .build());
+
   }
 
 }
