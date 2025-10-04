@@ -10,6 +10,7 @@ import me.doruk.catalogservice.request.VenueCreateRequest;
 import me.doruk.catalogservice.response.EventCatalogServiceResponse;
 import me.doruk.catalogservice.response.VenueCatalogServiceResponse;
 import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
+import me.doruk.ticketingcommonlibrary.model.Cart;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -155,6 +156,21 @@ public class CatalogService {
       updateEventCapacity(entry.getEventId(), entry.getTicketCount());
     }
     log.info("Updated capacities for all events");
+  }
+
+  // Validate cart from cart-service
+  public boolean validateCart(final Cart cart) {
+    for (var item : cart.getItems()) {
+      // Check if each item is a valid event and has enough capacity
+      final Event event = eventRepository.findById(item.getEventId())
+          .orElse(null);
+
+      if (event == null
+          || event.getRemainingCapacity() < item.getTicketCount()) {
+        return false;
+      }
+    }
+    return true;
   }
 
 }

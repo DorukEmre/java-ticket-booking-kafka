@@ -1,17 +1,18 @@
 package me.doruk.cartservice.client;
 
-import me.doruk.cartservice.model.Cart;
-import me.doruk.cartservice.response.CatalogServiceResponse;
+// import me.doruk.cartservice.response.CatalogServiceResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import me.doruk.ticketingcommonlibrary.model.Cart;
 
 @Service
 public class CatalogServiceClient {
   // Handles calls going to catalog service
 
-  // @Value("${catalog.service.url}")
-  // private String catalogServiceUrl;
+  @Value("${catalog.service.url}")
+  private String catalogServiceUrl;
 
   // public CatalogServiceResponse getCatalogService(final Long eventId) {
   // final RestTemplate restTemplate = new RestTemplate();
@@ -21,7 +22,13 @@ public class CatalogServiceClient {
   // return restTemplate.getForObject(url, CatalogServiceResponse.class);
   // }
 
-  public void checkAvailabilityAndReserveTickets(final Cart cart) {
-    System.out.println("Checking availability and reserving tickets for cart: " + cart);
+  // Check validity of cart items
+  public Boolean validateCart(final Cart cart) {
+
+    final RestTemplate restTemplate = new RestTemplate();
+
+    String url = catalogServiceUrl + "/validate-cart";
+
+    return restTemplate.postForObject(url, cart, Boolean.class);
   }
 }

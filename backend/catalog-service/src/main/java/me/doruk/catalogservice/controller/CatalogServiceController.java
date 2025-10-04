@@ -6,6 +6,7 @@ import me.doruk.catalogservice.response.EventCatalogServiceResponse;
 import me.doruk.catalogservice.response.VenueCatalogServiceResponse;
 import me.doruk.catalogservice.service.CatalogService;
 import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
+import me.doruk.ticketingcommonlibrary.model.Cart;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -71,5 +72,11 @@ public class CatalogServiceController {
 
     catalogService.updateEventsCapacities(eventTicketCounts);
     return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/catalog/validate-cart")
+  public ResponseEntity<Boolean> validateCart(@RequestBody Cart cart) {
+    boolean allAvailable = catalogService.validateCart(cart);
+    return ResponseEntity.ok(allAvailable);
   }
 }
