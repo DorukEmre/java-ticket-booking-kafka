@@ -32,4 +32,7 @@ public class Venue {
 
   @Column(name = "total_capacity")
   private Long totalCapacity;
+
+  @Column(name = "image_url")
+  private String imageUrl;
 }
