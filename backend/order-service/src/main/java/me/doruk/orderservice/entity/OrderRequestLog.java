@@ -18,11 +18,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "processed_cart_id")
-public class ProcessedCartId {
+@Table(name = "order_request_log")
+public class OrderRequestLog {
   @Id
   @Column(name = "cart_id", columnDefinition = "BINARY(16)")
   private UUID cartId;
+
+  @Column(name = "order_id")
+  private Long orderId;
 
   @CreationTimestamp
   @Column(name = "processed_at", updatable = false, nullable = false)
