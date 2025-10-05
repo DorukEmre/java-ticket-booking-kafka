@@ -187,6 +187,9 @@ services:
       KAFKA_CLUSTERS_BOOTSTRAPSERVERS: kafka-broker:29092
       DYNAMIC_CONFIG_ENABLED: 'true'
       LOG_LEVEL: WARN
+      LOGGING_LEVEL_ROOT: WARN
+      SPRING_LOG_LEVEL: WARN
+
     networks:
       - ticket-booking-network
 

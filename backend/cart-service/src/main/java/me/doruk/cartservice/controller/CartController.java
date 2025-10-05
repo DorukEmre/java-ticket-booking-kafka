@@ -40,4 +40,10 @@ public class CartController {
     System.out.println("POST /api/v1/cart/{cartId}/checkout called");
     return cartService.checkout(cartId, request);
   }
+
+  @GetMapping(value = "/cart/{cartId}/status", produces = "application/json")
+  public ResponseEntity<?> checkCartStatus(@PathVariable("cartId") UUID cartId) {
+    System.out.println("GET /api/v1/cart/{cartId}/status called");
+    return cartService.checkCartStatus(cartId);
+  }
 }

@@ -236,14 +236,14 @@ public class OrderService {
 
     System.out.println("Calculated total price: " + totalPrice);
 
-    // Update order status to COMPLETED
+    // Update order status to CONFIRMED
     Order order = orderRepository.findById(request.getOrderId()).orElse(null);
 
     order.setTotalPrice(totalPrice);
-    order.setStatus("COMPLETED");
+    order.setStatus("CONFIRMED");
     orderRepository.save(order);
 
-    log.info("Order {} marked as COMPLETED.", order.getId());
+    log.info("Order {} marked as CONFIRMED.", order.getId());
 
     List<CartItem> cartItems = orderItems.stream()
         .map(item -> CartItem.builder()
