@@ -34,19 +34,19 @@ public class OrderServiceRoutes {
 
         // admin routes
         .route("orders", r -> r
-            .path("/orders")
+            .path("/admin/orders")
             .and().method(HttpMethod.GET)
             .filters(f -> f.prefixPath("/api/v1"))
             .uri(uri))
 
         .route("users", r -> r
-            .path("/users")
+            .path("/admin/users")
             .and().method(HttpMethod.GET)
             .filters(f -> f.prefixPath("/api/v1"))
             .uri(uri))
 
         .route("add-user", r -> r
-            .path("/users/new")
+            .path("/admin/users/new")
             .and().method(HttpMethod.POST)
             .filters(f -> f.prefixPath("/api/v1"))
             .uri(uri))

@@ -45,21 +45,15 @@ public class CatalogServiceRoutes {
 
         // admin routes
         .route("catalog-add-venue", r -> r
-            .path("/venue/new")
+            .path("/admin/venue/new")
             .and().method(HttpMethod.POST)
             .filters(f -> f.rewritePath("/venue/new", "/api/v1/catalog/add-venue"))
             .uri(uri))
 
         .route("catalog-add-event", r -> r
-            .path("/event/new")
+            .path("/admin/event/new")
             .and().method(HttpMethod.POST)
             .filters(f -> f.rewritePath("/event/new", "/api/v1/catalog/add-event"))
-            .uri(uri))
-
-        .route("update-event-capacity", r -> r
-            .path("/events/update-capacities")
-            .and().method(HttpMethod.PUT)
-            .filters(f -> f.prefixPath("/api/v1/catalog"))
             .uri(uri))
 
         .build();
