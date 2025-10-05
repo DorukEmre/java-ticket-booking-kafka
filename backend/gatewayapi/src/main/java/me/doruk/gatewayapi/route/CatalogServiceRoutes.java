@@ -34,13 +34,13 @@ public class CatalogServiceRoutes {
         .route("catalog-event-by-id", r -> r
             .path("/event/{eventId}")
             .and().method(HttpMethod.GET)
-            .filters(f -> f.rewritePath("/event/(?<eventId>[^/]+)", "/api/v1/catalog/event/${eventId}"))
+            .filters(f -> f.prefixPath("/api/v1/catalog"))
             .uri(uri))
 
         .route("catalog-venue-by-id", r -> r
             .path("/venue/{venueId}")
             .and().method(HttpMethod.GET)
-            .filters(f -> f.rewritePath("/venue/(?<venueId>[^/]+)", "/api/v1/catalog/venue/${venueId}"))
+            .filters(f -> f.prefixPath("/api/v1/catalog"))
             .uri(uri))
 
         // admin routes
