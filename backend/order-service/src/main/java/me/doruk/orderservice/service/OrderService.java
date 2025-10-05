@@ -10,10 +10,10 @@ import me.doruk.ticketingcommonlibrary.event.OrderCreationSucceeded;
 import me.doruk.ticketingcommonlibrary.model.CartItem;
 import me.doruk.orderservice.entity.Customer;
 import me.doruk.orderservice.entity.OrderItem;
-import me.doruk.orderservice.entity.ProcessedCartId;
+import me.doruk.orderservice.entity.OrderRequestLog;
 import me.doruk.orderservice.entity.Order;
 import me.doruk.orderservice.repository.OrderRepository;
-import me.doruk.orderservice.repository.ProcessedCartIdRepository;
+import me.doruk.orderservice.repository.OrderRequestLogRepository;
 import me.doruk.orderservice.request.UserCreateRequest;
 import me.doruk.orderservice.repository.OrderItemRepository;
 import me.doruk.orderservice.repository.CustomerRepository;
@@ -25,6 +25,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
@@ -33,7 +35,7 @@ import java.util.UUID;
 @Slf4j
 public class OrderService {
 
-  private final ProcessedCartIdRepository processedCartIdRepository;
+  private final OrderRequestLogRepository orderRequestLogRepository;
   private final CustomerRepository customerRepository;
   private final OrderRepository orderRepository;
   private final OrderItemRepository orderItemRepository;
@@ -41,13 +43,13 @@ public class OrderService {
 
   @Autowired
   public OrderService(
-      final ProcessedCartIdRepository processedCartIdRepository,
+      final OrderRequestLogRepository orderRequestLogRepository,
       final CustomerRepository customerRepository,
       final OrderRepository orderRepository,
       final OrderItemRepository orderItemRepository,
       final KafkaTemplate<String, Object> kafkaTemplate) {
 
-    this.processedCartIdRepository = processedCartIdRepository;
+    this.orderRequestLogRepository = orderRequestLogRepository;
     this.customerRepository = customerRepository;
     this.orderRepository = orderRepository;
     this.orderItemRepository = orderItemRepository;
@@ -79,26 +81,36 @@ public class OrderService {
         .build();
   }
 
+  public List<OrderResponse> getAllOrders() {
+    final List<Order> orders = orderRepository.findAll();
+
+    return orders.stream().map((Order order) -> OrderResponse.builder()
+        .id(order.getId())
+        .customerId(order.getCustomerId())
+        .totalPrice(order.getTotalPrice())
+        .placedAt(order.getPlacedAt())
+        .status(order.getStatus())
+        .items(getOrderItems(order.getId()))
+        .build()).toList();
+  }
+
+  private List<OrderItem> getOrderItems(Long orderId) {
+    return orderItemRepository.findAllByOrderId(orderId).orElse(List.of());
+  }
+
+  @Transactional
   @KafkaListener(topics = "order-requested", groupId = "order-service")
   public void orderEvent(OrderCreationRequested request) {
     log.info("Received order event: {}", request);
 
     // Idempotency check: skip if order for this cart already exists
     UUID cartId = request.getCartId();
-    if (processedCartIdRepository.existsById(cartId)) {
+    if (orderRequestLogRepository.existsById(cartId)) {
       log.info("Duplicate message for cartId={}, skipping.", cartId);
       return;
     }
 
     System.out.println("Idempotency check passed for cartId=" + cartId);
-
-    // Mark cart as processed
-    processedCartIdRepository
-        .save(ProcessedCartId.builder()
-            .cartId(cartId)
-            .build());
-
-    System.out.println("Marked cartId as processed.");
 
     // Create or get Customer
     Customer customer = customerRepository.findByEmail(request.getEmail())
@@ -116,14 +128,14 @@ public class OrderService {
     List<OrderItem> orderItems = createOrderItems(request);
 
     // Create Order object and save to db
-    Order order = createOrder(customer.getId());
+    Order order = createInitialOrder(customer.getId());
     orderRepository.saveAndFlush(order);
 
     // Add order id to each order item and save to db
     orderItems.forEach(item -> item.setOrderId(order.getId()));
     orderItemRepository.saveAllAndFlush(orderItems);
 
-    System.out.println("Order saved with id=" + order.getId());
+    System.out.println("Order and items saved with id=" + order.getId());
 
     // Create a list of event ids and ticket counts
     List<CartItem> reserveItems = orderItems.stream()
@@ -142,6 +154,15 @@ public class OrderService {
 
     // Update inventory in catalog-service
     kafkaTemplate.send("reserve-inventory", reserveInventory);
+
+    // Mark cart as processed
+    orderRequestLogRepository
+        .save(OrderRequestLog.builder()
+            .cartId(cartId)
+            .orderId(order.getId())
+            .build());
+
+    System.out.println("cartId marked as processed.");
   }
 
   private List<OrderItem> createOrderItems(OrderCreationRequested request) {
@@ -153,29 +174,12 @@ public class OrderService {
         .toList();
   }
 
-  private Order createOrder(Long customerId) {
+  private Order createInitialOrder(Long customerId) {
 
     return Order.builder()
         .customerId(customerId)
         .status("PENDING")
         .build();
-  }
-
-  public List<OrderResponse> getAllOrders() {
-    final List<Order> orders = orderRepository.findAll();
-
-    return orders.stream().map((Order order) -> OrderResponse.builder()
-        .id(order.getId())
-        .customerId(order.getCustomerId())
-        .totalPrice(order.getTotalPrice())
-        .placedAt(order.getPlacedAt())
-        .status(order.getStatus())
-        .items(getOrderItems(order.getId()))
-        .build()).toList();
-  }
-
-  private List<OrderItem> getOrderItems(Long orderId) {
-    return orderItemRepository.findAllByOrderId(orderId).orElse(List.of());
   }
 
   // Listen for InventoryReservationFailed events from order-service
@@ -192,11 +196,16 @@ public class OrderService {
     log.info("Order {} marked as FAILED due to inventory reservation failure.", order.getId());
 
     kafkaTemplate.send("order-failed", OrderCreationFailed.builder()
+        .orderId(order.getId())
+        .cartId(orderRequestLogRepository.findByOrderId(order.getId())
+            .map(OrderRequestLog::getCartId)
+            .orElse(null))
         .build());
 
   }
 
   // Listen for InventoryReservationSucceeded events from order-service
+  @Transactional
   @KafkaListener(topics = "inventory-reservation-succeeded", groupId = "order-service")
   public void handleInventoryReservationSucceeded(InventoryReservationSucceeded request) {
     System.out.println("Received inventory reservation succeeded for orderId: " + request);
@@ -236,7 +245,21 @@ public class OrderService {
 
     log.info("Order {} marked as COMPLETED.", order.getId());
 
+    List<CartItem> cartItems = orderItems.stream()
+        .map(item -> CartItem.builder()
+            .eventId(item.getEventId())
+            .ticketCount(item.getTicketCount())
+            .ticketPrice(item.getTicketPrice())
+            .build())
+        .toList();
+
     kafkaTemplate.send("order-succeeded", OrderCreationSucceeded.builder()
+        .orderId(order.getId())
+        .cartId(orderRequestLogRepository.findByOrderId(order.getId())
+            .map(OrderRequestLog::getCartId)
+            .orElse(null))
+        .totalPrice(totalPrice)
+        .items(cartItems)
         .build());
 
   }
