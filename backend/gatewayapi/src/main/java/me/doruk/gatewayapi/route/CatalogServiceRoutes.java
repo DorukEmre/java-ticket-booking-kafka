@@ -19,6 +19,12 @@ public class CatalogServiceRoutes {
     String uri = "http://" + baseUrl;
 
     return builder.routes()
+
+        .route("images", r -> r
+            .path("/images/{filename}")
+            .and().method(HttpMethod.GET)
+            .uri(uri))
+
         .route("catalog-events", r -> r
             .path("/events")
             .and().method(HttpMethod.GET)
