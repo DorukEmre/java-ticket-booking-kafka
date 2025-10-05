@@ -21,6 +21,7 @@ import me.doruk.orderservice.response.OrderResponse;
 import me.doruk.orderservice.response.UserResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,44 @@ public class OrderService {
     this.orderRepository = orderRepository;
     this.orderItemRepository = orderItemRepository;
     this.kafkaTemplate = kafkaTemplate;
+  }
+
+  public ResponseEntity<?> getOrderById(final Long orderId) {
+    final Order order = orderRepository.findById(orderId).orElse(null);
+
+    if (order == null) {
+      return ResponseEntity.notFound().build();
+    }
+
+    OrderResponse reponse = OrderResponse.builder()
+        .id(order.getId())
+        .customerId(order.getCustomerId())
+        .totalPrice(order.getTotalPrice())
+        .placedAt(order.getPlacedAt())
+        .status(order.getStatus())
+        .items(getOrderItems(order.getId()))
+        .build();
+
+    return ResponseEntity.ok(reponse);
+  }
+
+  public ResponseEntity<?> getAllOrdersByUser(final Long customerId) {
+    final List<Order> orders = orderRepository.findAllByCustomerId(customerId).orElse(List.of());
+
+    if (orders.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    List<OrderResponse> orderResponses = orders.stream().map((Order order) -> OrderResponse.builder()
+        .id(order.getId())
+        .customerId(order.getCustomerId())
+        .totalPrice(order.getTotalPrice())
+        .placedAt(order.getPlacedAt())
+        .status(order.getStatus())
+        .items(getOrderItems(order.getId()))
+        .build()).toList();
+
+    return ResponseEntity.ok(orderResponses);
   }
 
   public List<UserResponse> GetAllUsers() {

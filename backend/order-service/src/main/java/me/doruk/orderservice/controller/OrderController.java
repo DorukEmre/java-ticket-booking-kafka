@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -27,6 +27,20 @@ public class OrderController {
     this.orderService = orderService;
   }
 
+  @GetMapping("/order/{orderId}")
+  public ResponseEntity<?> getOrderById(@PathVariable("orderId") Long orderId) {
+    System.out.println("GET /api/v1/order/{orderId} called");
+    return orderService.getOrderById(orderId);
+  }
+
+  @GetMapping("/users/{customerId}/orders")
+  public ResponseEntity<?> getAllOrdersByUser(@PathVariable("customerId") Long customerId) {
+    System.out.println("GET /api/v1/order/{orderId} called");
+    return orderService.getAllOrdersByUser(customerId);
+  }
+
+  // Admin routes
+
   @GetMapping("/orders")
   public List<OrderResponse> getOrders() {
     System.out.println("GET /api/v1/orders called");
@@ -34,7 +48,7 @@ public class OrderController {
   }
 
   @GetMapping("/users")
-  public @ResponseBody List<UserResponse> getUsers() {
+  public List<UserResponse> getUsers() {
     System.out.println("GET /api/v1/users called");
     return orderService.GetAllUsers();
   }

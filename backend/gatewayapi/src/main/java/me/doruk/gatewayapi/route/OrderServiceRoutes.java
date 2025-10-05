@@ -19,6 +19,20 @@ public class OrderServiceRoutes {
     String uri = "http://" + baseUrl;
 
     return builder.routes()
+
+        .route("order-by-id", r -> r
+            .path("/order/{orderId}")
+            .and().method(HttpMethod.GET)
+            .filters(f -> f.prefixPath("/api/v1"))
+            .uri(uri))
+
+        .route("orders-for-customerId", r -> r
+            .path("/users/{customerId}/orders")
+            .and().method(HttpMethod.GET)
+            .filters(f -> f.prefixPath("/api/v1"))
+            .uri(uri))
+
+        // admin routes
         .route("orders", r -> r
             .path("/orders")
             .and().method(HttpMethod.GET)
