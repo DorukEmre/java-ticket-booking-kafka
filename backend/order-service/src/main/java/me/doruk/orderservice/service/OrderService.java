@@ -23,10 +23,12 @@ import me.doruk.orderservice.response.OrderResponse;
 import me.doruk.orderservice.response.UserResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.transaction.Transactional;
 
@@ -60,11 +62,8 @@ public class OrderService {
   }
 
   public ResponseEntity<?> getOrderById(final String orderId) {
-    final Order order = orderRepository.findById(orderId).orElse(null);
-
-    if (order == null) {
-      return ResponseEntity.notFound().build();
-    }
+    final Order order = orderRepository.findById(orderId)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
 
     OrderResponse reponse = OrderResponse.builder()
         .id(order.getId())
@@ -79,11 +78,11 @@ public class OrderService {
   }
 
   public ResponseEntity<?> getAllOrdersByUser(final Long customerId) {
-    final List<Order> orders = orderRepository.findAllByCustomerId(customerId).orElse(List.of());
+    customerRepository.findById(customerId)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-    if (orders.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
+    final List<Order> orders = orderRepository.findAllByCustomerId(customerId)
+        .orElse(null);
 
     List<OrderResponse> orderResponses = orders.stream().map((Order order) -> OrderResponse.builder()
         .id(order.getId())
