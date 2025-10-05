@@ -1,5 +1,7 @@
 package me.doruk.orderservice.service;
 
+import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
+
 import lombok.extern.slf4j.Slf4j;
 import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
 import me.doruk.ticketingcommonlibrary.event.InventoryReservationFailed;
@@ -57,7 +59,7 @@ public class OrderService {
     this.kafkaTemplate = kafkaTemplate;
   }
 
-  public ResponseEntity<?> getOrderById(final Long orderId) {
+  public ResponseEntity<?> getOrderById(final String orderId) {
     final Order order = orderRepository.findById(orderId).orElse(null);
 
     if (order == null) {
@@ -133,7 +135,7 @@ public class OrderService {
         .build()).toList();
   }
 
-  private List<OrderItem> getOrderItems(Long orderId) {
+  private List<OrderItem> getOrderItems(String orderId) {
     return orderItemRepository.findAllByOrderId(orderId).orElse(List.of());
   }
 
@@ -216,6 +218,7 @@ public class OrderService {
   private Order createInitialOrder(Long customerId) {
 
     return Order.builder()
+        .id(NanoIdUtils.randomNanoId(NanoIdUtils.DEFAULT_NUMBER_GENERATOR, NanoIdUtils.DEFAULT_ALPHABET, 8))
         .customerId(customerId)
         .status("PENDING")
         .build();

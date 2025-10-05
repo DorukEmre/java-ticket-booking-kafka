@@ -26,7 +26,7 @@ public class OrderItem {
   private Long id;
 
   @Column(name = "order_id")
-  private Long orderId;
+  private String orderId;
 
   @Column(name = "event_id")
   private Long eventId;

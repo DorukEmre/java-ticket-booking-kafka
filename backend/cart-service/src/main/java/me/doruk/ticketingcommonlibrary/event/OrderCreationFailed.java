@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class OrderCreationFailed {
   UUID cartId;
-  Long orderId;
+  String orderId;
 }

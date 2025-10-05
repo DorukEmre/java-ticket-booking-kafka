@@ -28,7 +28,7 @@ public class OrderController {
   }
 
   @GetMapping("/order/{orderId}")
-  public ResponseEntity<?> getOrderById(@PathVariable("orderId") Long orderId) {
+  public ResponseEntity<?> getOrderById(@PathVariable("orderId") String orderId) {
     System.out.println("GET /api/v1/order/{orderId} called");
     return orderService.getOrderById(orderId);
   }

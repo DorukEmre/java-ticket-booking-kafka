@@ -13,6 +13,6 @@ import me.doruk.ticketingcommonlibrary.model.CartItem;
 @NoArgsConstructor
 @AllArgsConstructor
 public class InventoryReservationSucceeded {
-  Long orderId;
+  String orderId;
   List<CartItem> items;
 }

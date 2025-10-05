@@ -18,9 +18,8 @@ import java.math.BigDecimal;
 public class Order {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id")
-  private Long id;
+  @Column(name = "id", length = 8)
+  private String id;
 
   @Column(name = "total")
   private BigDecimal totalPrice;

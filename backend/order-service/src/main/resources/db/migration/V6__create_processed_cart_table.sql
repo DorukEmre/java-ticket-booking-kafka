@@ -1,4 +1,0 @@
-CREATE TABLE processed_cart_id (
-  cart_id BINARY(16) PRIMARY KEY,
-  processed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);

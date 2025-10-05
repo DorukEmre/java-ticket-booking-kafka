@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CartCacheEntry {
   private UUID cartId;
-  private Long orderId;
+  private String orderId;
   private CartStatus status;
   private List<CartItem> items;
 }

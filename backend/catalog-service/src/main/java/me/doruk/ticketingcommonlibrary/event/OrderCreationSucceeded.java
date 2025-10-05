@@ -16,7 +16,7 @@ import me.doruk.ticketingcommonlibrary.model.CartItem;
 @Builder
 public class OrderCreationSucceeded {
   UUID cartId;
-  Long orderId;
+  String orderId;
   BigDecimal totalPrice;
   List<CartItem> items;
 }

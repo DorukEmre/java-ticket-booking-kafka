@@ -25,7 +25,7 @@ public class OrderRequestLog {
   private UUID cartId;
 
   @Column(name = "order_id")
-  private Long orderId;
+  private String orderId;
 
   @CreationTimestamp
   @Column(name = "processed_at", updatable = false, nullable = false)

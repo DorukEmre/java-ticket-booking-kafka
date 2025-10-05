@@ -125,10 +125,9 @@ public class CartService {
     if (cartCache == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found");
     }
-    // if (request.getItems() == null || request.getItems().isEmpty()) {
-    // throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart request must
-    // contain at least one item");
-    // }
+    if (cartCache.getStatus() != CartStatus.IN_PROGRESS) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart already checked out");
+    }
     if (cartCache.getItems() == null || cartCache.getItems().isEmpty()) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart is empty");
     }

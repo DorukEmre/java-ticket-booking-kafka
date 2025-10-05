@@ -14,6 +14,6 @@ import me.doruk.cartservice.model.CartStatus;
 @Builder
 public class CartStatusResponse {
   private UUID cartId;
-  private Long orderId;
+  private String orderId;
   private CartStatus status;
 }
