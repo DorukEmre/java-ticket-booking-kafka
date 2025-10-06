@@ -12,12 +12,13 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventCatalogServiceResponse {
+public class EventResponse {
   private Long eventId;
-  private String event;
+  private String name;
   private int capacity;
   private Venue venue;
   private BigDecimal ticketPrice;
   private String eventDate;
   private String description;
+  private String imageUrl;
 }

@@ -29,8 +29,8 @@ public class Venue {
   @Column(name = "name")
   private String name;
 
-  @Column(name = "address")
-  private String address;
+  @Column(name = "location")
+  private String location;
 
   @Column(name = "total_capacity")
   private int totalCapacity;

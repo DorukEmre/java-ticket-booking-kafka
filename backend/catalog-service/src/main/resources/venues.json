@@ -1,61 +1,61 @@
 [
   {
     "name": "Velvet Hall",
-    "address": "Paris",
+    "location": "Paris",
     "totalCapacity": 50000,
     "imageUrl": "default-venue.jpg"
   },
   {
     "name": "Starlight Venue",
-    "address": "Madrid",
+    "location": "Madrid",
     "totalCapacity": 8000,
     "imageUrl": "default-venue.jpg"
   },
   {
     "name": "The Beacon",
-    "address": "London",
+    "location": "London",
     "totalCapacity": 20000,
     "imageUrl": "default-venue.jpg"
   },
   {
     "name": "Sunset Arena",
-    "address": "Berlin",
+    "location": "Berlin",
     "totalCapacity": 15000,
     "imageUrl": "default-venue.jpg"
   },
   {
     "name": "Echo Dome",
-    "address": "Rome",
+    "location": "Rome",
     "totalCapacity": 12000,
     "imageUrl": "default-venue.jpg"
   },
   {
     "name": "Harmony Pavilion",
-    "address": "Amsterdam",
+    "location": "Amsterdam",
     "totalCapacity": 9000,
     "imageUrl": "default-venue.jpg"
   },
   {
     "name": "Crystal Palace",
-    "address": "Vienna",
+    "location": "Vienna",
     "totalCapacity": 22000,
     "imageUrl": "default-venue.jpg"
   },
   {
     "name": "Galaxy Center",
-    "address": "Prague",
+    "location": "Prague",
     "totalCapacity": 17000,
     "imageUrl": "default-venue.jpg"
   },
   {
     "name": "Nova Hall",
-    "address": "Budapest",
+    "location": "Budapest",
     "totalCapacity": 14000,
     "imageUrl": "default-venue.jpg"
   },
   {
     "name": "Opal Theater",
-    "address": "Brussels",
+    "location": "Brussels",
     "totalCapacity": 11000,
     "imageUrl": "default-venue.jpg"
   }

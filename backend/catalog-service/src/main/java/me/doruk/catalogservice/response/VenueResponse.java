@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VenueCatalogServiceResponse {
+public class VenueResponse {
   private Long venueId;
   private String name;
-  private String address;
+  private String location;
   private int totalCapacity;
+  private String imageUrl;
 }

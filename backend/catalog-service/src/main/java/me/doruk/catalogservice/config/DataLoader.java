@@ -27,7 +27,7 @@ public class DataLoader {
   @Data
   static class VenueJson {
     private String name;
-    private String address;
+    private String location;
     private int totalCapacity;
     private String imageUrl;
   }
@@ -59,7 +59,7 @@ public class DataLoader {
 
         List<Venue> venues = venueJsons.stream().map(vj -> Venue.builder()
             .name(vj.getName())
-            .address(vj.getAddress())
+            .location(vj.getLocation())
             .totalCapacity(vj.getTotalCapacity())
             .imageUrl(vj.getImageUrl())
             .build()).toList();

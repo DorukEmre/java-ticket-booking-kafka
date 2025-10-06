@@ -3,43 +3,43 @@
 # Add Venues
 curl -X POST http://localhost:8000/admin/venues/new \
   -H "Content-Type: application/json" \
-  -d '{"name": "Velvet Hall", "address": "Paris", "totalCapacity": 50000}' -w "\n"
+  -d '{"name": "Velvet Hall", "location": "Paris", "totalCapacity": 50000}' -w "\n"
 
 curl -X POST http://localhost:8000/admin/venues/new \
   -H "Content-Type: application/json" \
-  -d '{"name": "Starlight Venue", "address": "Madrid", "totalCapacity": 8000}' -w "\n"
+  -d '{"name": "Starlight Venue", "location": "Madrid", "totalCapacity": 8000}' -w "\n"
 
 curl -X POST http://localhost:8000/admin/venues/new \
   -H "Content-Type: application/json" \
-  -d '{"name": "The Beacon", "address": "London", "totalCapacity": 20000}' -w "\n"
+  -d '{"name": "The Beacon", "location": "London", "totalCapacity": 20000}' -w "\n"
 
 curl -X POST http://localhost:8000/admin/venues/new \
   -H "Content-Type: application/json" \
-  -d '{"name": "Sunset Arena", "address": "Berlin", "totalCapacity": 15000}' -w "\n"
+  -d '{"name": "Sunset Arena", "location": "Berlin", "totalCapacity": 15000}' -w "\n"
 
 curl -X POST http://localhost:8000/admin/venues/new \
   -H "Content-Type: application/json" \
-  -d '{"name": "Echo Dome", "address": "Rome", "totalCapacity": 12000}' -w "\n"
+  -d '{"name": "Echo Dome", "location": "Rome", "totalCapacity": 12000}' -w "\n"
 
 curl -X POST http://localhost:8000/admin/venues/new \
   -H "Content-Type: application/json" \
-  -d '{"name": "Harmony Pavilion", "address": "Amsterdam", "totalCapacity": 9000}' -w "\n"
+  -d '{"name": "Harmony Pavilion", "location": "Amsterdam", "totalCapacity": 9000}' -w "\n"
 
 curl -X POST http://localhost:8000/admin/venues/new \
   -H "Content-Type: application/json" \
-  -d '{"name": "Crystal Palace", "address": "Vienna", "totalCapacity": 22000}' -w "\n"
+  -d '{"name": "Crystal Palace", "location": "Vienna", "totalCapacity": 22000}' -w "\n"
 
 curl -X POST http://localhost:8000/admin/venues/new \
   -H "Content-Type: application/json" \
-  -d '{"name": "Galaxy Center", "address": "Prague", "totalCapacity": 17000}' -w "\n"
+  -d '{"name": "Galaxy Center", "location": "Prague", "totalCapacity": 17000}' -w "\n"
 
 curl -X POST http://localhost:8000/admin/venues/new \
   -H "Content-Type: application/json" \
-  -d '{"name": "Nova Hall", "address": "Budapest", "totalCapacity": 14000}' -w "\n"
+  -d '{"name": "Nova Hall", "location": "Budapest", "totalCapacity": 14000}' -w "\n"
 
 curl -X POST http://localhost:8000/admin/venues/new \
   -H "Content-Type: application/json" \
-  -d '{"name": "Opal Theater", "address": "Brussels", "totalCapacity": 11000}' -w "\n"
+  -d '{"name": "Opal Theater", "location": "Brussels", "totalCapacity": 11000}' -w "\n"
 
 # Add Events
 curl -X POST http://localhost:8000/admin/events/new \

@@ -18,4 +18,5 @@ public class EventCreateRequest {
   private BigDecimal ticketPrice;
   private String eventDate;
   private String description;
+  private String imageUrl;
 }

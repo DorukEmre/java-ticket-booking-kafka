@@ -8,8 +8,8 @@ import me.doruk.catalogservice.repository.EventRepository;
 import me.doruk.catalogservice.repository.VenueRepository;
 import me.doruk.catalogservice.request.EventCreateRequest;
 import me.doruk.catalogservice.request.VenueCreateRequest;
-import me.doruk.catalogservice.response.EventCatalogServiceResponse;
-import me.doruk.catalogservice.response.VenueCatalogServiceResponse;
+import me.doruk.catalogservice.response.EventResponse;
+import me.doruk.catalogservice.response.VenueResponse;
 import me.doruk.ticketingcommonlibrary.event.InventoryReservationFailed;
 import me.doruk.ticketingcommonlibrary.event.InventoryReservationSucceeded;
 import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
@@ -37,77 +37,82 @@ public class CatalogService {
   private final VenueRepository venueRepository;
   private final KafkaTemplate<String, Object> kafkaTemplate;
 
-  public EventCatalogServiceResponse getEventInformation(final Long eventId) {
+  public EventResponse getEventInformation(final Long eventId) {
     final Event event = eventRepository.findById(eventId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
 
-    return EventCatalogServiceResponse.builder()
+    return EventResponse.builder()
         .eventId(event.getId())
-        .event(event.getName())
+        .name(event.getName())
         .capacity(event.getRemainingCapacity())
         .venue(event.getVenue())
         .ticketPrice(event.getTicketPrice())
         .eventDate(String.valueOf(event.getEventDate()))
         .description(event.getDescription())
+        .imageUrl(event.getImageUrl())
         .build();
   }
 
-  public List<EventCatalogServiceResponse> GetAllEvents() {
+  public List<EventResponse> GetAllEvents() {
     final List<Event> events = eventRepository.findAll();
 
-    return events.stream().map(event -> EventCatalogServiceResponse.builder()
+    return events.stream().map(event -> EventResponse.builder()
         .eventId(event.getId())
-        .event(event.getName())
+        .name(event.getName())
         .capacity(event.getRemainingCapacity())
         .venue(event.getVenue())
         .ticketPrice(event.getTicketPrice())
         .eventDate(String.valueOf(event.getEventDate()))
         .description(event.getDescription())
+        .imageUrl(event.getImageUrl())
         .build()).toList();
   }
 
-  public VenueCatalogServiceResponse getVenueInformation(final Long venueId) {
+  public VenueResponse getVenueInformation(final Long venueId) {
     System.out.println("Fetching venue information for venueId: " + venueId);
     final Venue venue = venueRepository.findById(venueId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Venue not found"));
     System.out.println("Found venue: " + venue);
-    return VenueCatalogServiceResponse.builder()
+    return VenueResponse.builder()
         .venueId(venue.getId())
         .name(venue.getName())
-        .address(venue.getAddress())
+        .location(venue.getLocation())
         .totalCapacity(venue.getTotalCapacity())
+        .imageUrl(venue.getImageUrl())
         .build();
   }
 
-  public List<VenueCatalogServiceResponse> getAllVenues() {
+  public List<VenueResponse> getAllVenues() {
     final List<Venue> venues = venueRepository.findAll();
 
-    return venues.stream().map(venue -> VenueCatalogServiceResponse.builder()
+    return venues.stream().map(venue -> VenueResponse.builder()
         .venueId(venue.getId())
         .name(venue.getName())
-        .address(venue.getAddress())
+        .location(venue.getLocation())
         .totalCapacity(venue.getTotalCapacity())
+        .imageUrl(venue.getImageUrl())
         .build()).toList();
   }
 
-  public VenueCatalogServiceResponse createVenue(final VenueCreateRequest request) {
+  public VenueResponse createVenue(final VenueCreateRequest request) {
     System.out.println("Creating venue: " + request);
     Venue venue = new Venue();
     venue.setName(request.getName());
-    venue.setAddress(request.getAddress());
+    venue.setLocation(request.getLocation());
     venue.setTotalCapacity(request.getTotalCapacity());
 
     Venue savedVenue = venueRepository.save(venue);
 
-    return VenueCatalogServiceResponse.builder()
+    return VenueResponse.builder()
         .venueId(savedVenue.getId())
         .name(savedVenue.getName())
-        .address(savedVenue.getAddress())
+        .location(savedVenue.getLocation())
         .totalCapacity(savedVenue.getTotalCapacity())
+        .imageUrl(savedVenue.getImageUrl())
         .build();
   }
 
-  public EventCatalogServiceResponse createEvent(final EventCreateRequest request) {
+  public EventResponse createEvent(final EventCreateRequest request) {
     System.out.println("Creating event: " + request);
 
     final Venue venue = venueRepository.findById(request.getVenueId())
@@ -127,18 +132,20 @@ public class CatalogService {
         .ticketPrice(request.getTicketPrice())
         .eventDate(Date.valueOf(request.getEventDate()))
         .description(request.getDescription())
+        .imageUrl(request.getImageUrl())
         .build();
 
     Event savedEvent = eventRepository.save(event);
 
-    return EventCatalogServiceResponse.builder()
+    return EventResponse.builder()
         .eventId(savedEvent.getId())
-        .event(savedEvent.getName())
+        .name(savedEvent.getName())
         .capacity(savedEvent.getRemainingCapacity())
         .venue(savedEvent.getVenue())
         .ticketPrice(savedEvent.getTicketPrice())
         .eventDate(String.valueOf(savedEvent.getEventDate()))
         .description(savedEvent.getDescription())
+        .imageUrl(savedEvent.getImageUrl())
         .build();
   }
 

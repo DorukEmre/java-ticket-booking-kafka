@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class VenueCreateRequest {
   private String name;
-  private String address;
+  private String location;
   private int totalCapacity;
+  private String imageUrl;
 }

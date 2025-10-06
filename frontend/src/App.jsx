@@ -49,7 +49,7 @@ function App() {
     // Convert FormData to JSON
     const data = {
       name: formData.get('venueName'),
-      address: formData.get('venueAddress'),
+      location: formData.get('venueLocation'),
       totalCapacity: Number(formData.get('venueCapacity'))
     };
 
@@ -92,7 +92,7 @@ function App() {
           <ul>
             {allVenues.map(event => (
               <li key={event.venueId}>
-                Venue ID {event.venueId}: {event.name}, {event.address} - {event.totalCapacity}
+                Venue ID {event.venueId}: {event.name}, {event.location} - {event.totalCapacity}
               </li>
             ))}
           </ul>
@@ -102,7 +102,7 @@ function App() {
       </div>
       <form onSubmit={addVenue}>
         <input type="text" name="venueName" placeholder="Name" />
-        <input type="text" name="venueAddress" placeholder="Address" />
+        <input type="text" name="venueLocation" placeholder="Location" />
         <input type="text" name="venueCapacity" placeholder="Capacity" />
         <button type="submit">Add</button>
       </form>
