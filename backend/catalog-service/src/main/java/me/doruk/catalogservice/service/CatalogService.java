@@ -1,5 +1,6 @@
 package me.doruk.catalogservice.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.doruk.catalogservice.entity.Event;
 import me.doruk.catalogservice.entity.Venue;
@@ -15,7 +16,6 @@ import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
 import me.doruk.ticketingcommonlibrary.model.Cart;
 import me.doruk.ticketingcommonlibrary.model.CartItem;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -30,21 +30,12 @@ import java.util.Map;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CatalogService {
 
   private final EventRepository eventRepository;
   private final VenueRepository venueRepository;
   private final KafkaTemplate<String, Object> kafkaTemplate;
-
-  @Autowired
-  public CatalogService(
-      final EventRepository eventRepository,
-      final VenueRepository venueRepository,
-      final KafkaTemplate<String, Object> kafkaTemplate) {
-    this.eventRepository = eventRepository;
-    this.venueRepository = venueRepository;
-    this.kafkaTemplate = kafkaTemplate;
-  }
 
   public EventCatalogServiceResponse getEventInformation(final Long eventId) {
     final Event event = eventRepository.findById(eventId)
@@ -161,7 +152,6 @@ public class CatalogService {
           .orElse(null);
 
       boolean isValid = event != null
-          && item.getTicketCount() != null
           && item.getTicketCount() > 0
           && event.getRemainingCapacity() >= item.getTicketCount();
 

@@ -1,5 +1,6 @@
 package me.doruk.cartservice.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.doruk.cartservice.client.CatalogServiceClient;
 import me.doruk.cartservice.model.CartCacheEntry;
@@ -14,7 +15,6 @@ import me.doruk.ticketingcommonlibrary.event.OrderCreationSucceeded;
 import me.doruk.ticketingcommonlibrary.model.Cart;
 import me.doruk.ticketingcommonlibrary.model.CartItem;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class CartService {
 
   private static final long CART_TTL_SECONDS = 86400; // 24 hours
@@ -39,16 +40,6 @@ public class CartService {
   private final CatalogServiceClient catalogServiceClient;
   private final KafkaTemplate<String, OrderCreationRequested> kafkaTemplate;
   private final RedisTemplate<String, Object> redisTemplate;
-
-  @Autowired
-  public CartService(
-      final CatalogServiceClient catalogServiceClient,
-      final KafkaTemplate<String, OrderCreationRequested> kafkaTemplate,
-      final RedisTemplate<String, Object> redisTemplate) {
-    this.catalogServiceClient = catalogServiceClient;
-    this.kafkaTemplate = kafkaTemplate;
-    this.redisTemplate = redisTemplate;
-  }
 
   private String key(UUID cartId) {
     return "cart:" + cartId;
@@ -91,7 +82,7 @@ public class CartService {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found");
     }
 
-    if (item.getTicketCount() == null || item.getTicketCount() <= 0
+    if (item.getTicketCount() <= 0
         || item.getEventId() == null || item.getEventId() <= 0
         || item.getTicketPrice() == null
         || item.getTicketPrice().compareTo(BigDecimal.ZERO) < 0) {

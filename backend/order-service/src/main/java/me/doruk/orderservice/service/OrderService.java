@@ -2,6 +2,7 @@ package me.doruk.orderservice.service;
 
 import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
 import me.doruk.ticketingcommonlibrary.event.InventoryReservationFailed;
@@ -22,7 +23,6 @@ import me.doruk.orderservice.repository.CustomerRepository;
 import me.doruk.orderservice.response.OrderResponse;
 import me.doruk.orderservice.response.UserResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -38,6 +38,7 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class OrderService {
 
   private final OrderRequestLogRepository orderRequestLogRepository;
@@ -45,21 +46,6 @@ public class OrderService {
   private final OrderRepository orderRepository;
   private final OrderItemRepository orderItemRepository;
   private final KafkaTemplate<String, Object> kafkaTemplate;
-
-  @Autowired
-  public OrderService(
-      final OrderRequestLogRepository orderRequestLogRepository,
-      final CustomerRepository customerRepository,
-      final OrderRepository orderRepository,
-      final OrderItemRepository orderItemRepository,
-      final KafkaTemplate<String, Object> kafkaTemplate) {
-
-    this.orderRequestLogRepository = orderRequestLogRepository;
-    this.customerRepository = customerRepository;
-    this.orderRepository = orderRepository;
-    this.orderItemRepository = orderItemRepository;
-    this.kafkaTemplate = kafkaTemplate;
-  }
 
   public ResponseEntity<?> getOrderById(final String orderId) {
     final Order order = orderRepository.findById(orderId)
