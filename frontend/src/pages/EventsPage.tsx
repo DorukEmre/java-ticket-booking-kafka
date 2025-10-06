@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios';
 
 import type { Event } from '@/types/catalog';
 import EventList from '@/components/EventList';
+import { fetchEvents } from '@/api/events';
 
 function EventsPage() {
   const [allEvents, setAllEvents] = useState<Event[]>([]);
@@ -14,19 +14,11 @@ function EventsPage() {
 
   useEffect(() => {
 
-    const getEvents = () => {
-      let url = `${baseURL}/events`;
-      console.log("axios get url: ", url);
-      axios.get(url, { withCredentials: true })
-        .then(response => {
-          console.log("response.data: ", response.data);
-          setAllEvents(response.data);
-        })
-        .catch(error => {
-          console.error('There was an error making the request', error);
-        });
-    }
-    getEvents();
+    fetchEvents()
+      .then(setAllEvents)
+      .catch(error => {
+        console.error('There was an error making the request', error);
+      });
 
   }, []);
 

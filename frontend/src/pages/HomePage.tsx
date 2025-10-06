@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios';
 import { Link } from "react-router-dom";
 
 import type { Venue, Event } from '@/types/catalog';
 import EventList from '@/components/EventList';
 import VenueList from '@/components/VenueList';
+import { fetchEvents } from '@/api/events';
+import { fetchVenues } from '@/api/venues';
 
 function HomePage() {
   const [allVenues, setAllVenues] = useState<Venue[]>([]);
@@ -17,32 +18,17 @@ function HomePage() {
 
   useEffect(() => {
 
-    const getVenues = () => {
-      let url = `${baseURL}/venues`;
-      console.log("axios get url: ", url);
-      axios.get(url, { withCredentials: true })
-        .then(response => {
-          console.log("response.data: ", response.data);
-          setAllVenues(response.data);
-        })
-        .catch(error => {
-          console.error('There was an error making the request', error);
-        });
-    }
-    const getEvents = () => {
-      let url = `${baseURL}/events`;
-      console.log("axios get url: ", url);
-      axios.get(url, { withCredentials: true })
-        .then(response => {
-          console.log("response.data: ", response.data);
-          setAllEvents(response.data);
-        })
-        .catch(error => {
-          console.error('There was an error making the request', error);
-        });
-    }
-    getVenues();
-    getEvents();
+    fetchEvents()
+      .then(setAllEvents)
+      .catch(error => {
+        console.error('There was an error making the request', error);
+      });
+
+    fetchVenues()
+      .then(setAllVenues)
+      .catch(error => {
+        console.error('There was an error making the request', error);
+      });
 
   }, []);
 
