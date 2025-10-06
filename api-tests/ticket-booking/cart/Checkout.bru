@@ -5,9 +5,13 @@ meta {
 }
 
 post {
-  url: http://localhost:8000/cart/f506a8cb-c1fd-443b-8a49-22ac41f5a9c5/checkout
+  url: http://localhost:8000/cart/:cartId/checkout
   body: json
   auth: inherit
+}
+
+params:path {
+  cartId: 3ab29128-0f96-4870-9e91-3e6eeb7b3bdf
 }
 
 body:json {

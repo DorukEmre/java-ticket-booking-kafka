@@ -1,0 +1,19 @@
+meta {
+  name: Get All Orders for userId
+  type: http
+  seq: 5
+}
+
+get {
+  url: http://localhost:8000/users/:userId/orders
+  body: none
+  auth: inherit
+}
+
+params:path {
+  userId: 1
+}
+
+settings {
+  encodeUrl: true
+}

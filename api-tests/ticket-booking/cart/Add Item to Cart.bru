@@ -5,15 +5,19 @@ meta {
 }
 
 post {
-  url: http://localhost:8000/cart/f506a8cb-c1fd-443b-8a49-22ac41f5a9c5/items
+  url: http://localhost:8000/cart/:cartId/items
   body: json
   auth: inherit
 }
 
+params:path {
+  cartId: f65652af-3329-4a54-a37f-da0b9281c535
+}
+
 body:json {
   {
-    "eventId": 8,
-    "ticketCount": 5,
+    "eventId": 2,
+    "ticketCount": 10,
     "ticketPrice": 30
   }
 }

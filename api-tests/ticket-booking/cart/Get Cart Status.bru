@@ -1,13 +1,17 @@
 meta {
-  name: Get Event by Id
+  name: Get Cart Status
   type: http
   seq: 4
 }
 
 get {
-  url: http://localhost:8000/events/8
+  url: http://localhost:8000/cart/:cartId/status
   body: none
   auth: inherit
+}
+
+params:path {
+  cartId: 
 }
 
 settings {

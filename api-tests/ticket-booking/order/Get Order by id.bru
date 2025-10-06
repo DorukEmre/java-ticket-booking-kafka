@@ -1,13 +1,17 @@
 meta {
-  name: Get Event by Id
+  name: Get Order by id
   type: http
   seq: 4
 }
 
 get {
-  url: http://localhost:8000/events/8
+  url: http://localhost:8000/orders/:orderId
   body: none
   auth: inherit
+}
+
+params:path {
+  orderId: 1
 }
 
 settings {
