@@ -42,6 +42,8 @@ public class CartService {
   private final KafkaTemplate<String, OrderCreationRequested> kafkaTemplate;
   private final RedisTemplate<String, Object> redisTemplate;
 
+  // Redis methods
+
   private String key(UUID cartId) {
     return "cart:" + cartId;
   }
@@ -54,6 +56,7 @@ public class CartService {
     redisTemplate.opsForValue().set(key(cartId), cartCache, CART_TTL_SECONDS, TimeUnit.SECONDS);
   }
 
+  // Get cart by ID
   public ResponseEntity<CartResponse> getCart(final UUID cartId) {
     CartCacheEntry cartCache = getCartFromRedis(cartId);
     if (cartCache == null) {
@@ -89,11 +92,14 @@ public class CartService {
   }
 
   // Add or update item in cart
-  public ResponseEntity<Void> addItem(final UUID cartId, final CartItem item) {
+  public ResponseEntity<Void> saveCartItem(final UUID cartId, final CartItem item) {
     System.out.println("Add item called: " + cartId + ", " + item);
     CartCacheEntry cartCache = getCartFromRedis(cartId);
     if (cartCache == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found");
+    }
+    if (cartCache.getStatus() != CartStatus.IN_PROGRESS) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart already checked out");
     }
 
     if (item.getTicketCount() <= 0
@@ -120,6 +126,35 @@ public class CartService {
     }
 
     return ResponseEntity.status(HttpStatus.CREATED).build();
+  }
+
+  // Delete item from cart
+  public ResponseEntity<Void> deleteCartItem(final UUID cartId, final CartItem item) {
+    System.out.println("Delete item called: " + cartId + ", " + item);
+
+    CartCacheEntry cartCache = getCartFromRedis(cartId);
+    if (cartCache == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found");
+    }
+    if (cartCache.getStatus() != CartStatus.IN_PROGRESS) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart already checked out");
+    }
+
+    boolean removed = cartCache.getItems()
+        .removeIf(i -> i.getEventId().equals(item.getEventId()));
+    if (!removed) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Item not found in cart");
+    }
+
+    try {
+      saveCartToRedis(cartId, cartCache);
+      log.info("Deleted item from cart: {}", cartCache);
+    } catch (Exception e) {
+      log.error("Error interacting with Redis", e);
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to connect to Redis");
+    }
+
+    return ResponseEntity.noContent().build();
   }
 
   // Checkout cart (producer for order-service)

@@ -35,10 +35,16 @@ public class CartController {
     return cartService.getCart(cartId);
   }
 
-  @PostMapping(value = "/cart/{cartId}/items", consumes = "application/json", produces = "application/json")
-  public ResponseEntity<Void> addItem(@PathVariable("cartId") UUID cartId, @RequestBody CartItem request) {
-    System.out.println("POST /api/v1/cart/{cartId}/items called");
-    return cartService.addItem(cartId, request);
+  @PutMapping(value = "/cart/{cartId}/items", consumes = "application/json", produces = "application/json")
+  public ResponseEntity<Void> saveCartItem(@PathVariable("cartId") UUID cartId, @RequestBody CartItem request) {
+    System.out.println("PUT /api/v1/cart/{cartId}/items called");
+    return cartService.saveCartItem(cartId, request);
+  }
+
+  @DeleteMapping(value = "/cart/{cartId}/items", consumes = "application/json", produces = "application/json")
+  public ResponseEntity<Void> deleteCartItem(@PathVariable("cartId") UUID cartId, @RequestBody CartItem request) {
+    System.out.println("DELETE /api/v1/cart/{cartId}/items called");
+    return cartService.deleteCartItem(cartId, request);
   }
 
   @PostMapping(value = "/cart/{cartId}/checkout", consumes = "application/json", produces = "application/json")
