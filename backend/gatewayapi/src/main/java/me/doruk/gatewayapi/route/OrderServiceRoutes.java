@@ -36,19 +36,19 @@ public class OrderServiceRoutes {
         .route("orders", r -> r
             .path("/admin/orders")
             .and().method(HttpMethod.GET)
-            .filters(f -> f.prefixPath("/api/v1"))
+            .filters(f -> f.rewritePath("/admin/orders", "/api/v1/orders"))
             .uri(uri))
 
         .route("users", r -> r
             .path("/admin/users")
             .and().method(HttpMethod.GET)
-            .filters(f -> f.prefixPath("/api/v1"))
+            .filters(f -> f.rewritePath("/admin/users", "/api/v1/users"))
             .uri(uri))
 
         .route("add-user", r -> r
             .path("/admin/users/new")
             .and().method(HttpMethod.POST)
-            .filters(f -> f.prefixPath("/api/v1"))
+            .filters(f -> f.rewritePath("/admin/users/new", "/api/v1/users/new"))
             .uri(uri))
 
         .build();

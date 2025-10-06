@@ -53,13 +53,13 @@ public class CatalogServiceRoutes {
         .route("catalog-add-venue", r -> r
             .path("/admin/venues/new")
             .and().method(HttpMethod.POST)
-            .filters(f -> f.rewritePath("/venues/new", "/api/v1/catalog/add-venue"))
+            .filters(f -> f.rewritePath("/admin/venues/new", "/api/v1/catalog/add-venue"))
             .uri(uri))
 
         .route("catalog-add-event", r -> r
             .path("/admin/events/new")
             .and().method(HttpMethod.POST)
-            .filters(f -> f.rewritePath("/events/new", "/api/v1/catalog/add-event"))
+            .filters(f -> f.rewritePath("/admin/events/new", "/api/v1/catalog/add-event"))
             .uri(uri))
 
         .build();

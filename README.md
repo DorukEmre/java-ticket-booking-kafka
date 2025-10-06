@@ -68,7 +68,7 @@ Ticket purchase request flow through the system. Each service communicates via K
 
 6) Frontend Cart Update
   - Poll `/cart/{cartId}/status` (or subscribe via WebSocket for real-time updates)
-  - If status = `CONFIRMED` → redirect to /order/{orderId}
+  - If status = `CONFIRMED` → redirect to /orders/{orderId}
   - If status = `FAILED` → display checkout failed
 
 
