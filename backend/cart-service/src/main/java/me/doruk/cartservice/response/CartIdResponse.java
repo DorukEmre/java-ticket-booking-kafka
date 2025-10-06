@@ -1,22 +1,16 @@
 package me.doruk.cartservice.response;
 
-import java.util.List;
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import me.doruk.cartservice.model.CartStatus;
-import me.doruk.ticketingcommonlibrary.model.CartItem;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CartResponse {
+public class CartIdResponse {
   private UUID cartId;
-  private String orderId;
-  private CartStatus status;
-  private List<CartItem> items;
 }

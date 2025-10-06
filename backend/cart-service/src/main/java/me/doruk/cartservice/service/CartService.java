@@ -6,6 +6,7 @@ import me.doruk.cartservice.client.CatalogServiceClient;
 import me.doruk.cartservice.model.CartCacheEntry;
 import me.doruk.cartservice.model.CartStatus;
 import me.doruk.cartservice.request.CheckoutRequest;
+import me.doruk.cartservice.response.CartIdResponse;
 import me.doruk.cartservice.response.CartResponse;
 import me.doruk.cartservice.response.CartStatusResponse;
 import me.doruk.cartservice.response.InvalidCheckoutResponse;
@@ -53,8 +54,21 @@ public class CartService {
     redisTemplate.opsForValue().set(key(cartId), cartCache, CART_TTL_SECONDS, TimeUnit.SECONDS);
   }
 
+  public ResponseEntity<CartResponse> getCart(final UUID cartId) {
+    CartCacheEntry cartCache = getCartFromRedis(cartId);
+    if (cartCache == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found");
+    }
+    return ResponseEntity.ok(CartResponse.builder()
+        .cartId(cartCache.getCartId())
+        .orderId(cartCache.getOrderId())
+        .status(cartCache.getStatus())
+        .items(cartCache.getItems())
+        .build());
+  }
+
   // Create new cart: generate cartID and save CartCacheEntry to Redis
-  public ResponseEntity<CartResponse> createCart() {
+  public ResponseEntity<CartIdResponse> createCart() {
     UUID cartId = UUID.randomUUID();
     System.out.println("createCart > Generated cartId: " + cartId);
 
@@ -69,7 +83,7 @@ public class CartService {
     }
 
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(CartResponse.builder()
+        .body(CartIdResponse.builder()
             .cartId(cartId)
             .build());
   }

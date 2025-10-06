@@ -20,9 +20,15 @@ public class CartServiceRoutes {
 
     return builder.routes()
 
-        .route("cart", r -> r
+        .route("create-cart", r -> r
             .path("/cart")
             .and().method(HttpMethod.POST)
+            .filters(f -> f.prefixPath("/api/v1"))
+            .uri(uri))
+
+        .route("get-cart", r -> r
+            .path("/cart/{cartId}")
+            .and().method(HttpMethod.GET)
             .filters(f -> f.prefixPath("/api/v1"))
             .uri(uri))
 
