@@ -32,7 +32,7 @@ public class OrderItem {
   private Long eventId;
 
   @Column(name = "quantity")
-  private Long ticketCount;
+  private int ticketCount;
 
   @Column(name = "ticket_price")
   private BigDecimal ticketPrice;

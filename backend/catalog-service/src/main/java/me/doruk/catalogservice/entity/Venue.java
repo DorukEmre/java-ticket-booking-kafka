@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "venue")
 public class Venue {
 
@@ -31,7 +33,7 @@ public class Venue {
   private String address;
 
   @Column(name = "total_capacity")
-  private Long totalCapacity;
+  private int totalCapacity;
 
   @Column(name = "image_url")
   private String imageUrl;

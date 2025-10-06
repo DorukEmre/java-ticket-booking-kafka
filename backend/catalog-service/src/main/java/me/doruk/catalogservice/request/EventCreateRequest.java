@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Builder
 public class EventCreateRequest {
   private String name;
-  private Long totalCapacity;
+  private int totalCapacity;
   private Long venueId;
   private BigDecimal ticketPrice;
   private String eventDate;

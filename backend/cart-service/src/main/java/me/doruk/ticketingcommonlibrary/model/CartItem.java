@@ -15,6 +15,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CartItem {
   private Long eventId;
-  private Long ticketCount;
+  private int ticketCount;
   private BigDecimal ticketPrice;
 }

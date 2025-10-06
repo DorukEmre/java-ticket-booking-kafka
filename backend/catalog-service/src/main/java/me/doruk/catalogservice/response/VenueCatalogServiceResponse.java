@@ -13,5 +13,5 @@ public class VenueCatalogServiceResponse {
   private Long venueId;
   private String name;
   private String address;
-  private Long totalCapacity;
+  private int totalCapacity;
 }

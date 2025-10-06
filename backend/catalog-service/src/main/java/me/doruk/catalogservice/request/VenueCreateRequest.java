@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class VenueCreateRequest {
   private String name;
   private String address;
-  private Long totalCapacity;
+  private int totalCapacity;
 }

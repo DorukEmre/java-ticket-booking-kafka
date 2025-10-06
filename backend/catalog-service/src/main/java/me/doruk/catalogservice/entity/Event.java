@@ -24,10 +24,10 @@ public class Event {
   private String name;
 
   @Column(name = "total_capacity")
-  private Long totalCapacity;
+  private int totalCapacity;
 
   @Column(name = "remaining_capacity")
-  private Long remainingCapacity;
+  private int remainingCapacity;
 
   @ManyToOne
   @JoinColumn(name = "venue_id")
@@ -44,4 +44,11 @@ public class Event {
 
   @Column(name = "image_url")
   private String imageUrl;
+
+  @PrePersist
+  public void prePersist() {
+    if (remainingCapacity == 0) {
+      remainingCapacity = totalCapacity;
+    }
+  }
 }
