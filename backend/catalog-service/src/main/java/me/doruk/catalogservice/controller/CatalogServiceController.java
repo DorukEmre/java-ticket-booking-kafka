@@ -26,9 +26,9 @@ public class CatalogServiceController {
     this.catalogService = catalogService;
   }
 
-  @GetMapping("/catalog/event/{eventId}")
+  @GetMapping("/catalog/events/{eventId}")
   public @ResponseBody EventCatalogServiceResponse catalogByEventId(@PathVariable("eventId") Long eventId) {
-    System.out.println("GET /api/v1/catalog/event/" + eventId + " called");
+    System.out.println("GET /api/v1/catalog/events/" + eventId + " called");
     return catalogService.getEventInformation(eventId);
   }
 
@@ -38,9 +38,9 @@ public class CatalogServiceController {
     return catalogService.GetAllEvents();
   }
 
-  @GetMapping("/catalog/venue/{venueId}")
+  @GetMapping("/catalog/venues/{venueId}")
   public @ResponseBody VenueCatalogServiceResponse catalogByVenueId(@PathVariable("venueId") Long venueId) {
-    System.out.println("GET /api/v1/catalog/venue/" + venueId + " called");
+    System.out.println("GET /api/v1/catalog/venues/" + venueId + " called");
     return catalogService.getVenueInformation(venueId);
   }
 

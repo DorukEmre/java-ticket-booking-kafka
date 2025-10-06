@@ -27,15 +27,15 @@ public class OrderController {
     this.orderService = orderService;
   }
 
-  @GetMapping("/order/{orderId}")
+  @GetMapping("/orders/{orderId}")
   public ResponseEntity<?> getOrderById(@PathVariable("orderId") String orderId) {
-    System.out.println("GET /api/v1/order/{orderId} called");
+    System.out.println("GET /api/v1/orders/{orderId} called");
     return orderService.getOrderById(orderId);
   }
 
   @GetMapping("/users/{customerId}/orders")
   public ResponseEntity<?> getAllOrdersByUser(@PathVariable("customerId") Long customerId) {
-    System.out.println("GET /api/v1/order/{orderId} called");
+    System.out.println("GET /api/v1/orders/{orderId} called");
     return orderService.getAllOrdersByUser(customerId);
   }
 

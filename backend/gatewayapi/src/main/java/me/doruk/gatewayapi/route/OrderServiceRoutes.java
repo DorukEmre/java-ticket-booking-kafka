@@ -21,7 +21,7 @@ public class OrderServiceRoutes {
     return builder.routes()
 
         .route("order-by-id", r -> r
-            .path("/order/{orderId}")
+            .path("/orders/{orderId}")
             .and().method(HttpMethod.GET)
             .filters(f -> f.prefixPath("/api/v1"))
             .uri(uri))

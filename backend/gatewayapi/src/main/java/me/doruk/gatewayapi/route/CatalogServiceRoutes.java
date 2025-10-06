@@ -38,28 +38,28 @@ public class CatalogServiceRoutes {
             .uri(uri))
 
         .route("catalog-event-by-id", r -> r
-            .path("/event/{eventId}")
+            .path("/events/{eventId}")
             .and().method(HttpMethod.GET)
             .filters(f -> f.prefixPath("/api/v1/catalog"))
             .uri(uri))
 
         .route("catalog-venue-by-id", r -> r
-            .path("/venue/{venueId}")
+            .path("/venues/{venueId}")
             .and().method(HttpMethod.GET)
             .filters(f -> f.prefixPath("/api/v1/catalog"))
             .uri(uri))
 
         // admin routes
         .route("catalog-add-venue", r -> r
-            .path("/admin/venue/new")
+            .path("/admin/venues/new")
             .and().method(HttpMethod.POST)
-            .filters(f -> f.rewritePath("/venue/new", "/api/v1/catalog/add-venue"))
+            .filters(f -> f.rewritePath("/venues/new", "/api/v1/catalog/add-venue"))
             .uri(uri))
 
         .route("catalog-add-event", r -> r
-            .path("/admin/event/new")
+            .path("/admin/events/new")
             .and().method(HttpMethod.POST)
-            .filters(f -> f.rewritePath("/event/new", "/api/v1/catalog/add-event"))
+            .filters(f -> f.rewritePath("/events/new", "/api/v1/catalog/add-event"))
             .uri(uri))
 
         .build();

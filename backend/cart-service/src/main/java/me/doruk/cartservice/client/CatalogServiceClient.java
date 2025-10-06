@@ -19,14 +19,6 @@ public class CatalogServiceClient {
   @Value("${catalog.service.url}")
   private String catalogServiceUrl;
 
-  // public CatalogServiceResponse getCatalogService(final Long eventId) {
-  // final RestTemplate restTemplate = new RestTemplate();
-
-  // String url = catalogServiceUrl + "/event/" + eventId;
-
-  // return restTemplate.getForObject(url, CatalogServiceResponse.class);
-  // }
-
   // Check validity of cart items
   public Map<Long, Boolean> validateCart(final Cart cart) {
 
