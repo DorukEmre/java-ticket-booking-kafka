@@ -4,8 +4,7 @@ import { Link } from "react-router-dom";
 import type { Venue, Event } from '@/types/catalog';
 import EventList from '@/components/EventList';
 import VenueList from '@/components/VenueList';
-import { fetchEvents } from '@/api/events';
-import { fetchVenues } from '@/api/venues';
+import { fetchEvents, fetchVenues } from '@/api/catalog';
 
 function HomePage() {
   const [allVenues, setAllVenues] = useState<Venue[]>([]);
@@ -18,17 +17,25 @@ function HomePage() {
 
   useEffect(() => {
 
-    fetchEvents()
-      .then(setAllEvents)
-      .catch(error => {
+    async function loadEvents() {
+      try {
+        const events = await fetchEvents();
+        setAllEvents(events);
+      } catch (error) {
         console.error('There was an error making the request', error);
-      });
+      }
+    }
+    async function loadVenues() {
+      try {
+        const events = await fetchVenues();
+        setAllVenues(events);
+      } catch (error) {
+        console.error('There was an error making the request', error);
+      }
+    }
 
-    fetchVenues()
-      .then(setAllVenues)
-      .catch(error => {
-        console.error('There was an error making the request', error);
-      });
+    loadEvents();
+    loadVenues();
 
   }, []);
 

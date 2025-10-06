@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 import type { Venue } from '@/types/catalog';
 import VenueList from '@/components/VenueList';
-import { fetchVenues } from '@/api/venues';
+import { fetchVenues } from '@/api/catalog';
 
 function VenuesPage() {
   const [allVenues, setAllVenues] = useState<Venue[]>([]);
@@ -10,11 +10,15 @@ function VenuesPage() {
 
   useEffect(() => {
 
-    fetchVenues()
-      .then(setAllVenues)
-      .catch(error => {
+    async function loadVenues() {
+      try {
+        const events = await fetchVenues();
+        setAllVenues(events);
+      } catch (error) {
         console.error('There was an error making the request', error);
-      });
+      }
+    }
+    loadVenues();
 
   }, []);
 

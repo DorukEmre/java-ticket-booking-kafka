@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 
 import type { Event } from '@/types/catalog';
 import EventList from '@/components/EventList';
-import { fetchEvents } from '@/api/events';
+import { fetchEvents } from '@/api/catalog';
 
 function EventsPage() {
   const [allEvents, setAllEvents] = useState<Event[]>([]);
@@ -14,11 +14,15 @@ function EventsPage() {
 
   useEffect(() => {
 
-    fetchEvents()
-      .then(setAllEvents)
-      .catch(error => {
+    async function loadEvents() {
+      try {
+        const events = await fetchEvents();
+        setAllEvents(events);
+      } catch (error) {
         console.error('There was an error making the request', error);
-      });
+      }
+    }
+    loadEvents();
 
   }, []);
 
