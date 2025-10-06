@@ -6,6 +6,8 @@ import { BrowserRouter } from "react-router-dom";
 
 import './css/reset.css'
 import './css/index.css'
+import "./css/custom.scss";
+
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(

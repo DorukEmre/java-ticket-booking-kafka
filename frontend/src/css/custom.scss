@@ -1,0 +1,27 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
+$custom-colors: (
+  back-200: #111213,
+  back-300: #181a1b,
+  back-400: #1d1f20,
+  back-500: #2b2a33,
+  back-600: #726a5e,
+
+  compl-300: #ff6600,
+
+  accent-300: #8ab7ff,
+  accent-400: #82a1d4,
+  accent-500: #4975a7,
+  accent-600: #253c55,
+
+  neutral-300: #c5c0b9,
+  neutral-350: #a29a8e,
+
+  alert-300: #ff5c88,
+  alert-400: #e3426e,
+);
+
+$theme-colors: map-merge($theme-colors, $custom-colors);
+
+@import "bootstrap";
