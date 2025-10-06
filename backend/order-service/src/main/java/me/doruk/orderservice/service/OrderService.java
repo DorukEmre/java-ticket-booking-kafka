@@ -52,7 +52,7 @@ public class OrderService {
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
 
     OrderResponse reponse = OrderResponse.builder()
-        .id(order.getId())
+        .orderId(order.getId())
         .customerId(order.getCustomerId())
         .totalPrice(order.getTotalPrice())
         .placedAt(order.getPlacedAt())
@@ -71,7 +71,7 @@ public class OrderService {
         .orElse(null);
 
     List<OrderResponse> orderResponses = orders.stream().map((Order order) -> OrderResponse.builder()
-        .id(order.getId())
+        .orderId(order.getId())
         .customerId(order.getCustomerId())
         .totalPrice(order.getTotalPrice())
         .placedAt(order.getPlacedAt())
@@ -111,7 +111,7 @@ public class OrderService {
     final List<Order> orders = orderRepository.findAll();
 
     return orders.stream().map((Order order) -> OrderResponse.builder()
-        .id(order.getId())
+        .orderId(order.getId())
         .customerId(order.getCustomerId())
         .totalPrice(order.getTotalPrice())
         .placedAt(order.getPlacedAt())

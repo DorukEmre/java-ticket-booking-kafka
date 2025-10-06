@@ -72,7 +72,7 @@ public class CatalogService {
     System.out.println("Fetching venue information for venueId: " + venueId);
     final Venue venue = venueRepository.findById(venueId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Venue not found"));
-    System.out.println("Found venue: " + venue);
+
     return VenueResponse.builder()
         .venueId(venue.getId())
         .name(venue.getName())
