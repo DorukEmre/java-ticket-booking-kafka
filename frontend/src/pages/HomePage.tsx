@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios';
+import { Link } from "react-router-dom";
 
-import type { Venue, Event } from '../types/catalog';
+import type { Venue, Event } from '@/types/catalog';
+import EventList from '@/components/EventList';
+import VenueList from '@/components/VenueList';
 
 function HomePage() {
   const [allVenues, setAllVenues] = useState<Venue[]>([]);
@@ -47,15 +50,9 @@ function HomePage() {
     <>
       {allEvents.length > 0 ? (
         <div>
-          <p>Upcoming events: {allVenues.length}</p>
+          <Link to="/events">Upcoming events: {allEvents.length}</Link>
 
-          <ul>
-            {allEvents.map(event => (
-              <li key={event.eventId}>
-                Event ID {event.venueId}: {event.name} on {new Date(event.date).toLocaleDateString()}
-              </li>
-            ))}
-          </ul>
+          <EventList events={allEvents} />
         </div>
       ) : (
         <p>No events to display.</p>
@@ -63,14 +60,9 @@ function HomePage() {
 
       {allVenues.length > 0 ? (
         <div>
-          <p>Browse venues: {allVenues.length}</p>
-          <ul>
-            {allVenues.map(venue => (
-              <li key={venue.venueId}>
-                Venue ID {venue.venueId}: {venue.name}, {venue.location} - {venue.totalCapacity}
-              </li>
-            ))}
-          </ul>
+          <Link to="/venues">Browse venues: {allVenues.length}</Link>
+
+          <VenueList venues={allVenues} />
         </div>
       ) : (
         <p>No venues to display.</p>
