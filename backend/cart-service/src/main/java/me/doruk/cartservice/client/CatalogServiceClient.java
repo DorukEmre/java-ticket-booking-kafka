@@ -2,7 +2,6 @@ package me.doruk.cartservice.client;
 
 import java.util.Map;
 
-// import me.doruk.cartservice.response.CatalogServiceResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
