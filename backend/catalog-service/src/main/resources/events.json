@@ -6,7 +6,7 @@
     "ticketPrice": 120,
     "description": "A dazzling festival of lights and music, featuring top international DJs and immersive visual experiences.",
     "eventDate": "2025-01-17",
-    "imageUrl": ""
+    "imageUrl": "events/libre-leung-nGjxP60taTs-unsplash.jpg"
   },
   {
     "name": "Pulse Concert Series",
@@ -15,16 +15,16 @@
     "ticketPrice": 130,
     "description": "An electrifying concert series with high-energy performances and a vibrant crowd.",
     "eventDate": "2025-02-12",
-    "imageUrl": ""
+    "imageUrl": "events/sebastian-ervi-xJt6Gs20Uqc-unsplash.jpg"
   },
   {
     "name": "Rhythm & Beats Gala",
     "totalCapacity": 8000,
-    "venueIndex": 1,
+    "venueIndex": 0,
     "ticketPrice": 90,
     "description": "A night dedicated to rhythm, featuring live bands and dance performances.",
     "eventDate": "2025-03-08",
-    "imageUrl": ""
+    "imageUrl": "events/andrea-quiroz-qdsrJGWPnno-unsplash.jpg"
   },
   {
     "name": "Starlit Soirée",
@@ -33,16 +33,16 @@
     "ticketPrice": 100,
     "description": "An elegant evening under the stars with classical music and gourmet dining.",
     "eventDate": "2025-04-19",
-    "imageUrl": ""
+    "imageUrl": "events/kks-captures-olcJh4s4ag0-unsplash.jpg"
   },
   {
     "name": "Aurora Live",
-    "totalCapacity": 20000,
+    "totalCapacity": 500,
     "venueIndex": 2,
     "ticketPrice": 110,
     "description": "Experience the magic of live performances inspired by the northern lights.",
     "eventDate": "2025-05-23",
-    "imageUrl": ""
+    "imageUrl": "events/cosmin-serban-2fn_pxLMS9g-unsplash.jpg"
   },
   {
     "name": "Echoes of Tomorrow",
@@ -51,7 +51,7 @@
     "ticketPrice": 95,
     "description": "A futuristic music event blending electronic sounds and innovative stage design.",
     "eventDate": "2025-06-14",
-    "imageUrl": ""
+    "imageUrl": "events/chloe-boulos-9U4-ZI5Yckw-unsplash.jpg"
   },
   {
     "name": "Sunset Groove",
@@ -60,7 +60,7 @@
     "ticketPrice": 105,
     "description": "Chill out with sunset views and groovy tunes from renowned artists.",
     "eventDate": "2025-07-10",
-    "imageUrl": ""
+    "imageUrl": "events/bence-balla-schottner-b34NWlh8G_M-unsplash.jpg"
   },
   {
     "name": "Dome Sessions",
@@ -69,7 +69,7 @@
     "ticketPrice": 80,
     "description": "Intimate live sessions inside the iconic dome, featuring acoustic sets.",
     "eventDate": "2025-08-05",
-    "imageUrl": ""
+    "imageUrl": "events/helena-lopes-LdLuVmDf2GA-unsplash.jpg"
   },
   {
     "name": "Roman Nights",
@@ -78,16 +78,16 @@
     "ticketPrice": 85,
     "description": "A celebration of Roman culture with music, food, and historical performances.",
     "eventDate": "2025-09-22",
-    "imageUrl": ""
+    "imageUrl": "events/jametlene-reskp-Rx3RfkusWvE-unsplash.jpg"
   },
   {
-    "name": "Harmony Fest",
+    "name": "Underground Gig",
     "totalCapacity": 9000,
     "venueIndex": 5,
     "ticketPrice": 70,
-    "description": "A festival promoting peace and unity through diverse musical acts.",
+    "description": "An exclusive underground music event featuring indie bands and raw, authentic performances.",
     "eventDate": "2025-10-13",
-    "imageUrl": ""
+    "imageUrl": "events/dance-in-tha-salt-mine-1434776.jpg"
   },
   {
     "name": "Pavilion Party",
@@ -96,7 +96,7 @@
     "ticketPrice": 75,
     "description": "A lively party with dance music, food trucks, and interactive art installations.",
     "eventDate": "2025-11-21",
-    "imageUrl": ""
+    "imageUrl": "events/lukas-bato-C6ni9uAva5I-unsplash.jpg"
   },
   {
     "name": "Crystal Ball",
@@ -105,16 +105,16 @@
     "ticketPrice": 115,
     "description": "A glamorous masquerade ball with live orchestras and ballroom dancing.",
     "eventDate": "2025-12-18",
-    "imageUrl": ""
+    "imageUrl": "events/danny-g-ka4wDQPFm2c-unsplash.jpg"
   },
   {
-    "name": "Palace Parade",
+    "name": "Circus Spectacular",
     "totalCapacity": 22000,
     "venueIndex": 7,
     "ticketPrice": 120,
-    "description": "A grand parade with floats, performers, and fireworks at the palace.",
+    "description": "A thrilling circus event with acrobats, clowns, and mesmerizing performances for all ages.",
     "eventDate": "2025-01-29",
-    "imageUrl": ""
+    "imageUrl": "events/miquel-parera-8NHZSXvYG3I-unsplash.jpg"
   },
   {
     "name": "Galaxy Gathering",
@@ -123,7 +123,7 @@
     "ticketPrice": 100,
     "description": "A cosmic-themed gathering with space-inspired music and visuals.",
     "eventDate": "2025-03-15",
-    "imageUrl": ""
+    "imageUrl": "events/christian-tbPaKuB87CU-unsplash.jpg"
   },
   {
     "name": "Center Stage",
@@ -132,16 +132,16 @@
     "ticketPrice": 105,
     "description": "A showcase of emerging artists and bands on the main stage.",
     "eventDate": "2025-05-27",
-    "imageUrl": ""
+    "imageUrl": "events/jonathan-cooper-4QRYRDnW_64-unsplash.jpg"
   },
   {
     "name": "Nova Nights",
     "totalCapacity": 14000,
     "venueIndex": 8,
     "ticketPrice": 90,
-    "description": "A night of indie music and stargazing.",
+    "description": "A night of indie music featuring up-and-coming bands.",
     "eventDate": "2025-07-03",
-    "imageUrl": ""
+    "imageUrl": "events/hoang-anh-nguy-n-lWDF2MsHaHg-unsplash.jpg"
   },
   {
     "name": "Nova Vibes",
@@ -150,7 +150,7 @@
     "ticketPrice": 95,
     "description": "A celebration of the vibrant music scene with local and international acts.",
     "eventDate": "2025-09-09",
-    "imageUrl": ""
+    "imageUrl": "events/erhan-turel-b1GBxJ2sQpw-unsplash.jpg"
   },
   {
     "name": "Opal Opening",
@@ -159,7 +159,7 @@
     "ticketPrice": 85,
     "description": "The grand opening of Opal Theater with a star-studded lineup.",
     "eventDate": "2025-10-25",
-    "imageUrl": ""
+    "imageUrl": "events/lobacheva-ina-lnzM_e-vbC0-unsplash.jpg"
   },
   {
     "name": "Beats Bash",
@@ -168,7 +168,7 @@
     "ticketPrice": 90,
     "description": "A high-energy bash featuring DJs, live acts, and street food.",
     "eventDate": "2025-02-28",
-    "imageUrl": ""
+    "imageUrl": "events/a-j-tnvWwMJXRtM-unsplash.jpg"
   },
   {
     "name": "Grand Encore",
@@ -177,6 +177,6 @@
     "ticketPrice": 140,
     "description": "A spectacular encore event bringing together the best performers for one night only.",
     "eventDate": "2025-06-30",
-    "imageUrl": ""
+    "imageUrl": "events/nichika-sakurai-L8r9_VomdKU-unsplash.jpg"
   }
 ]
