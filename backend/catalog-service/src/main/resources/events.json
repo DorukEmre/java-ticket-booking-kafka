@@ -1,0 +1,182 @@
+[
+  {
+    "name": "Neon Nights Festival",
+    "totalCapacity": 50000,
+    "venueIndex": 0,
+    "ticketPrice": 120,
+    "description": "A dazzling festival of lights and music, featuring top international DJs and immersive visual experiences.",
+    "eventDate": "2025-01-17",
+    "imageUrl": ""
+  },
+  {
+    "name": "Pulse Concert Series",
+    "totalCapacity": 40000,
+    "venueIndex": 0,
+    "ticketPrice": 130,
+    "description": "An electrifying concert series with high-energy performances and a vibrant crowd.",
+    "eventDate": "2025-02-12",
+    "imageUrl": ""
+  },
+  {
+    "name": "Rhythm & Beats Gala",
+    "totalCapacity": 8000,
+    "venueIndex": 1,
+    "ticketPrice": 90,
+    "description": "A night dedicated to rhythm, featuring live bands and dance performances.",
+    "eventDate": "2025-03-08",
+    "imageUrl": ""
+  },
+  {
+    "name": "Starlit Soirée",
+    "totalCapacity": 8000,
+    "venueIndex": 1,
+    "ticketPrice": 100,
+    "description": "An elegant evening under the stars with classical music and gourmet dining.",
+    "eventDate": "2025-04-19",
+    "imageUrl": ""
+  },
+  {
+    "name": "Aurora Live",
+    "totalCapacity": 20000,
+    "venueIndex": 2,
+    "ticketPrice": 110,
+    "description": "Experience the magic of live performances inspired by the northern lights.",
+    "eventDate": "2025-05-23",
+    "imageUrl": ""
+  },
+  {
+    "name": "Echoes of Tomorrow",
+    "totalCapacity": 15000,
+    "venueIndex": 3,
+    "ticketPrice": 95,
+    "description": "A futuristic music event blending electronic sounds and innovative stage design.",
+    "eventDate": "2025-06-14",
+    "imageUrl": ""
+  },
+  {
+    "name": "Sunset Groove",
+    "totalCapacity": 15000,
+    "venueIndex": 5,
+    "ticketPrice": 105,
+    "description": "Chill out with sunset views and groovy tunes from renowned artists.",
+    "eventDate": "2025-07-10",
+    "imageUrl": ""
+  },
+  {
+    "name": "Dome Sessions",
+    "totalCapacity": 12000,
+    "venueIndex": 4,
+    "ticketPrice": 80,
+    "description": "Intimate live sessions inside the iconic dome, featuring acoustic sets.",
+    "eventDate": "2025-08-05",
+    "imageUrl": ""
+  },
+  {
+    "name": "Roman Nights",
+    "totalCapacity": 12000,
+    "venueIndex": 4,
+    "ticketPrice": 85,
+    "description": "A celebration of Roman culture with music, food, and historical performances.",
+    "eventDate": "2025-09-22",
+    "imageUrl": ""
+  },
+  {
+    "name": "Harmony Fest",
+    "totalCapacity": 9000,
+    "venueIndex": 5,
+    "ticketPrice": 70,
+    "description": "A festival promoting peace and unity through diverse musical acts.",
+    "eventDate": "2025-10-13",
+    "imageUrl": ""
+  },
+  {
+    "name": "Pavilion Party",
+    "totalCapacity": 9000,
+    "venueIndex": 5,
+    "ticketPrice": 75,
+    "description": "A lively party with dance music, food trucks, and interactive art installations.",
+    "eventDate": "2025-11-21",
+    "imageUrl": ""
+  },
+  {
+    "name": "Crystal Ball",
+    "totalCapacity": 22000,
+    "venueIndex": 6,
+    "ticketPrice": 115,
+    "description": "A glamorous masquerade ball with live orchestras and ballroom dancing.",
+    "eventDate": "2025-12-18",
+    "imageUrl": ""
+  },
+  {
+    "name": "Palace Parade",
+    "totalCapacity": 22000,
+    "venueIndex": 7,
+    "ticketPrice": 120,
+    "description": "A grand parade with floats, performers, and fireworks at the palace.",
+    "eventDate": "2025-01-29",
+    "imageUrl": ""
+  },
+  {
+    "name": "Galaxy Gathering",
+    "totalCapacity": 17000,
+    "venueIndex": 7,
+    "ticketPrice": 100,
+    "description": "A cosmic-themed gathering with space-inspired music and visuals.",
+    "eventDate": "2025-03-15",
+    "imageUrl": ""
+  },
+  {
+    "name": "Center Stage",
+    "totalCapacity": 17000,
+    "venueIndex": 7,
+    "ticketPrice": 105,
+    "description": "A showcase of emerging artists and bands on the main stage.",
+    "eventDate": "2025-05-27",
+    "imageUrl": ""
+  },
+  {
+    "name": "Nova Nights",
+    "totalCapacity": 14000,
+    "venueIndex": 8,
+    "ticketPrice": 90,
+    "description": "A night of indie music and stargazing.",
+    "eventDate": "2025-07-03",
+    "imageUrl": ""
+  },
+  {
+    "name": "Nova Vibes",
+    "totalCapacity": 14000,
+    "venueIndex": 8,
+    "ticketPrice": 95,
+    "description": "A celebration of the vibrant music scene with local and international acts.",
+    "eventDate": "2025-09-09",
+    "imageUrl": ""
+  },
+  {
+    "name": "Opal Opening",
+    "totalCapacity": 11000,
+    "venueIndex": 9,
+    "ticketPrice": 85,
+    "description": "The grand opening of Opal Theater with a star-studded lineup.",
+    "eventDate": "2025-10-25",
+    "imageUrl": ""
+  },
+  {
+    "name": "Beats Bash",
+    "totalCapacity": 11000,
+    "venueIndex": 9,
+    "ticketPrice": 90,
+    "description": "A high-energy bash featuring DJs, live acts, and street food.",
+    "eventDate": "2025-02-28",
+    "imageUrl": ""
+  },
+  {
+    "name": "Grand Encore",
+    "totalCapacity": 50000,
+    "venueIndex": 9,
+    "ticketPrice": 140,
+    "description": "A spectacular encore event bringing together the best performers for one night only.",
+    "eventDate": "2025-06-30",
+    "imageUrl": ""
+  }
+]
