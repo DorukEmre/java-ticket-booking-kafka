@@ -2,7 +2,7 @@ import type { CartItem, CartResponse, CartIdResponse, CartStatusResponse, Checko
 import { axiosDeleteWithErrorHandling, axiosGetWithErrorHandling, axiosPostWithErrorHandling, axiosPutWithErrorHandling } from '@/utils/axios';
 
 // GET /cart/:cartId 
-async function fetchCartById(cartId: number)
+async function fetchCartById(cartId: string)
   : Promise<CartResponse> {
 
   const path = `/cart/${cartId}`;
@@ -20,34 +20,34 @@ async function createCart()
 }
 
 // PUT /cart/:cartId/items
-async function saveCartItem(cartId: number, item: CartItem)
-  : Promise<void> {
+async function saveCartItem(cartId: string, item: CartItem)
+  : Promise<number> {
 
   const path = `/cart/${cartId}/items`;
 
-  return axiosPutWithErrorHandling<void>(path, item);
+  return axiosPutWithErrorHandling<number>(path, item, true);
 }
 
 // DELETE /cart/:cartId/items
-async function deleteCartItem(cartId: number, item: CartItem)
-  : Promise<void> {
+async function deleteCartItem(cartId: string, item: CartItem)
+  : Promise<number> {
 
   const path = `/cart/${cartId}/items`;
 
-  return axiosDeleteWithErrorHandling<void>(path, item);
+  return axiosDeleteWithErrorHandling<number>(path, item, true);
 }
 
 // POST /cart/:cartId/checkout
-async function checkoutCart(cartId: number, request: CheckoutRequest)
-  : Promise<void> {
+async function checkoutCart(cartId: string, request: CheckoutRequest)
+  : Promise<number> {
 
   const path = `/cart/${cartId}/checkout`;
 
-  return axiosPostWithErrorHandling<void>(path, request);
+  return axiosPostWithErrorHandling<number>(path, request, true);
 }
 
 // GET /cart/:cartId/status
-async function fetchCartStatus(cartId: number)
+async function fetchCartStatus(cartId: string)
   : Promise<CartStatusResponse> {
 
   const path = `/cart/${cartId}/status`;
