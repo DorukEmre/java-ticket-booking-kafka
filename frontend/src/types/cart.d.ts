@@ -1,3 +1,5 @@
+import type { CartStatus } from "@/utils/utils";
+
 type CartItem = {
   eventId: number;
   ticketCount: number;
@@ -13,26 +15,18 @@ type CartIdResponse = {
   cartId: string;
 };
 
-type CartStatus = {
-  PENDING: 'PENDING';
-  IN_PROGRESS: 'IN_PROGRESS';
-  CONFIRMED: 'CONFIRMED';
-  FAILED: 'FAILED';
-}
-
 type CartResponse = {
   cartId: string;
   orderId: string | null;
-  status: CartStatus[keyof CartStatus];
+  status: CartStatusType;
   items: CartItem[];
   totalPrice: number;
-  status: string;
 };
 
 type CartStatusResponse = {
   cartId: string;
   orderId: string | null;
-  status: CartStatus[keyof CartStatus];
+  status: CartStatusType;
 };
 
 type CheckoutRequest = {
@@ -41,4 +35,7 @@ type CheckoutRequest = {
   items: CartItem[];
 };
 
-export { Cart, CartItem, CartResponse, CartIdResponse, CartStatusResponse, CartStatus, CheckoutRequest };
+
+type CartStatusType = typeof CartStatus[keyof typeof CartStatus];
+
+export { Cart, CartItem, CartResponse, CartIdResponse, CartStatusResponse, CheckoutRequest, CartStatusType };

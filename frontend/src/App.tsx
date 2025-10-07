@@ -7,7 +7,7 @@ import VenuesPage from '@/pages/VenuesPage';
 import VenueDetailPage from '@/pages/VenueDetailPage';
 import EventsPage from '@/pages/EventsPage';
 import EventDetailPage from '@/pages/EventDetailPage';
-// import CartPage from '@/pages/CartPage';
+import CartPage from '@/pages/CartPage';
 // import OrderConfirmationPage from '@/pages/OrderConfirmationPage';
 // import UserOrdersPage from '@/pages/UserOrdersPage';
 // import AdminPage from '@/pages/AdminPage';
@@ -17,7 +17,7 @@ function App() {
 
   return (
 
-    <div className="d-flex flex-column min-vh-100">
+    <div className="d-flex flex-column min-vh-100 bg-back-300 text-neutral-300">
       <Header />
 
       <main className="flex-fill p-4">
@@ -28,7 +28,7 @@ function App() {
           <Route path="/venues/:venueId" element={<VenueDetailPage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/events/:eventId" element={<EventDetailPage />} />
-          {/* <Route path="/cart" element={<CartPage />} /> */}
+          <Route path="/cart" element={<CartPage />} />
           {/* <Route
             path="/confirmation"
             element={<OrderConfirmationPage />}
