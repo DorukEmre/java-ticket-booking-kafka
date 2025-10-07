@@ -4,9 +4,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Header from '@/components/Header';
 import HomePage from '@/pages/HomePage';
 import VenuesPage from '@/pages/VenuesPage';
-// import VenueDetailPage from '@/pages/VenueDetailPage';
+import VenueDetailPage from '@/pages/VenueDetailPage';
 import EventsPage from '@/pages/EventsPage';
-// import EventDetailPage from '@/pages/EventDetailPage';
+import EventDetailPage from '@/pages/EventDetailPage';
 // import CartPage from '@/pages/CartPage';
 // import OrderConfirmationPage from '@/pages/OrderConfirmationPage';
 // import UserOrdersPage from '@/pages/UserOrdersPage';
@@ -25,9 +25,9 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<HomePage />} />
           <Route path="/venues" element={<VenuesPage />} />
-          {/* <Route path="/venues/:venueId" element={<VenueDetailPage />} /> */}
+          <Route path="/venues/:venueId" element={<VenueDetailPage />} />
           <Route path="/events" element={<EventsPage />} />
-          {/* <Route path="/events/:eventId" element={<EventDetailPage />} /> */}
+          <Route path="/events/:eventId" element={<EventDetailPage />} />
           {/* <Route path="/cart" element={<CartPage />} /> */}
           {/* <Route
             path="/confirmation"
