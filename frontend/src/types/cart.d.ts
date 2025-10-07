@@ -1,7 +1,7 @@
 type CartItem = {
   eventId: number;
   ticketCount: number;
-  ticketPrice: number;
+  ticketPrice?: number;
 };
 
 type Cart = {

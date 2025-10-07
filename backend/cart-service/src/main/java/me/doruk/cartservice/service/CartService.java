@@ -24,7 +24,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -103,9 +102,7 @@ public class CartService {
     }
 
     if (item.getTicketCount() <= 0
-        || item.getEventId() == null || item.getEventId() <= 0
-        || item.getTicketPrice() == null
-        || item.getTicketPrice().compareTo(BigDecimal.ZERO) < 0) {
+        || item.getEventId() == null || item.getEventId() <= 0) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid item details");
     }
 
