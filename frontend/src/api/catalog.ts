@@ -1,7 +1,7 @@
-import axios from 'axios';
 import type { Event, Venue } from '@/types/catalog';
 import { getBaseUrl } from '@/utils/utils';
-import type { ApiErrorResponse } from '@/types/error';
+import { axiosGetWithErrorHandling } from '@/utils/axios';
+
 
 // GET /venues
 async function fetchVenues()
@@ -10,21 +10,17 @@ async function fetchVenues()
   const baseURL = getBaseUrl();
   const url = `${baseURL}/venues`;
 
-  const response = await axios.get(url, { withCredentials: true });
-
-  return response.data;
+  return axiosGetWithErrorHandling<Venue[]>(url);
 }
 
 // GET /venues/:venueId
 async function fetchVenueById(venueId: number)
-  : Promise<Venue | ApiErrorResponse> {
+  : Promise<Venue> {
 
   const baseURL = getBaseUrl();
   const url = `${baseURL}/venues/${venueId}`;
 
-  const response = await axios.get(url, { withCredentials: true });
-
-  return response.data;
+  return axiosGetWithErrorHandling<Venue>(url);
 }
 
 // GET /events
@@ -34,21 +30,17 @@ async function fetchEvents()
   const baseURL = getBaseUrl();
   const url = `${baseURL}/events`;
 
-  const response = await axios.get(url, { withCredentials: true });
-
-  return response.data;
+  return axiosGetWithErrorHandling<Event[]>(url);
 }
 
 // GET /events/:eventId
 async function fetchEventById(eventId: number)
-  : Promise<Event | ApiErrorResponse> {
+  : Promise<Event> {
 
   const baseURL = getBaseUrl();
   const url = `${baseURL}/events/${eventId}`;
 
-  const response = await axios.get(url, { withCredentials: true });
-
-  return response.data;
+  return axiosGetWithErrorHandling<Event>(url);
 }
 
 export { fetchVenues, fetchVenueById, fetchEvents, fetchEventById };
