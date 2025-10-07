@@ -12,7 +12,7 @@ type Event = {
   capacity: number;
   venue: Venue;
   ticketPrice: number;
-  eventDate: string; // ISO format date string
+  eventDate: string;
   description: string;
   imageUrl: string;
 }

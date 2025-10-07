@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
   public ResponseEntity<Map<String, Object>> handleResponseStatusException(ResponseStatusException ex) {
     Map<String, Object> error = new HashMap<>();
     error.put("status", ex.getStatusCode().value());
-    error.put("error", ex.getReason());
+    error.put("message", ex.getReason());
     return new ResponseEntity<>(error, ex.getStatusCode());
   }
 
@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
   public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
     Map<String, Object> error = new HashMap<>();
     error.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-    error.put("error", ex.getMessage());
+    error.put("message", ex.getMessage());
     return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

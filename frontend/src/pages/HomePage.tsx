@@ -1,65 +1,73 @@
-import { useState, useEffect } from 'react'
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
-import type { Venue, Event } from '@/types/catalog';
 import EventList from '@/components/EventList';
 import VenueList from '@/components/VenueList';
+
 import { fetchEvents, fetchVenues } from '@/api/catalog';
 
+import type { Venue, Event } from '@/types/catalog';
+import ApiErrorMessage from "@/components/ApiErrorMessage";
+
 function HomePage() {
-  const [allVenues, setAllVenues] = useState<Venue[]>([]);
-  const [allEvents, setAllEvents] = useState<Event[]>([]);
+  // Fetch events
+  const {
+    data: events,
+    isLoading: eventsLoading,
+    isError: eventsError,
+    error: eventsErrorObj,
+  } = useQuery<Event[]>({
+    queryKey: ["events"],
+    queryFn: fetchEvents,
+  });
 
-  const baseURL = import.meta.env.VITE_API_BASE_URL;
-  if (!baseURL) {
-    throw new Error("VITE_API_BASE_URL is not defined");
-  }
-
-  useEffect(() => {
-
-    async function loadEvents() {
-      try {
-        const events = await fetchEvents();
-        setAllEvents(events);
-      } catch (error) {
-        console.error('There was an error making the request', error);
-      }
-    }
-    async function loadVenues() {
-      try {
-        const events = await fetchVenues();
-        setAllVenues(events);
-      } catch (error) {
-        console.error('There was an error making the request', error);
-      }
-    }
-
-    loadEvents();
-    loadVenues();
-
-  }, []);
+  // Fetch venues
+  const {
+    data: venues,
+    isLoading: venuesLoading,
+    isError: venuesError,
+    error: venuesErrorObj,
+  } = useQuery<Venue[]>({
+    queryKey: ["venues"],
+    queryFn: fetchVenues,
+  });
 
   return (
     <>
-      {allEvents.length > 0 ? (
-        <div>
-          <Link to="/events">Upcoming events: {allEvents.length}</Link>
+      <section>
+        <Link to="/events">Upcoming events:</Link>
 
-          <EventList events={allEvents} />
-        </div>
-      ) : (
-        <p>No events to display.</p>
-      )}
+        {eventsLoading && <p>Loading events...</p>}
 
-      {allVenues.length > 0 ? (
-        <div>
-          <Link to="/venues">Browse venues: {allVenues.length}</Link>
+        {eventsError && <ApiErrorMessage error={eventsErrorObj} />}
 
-          <VenueList venues={allVenues} />
-        </div>
-      ) : (
-        <p>No venues to display.</p>
-      )}
+        {!eventsLoading && !eventsError && events && events.length > 0 && (
+          <EventList events={events} />
+        )}
+
+        {!eventsLoading && !eventsError && events && events.length === 0 && (
+          <p>No events to display.</p>
+        )}
+
+      </section>
+
+      <section>
+        <Link to="/venues">Browse venues:</Link>
+
+        {venuesLoading && <p>Loading venues...</p>}
+
+        {venuesError && <ApiErrorMessage error={venuesErrorObj} />}
+
+        {!venuesLoading && !venuesError && venues && venues.length > 0 && (
+          <VenueList venues={venues} />
+        )}
+
+        {!venuesLoading && !venuesError && venues && venues.length === 0 && (
+          <p>No venues to display.</p>
+        )}
+
+      </section>
+
     </>
   )
 }

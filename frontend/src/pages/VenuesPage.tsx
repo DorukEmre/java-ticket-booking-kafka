@@ -1,38 +1,42 @@
-import { useState, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query';
 
 import type { Venue } from '@/types/catalog';
+
 import VenueList from '@/components/VenueList';
+import ApiErrorMessage from '@/components/ApiErrorMessage';
+
 import { fetchVenues } from '@/api/catalog';
 
 function VenuesPage() {
-  const [allVenues, setAllVenues] = useState<Venue[]>([]);
-
-
-  useEffect(() => {
-
-    async function loadVenues() {
-      try {
-        const events = await fetchVenues();
-        setAllVenues(events);
-      } catch (error) {
-        console.error('There was an error making the request', error);
-      }
-    }
-    loadVenues();
-
-  }, []);
+  // Fetch venues
+  const {
+    data: venues,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<Venue[]>({
+    queryKey: ["venues"],
+    queryFn: fetchVenues,
+  });
 
   return (
     <>
-      {allVenues.length > 0 ? (
-        <div>
-          <p>Browse venues: {allVenues.length}</p>
+      <section>
+        <p>Browse venues:</p>
 
-          <VenueList venues={allVenues} />
-        </div>
-      ) : (
-        <p>No venues to display.</p>
-      )}
+        {isLoading && <p>Loading venues...</p>}
+
+        {isError && <ApiErrorMessage error={error} />}
+
+        {!isLoading && !isError && venues && venues.length > 0 && (
+          <VenueList venues={venues} />
+        )}
+
+        {!isLoading && !isError && venues && venues.length === 0 && (
+          <p>No venues to display.</p>
+        )}
+
+      </section>
     </>
   )
 }

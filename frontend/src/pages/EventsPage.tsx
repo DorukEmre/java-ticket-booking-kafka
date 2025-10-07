@@ -1,42 +1,42 @@
-import { useState, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query';
 
 import type { Event } from '@/types/catalog';
+
 import EventList from '@/components/EventList';
+import ApiErrorMessage from '@/components/ApiErrorMessage';
+
 import { fetchEvents } from '@/api/catalog';
 
 function EventsPage() {
-  const [allEvents, setAllEvents] = useState<Event[]>([]);
-
-  const baseURL = import.meta.env.VITE_API_BASE_URL;
-  if (!baseURL) {
-    throw new Error("VITE_API_BASE_URL is not defined");
-  }
-
-  useEffect(() => {
-
-    async function loadEvents() {
-      try {
-        const events = await fetchEvents();
-        setAllEvents(events);
-      } catch (error) {
-        console.error('There was an error making the request', error);
-      }
-    }
-    loadEvents();
-
-  }, []);
+  // Fetch events
+  const {
+    data: events,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<Event[]>({
+    queryKey: ["events"],
+    queryFn: fetchEvents,
+  });
 
   return (
     <>
-      {allEvents.length > 0 ? (
-        <div>
-          <p>Upcoming events: {allEvents.length}</p>
+      <section>
+        <p>Upcoming events:</p>
 
-          <EventList events={allEvents} />
-        </div>
-      ) : (
-        <p>No events to display.</p>
-      )}
+        {isLoading && <p>Loading events...</p>}
+
+        {isError && <ApiErrorMessage error={error} />}
+
+        {!isLoading && !isError && events && events.length > 0 && (
+          <EventList events={events} />
+        )}
+
+        {!isLoading && !isError && events && events.length === 0 && (
+          <p>No events to display.</p>
+        )}
+
+      </section>
     </>
   )
 }

@@ -10,6 +10,7 @@
     "deploy": "npm run build && serve -s dist -l 5173"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.2",
     "axios": "^1.12.2",
     "bootstrap": "^5.3.8",
     "react": "^19.2.0",
