@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import CheckoutForm from "@/components/CheckoutForm";
 import type { Cart, CartStatusType, CheckoutRequest } from "@/types/cart";
-import { CartStatus } from "@/utils/utils";
+import { CartStatus } from "@/utils/globals";
 import { checkoutCart } from "@/api/cart";
 import OrderConfirmationStatus from "@/components/OrderConfirmationStatus";
 import CartItemEntry from "@/components/CartItemEntry";

@@ -10,7 +10,7 @@ import ApiErrorMessage from '@/components/ApiErrorMessage';
 
 import { fetchEventById } from '@/api/catalog';
 import { createCart, saveCartItem } from '@/api/cart';
-import { imageBaseUrl } from '@/utils/utils';
+import { imageBaseUrl } from '@/utils/globals';
 
 import type { Event } from '@/types/catalog';
 import type { Cart, CartItem } from '@/types/cart';

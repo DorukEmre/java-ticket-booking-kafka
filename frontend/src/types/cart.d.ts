@@ -1,4 +1,4 @@
-import type { CartStatus } from "@/utils/utils";
+import type { CartStatus } from "@/utils/globals";
 
 type CartItem = {
   eventId: number;

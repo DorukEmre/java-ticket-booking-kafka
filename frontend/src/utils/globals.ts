@@ -15,4 +15,11 @@ function addBaseUrl(path: string): string {
   return `${baseURL}${path}`;
 }
 
-export { getBaseUrl, imageBaseUrl, addBaseUrl };
+const CartStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  FAILED: 'FAILED'
+} as const;
+
+export { getBaseUrl, imageBaseUrl, addBaseUrl, CartStatus };

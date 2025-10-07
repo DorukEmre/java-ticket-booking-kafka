@@ -1,6 +1,6 @@
 import type { ApiErrorResponse } from "@/types/error";
 import axios from "axios";
-import { addBaseUrl } from "@/utils/utils";
+import { addBaseUrl } from "@/utils/globals";
 
 async function axiosGetWithErrorHandling<T>(path: string): Promise<T> {
   console.log("axios GET request to:", path);

@@ -1,6 +1,6 @@
 import { fetchCartStatus } from "@/api/cart";
 import type { CartStatusResponse, CartStatusType } from "@/types/cart";
-import { CartStatus } from "@/utils/utils";
+import { CartStatus } from "@/utils/globals";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 
 function OrderConfirmationStatus(

@@ -7,7 +7,7 @@ import ApiErrorMessage from '@/components/ApiErrorMessage';
 import { fetchVenueById } from '@/api/catalog';
 import { useParams } from 'react-router-dom';
 import queryClient from '@/config/queryClient';
-import { imageBaseUrl } from '@/utils/utils';
+import { imageBaseUrl } from '@/utils/globals';
 
 function VenueDetailPage() {
   const { venueId } = useParams<{ venueId: string }>();
