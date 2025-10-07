@@ -10,13 +10,13 @@ import '@/css/index.css'
 import "@/css/custom.scss";
 
 import App from '@/App.tsx'
-import getQueryClient from '@/config/queryClient';
+import queryClient from '@/config/queryClient';
 
 createRoot(document.getElementById('root')!).render(
 
   <StrictMode>
     <BrowserRouter>
-      <QueryClientProvider client={getQueryClient()}>
+      <QueryClientProvider client={queryClient}>
         {/* <CartProvider> */}
         <App />
         {/* </CartProvider> */}
