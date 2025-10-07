@@ -20,10 +20,24 @@ public class CatalogServiceRoutes {
 
     return builder.routes()
 
+        // routes to static images
+
         .route("images", r -> r
             .path("/images/{filename}")
             .and().method(HttpMethod.GET)
             .uri(uri))
+
+        .route("images-events", r -> r
+            .path("/images/events/{filename}")
+            .and().method(HttpMethod.GET)
+            .uri(uri))
+
+        .route("images-venues", r -> r
+            .path("/images/venues/{filename}")
+            .and().method(HttpMethod.GET)
+            .uri(uri))
+
+        // public routes
 
         .route("catalog-events", r -> r
             .path("/events")
@@ -50,6 +64,7 @@ public class CatalogServiceRoutes {
             .uri(uri))
 
         // admin routes
+
         .route("catalog-add-venue", r -> r
             .path("/admin/venues/new")
             .and().method(HttpMethod.POST)

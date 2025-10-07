@@ -18,4 +18,12 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  // server: {
+  //   proxy: {
+  //     "/images": {
+  //       target: "http://localhost:8000",
+  //       changeOrigin: true,
+  //     },
+  //   },
+  // },
 })

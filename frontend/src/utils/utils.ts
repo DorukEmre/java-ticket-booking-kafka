@@ -1,10 +1,11 @@
-
 function getBaseUrl() {
-  const baseURL = import.meta.env.VITE_API_BASE_URL;
-  if (!baseURL) {
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+  if (!baseUrl) {
     throw new Error("VITE_API_BASE_URL is not defined");
   }
-  return baseURL;
+  return baseUrl;
 }
 
-export { getBaseUrl };
+const imageBaseUrl = getBaseUrl() + "/images/";
+
+export { getBaseUrl, imageBaseUrl };
