@@ -1,6 +1,6 @@
 import type { ApiErrorResponse } from "@/types/error";
 import axios from "axios";
-import { addBaseUrl } from "./utils";
+import { addBaseUrl } from "@/utils/utils";
 
 async function axiosGetWithErrorHandling<T>(path: string): Promise<T> {
   console.log("axios GET request to:", path);
@@ -20,14 +20,17 @@ async function axiosGetWithErrorHandling<T>(path: string): Promise<T> {
   }
 }
 
-async function axiosPostWithErrorHandling<T>(path: string, data: any): Promise<T> {
+async function axiosPostWithErrorHandling<T>(path: string, data: any, returnStatus = false): Promise<T> {
   console.log("axios POST request to:", path);
 
   const url = addBaseUrl(path);
 
   try {
     const response = await axios.post(url, data, { withCredentials: true });
-    return response.data as T;
+    if (returnStatus)
+      return response.status as T;
+    else
+      return response.data as T;
 
   } catch (err: any) {
     const apiError: ApiErrorResponse = {
@@ -38,14 +41,17 @@ async function axiosPostWithErrorHandling<T>(path: string, data: any): Promise<T
   }
 }
 
-async function axiosPutWithErrorHandling<T>(path: string, data: any): Promise<T> {
+async function axiosPutWithErrorHandling<T>(path: string, data: any, returnStatus = false): Promise<T> {
   console.log("axios PUT request to:", path);
 
   const url = addBaseUrl(path);
 
   try {
     const response = await axios.put(url, data, { withCredentials: true });
-    return response.data as T;
+    if (returnStatus)
+      return response.status as T;
+    else
+      return response.data as T;
 
   } catch (err: any) {
     const apiError: ApiErrorResponse = {
@@ -56,14 +62,17 @@ async function axiosPutWithErrorHandling<T>(path: string, data: any): Promise<T>
   }
 }
 
-async function axiosDeleteWithErrorHandling<T>(path: string, data?: any): Promise<T> {
+async function axiosDeleteWithErrorHandling<T>(path: string, data?: any, returnStatus = false): Promise<T> {
   console.log("axios DELETE request to:", path);
 
   const url = addBaseUrl(path);
 
   try {
     const response = await axios.delete(url, { data, withCredentials: true });
-    return response.data as T;
+    if (returnStatus)
+      return response.status as T;
+    else
+      return response.data as T;
 
   } catch (err: any) {
     const apiError: ApiErrorResponse = {
