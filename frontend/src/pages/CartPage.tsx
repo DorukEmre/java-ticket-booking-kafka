@@ -69,7 +69,7 @@ function CartPage() {
             {cart && cart.items.length > 0 ? (
               <ul>
                 {cart.items.map((item, index) => (
-                  <CartItemEntry item={item} index={index} />
+                  <CartItemEntry item={item} key={index} />
                 ))}
               </ul>
 

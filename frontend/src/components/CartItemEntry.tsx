@@ -1,16 +1,11 @@
 import type { CartItem } from "@/types/cart";
 
-function CartItemEntry(
-  {
-    item,
-    index
-  }: {
-    item: CartItem;
-    index: number
-  }) {
+function CartItemEntry({ item, }
+  : { item: CartItem; }) {
+
   return (
 
-    <li key={index}>
+    <li>
       Event ID: {item.eventId}, Ticket Count: {item.ticketCount}
     </li>
   )
