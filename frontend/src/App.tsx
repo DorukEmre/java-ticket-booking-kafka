@@ -10,8 +10,8 @@ import EventsPage from '@/pages/EventsPage';
 import EventDetailPage from '@/pages/EventDetailPage';
 import CartPage from '@/pages/CartPage';
 import OrderConfirmationPage from "@/pages/OrderConfirmationPage";
-// import UserOrdersPage from '@/pages/UserOrdersPage';
-// import OrderDetailsPage from '@/pages/OrderDetailsPage';
+import UserOrdersPage from '@/pages/UserOrdersPage';
+import OrderDetailsPage from '@/pages/OrderDetailsPage';
 
 // import AdminPage from '@/pages/AdminPage';
 // import NotFoundPage from '@/pages/NotFoundPage';
@@ -36,8 +36,8 @@ function App() {
 
           <Route path="/orders/:orderId/confirmation" element={<OrderConfirmationPage />} />
 
-          {/* <Route path="/orders" element={<UserOrdersPage />} />
-          <Route path="/orders/:orderId" element={<OrderDetailsPage />} /> */}
+          <Route path="/orders" element={<UserOrdersPage />} />
+          <Route path="/orders/:orderId" element={<OrderDetailsPage />} />
 
           {/* Admin Route */}
           {/* <Route path="/admin" element={<AdminPage />} /> */}
