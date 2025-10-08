@@ -46,7 +46,7 @@ function CheckoutForm(
           autoComplete="email"
         />
       </div>
-      <button>Checkout</button>
+      <button className="px-4 py-2 bg-back-300 text-compl-300 border-2 border-compl-300">Checkout</button>
     </form>)
 }
 

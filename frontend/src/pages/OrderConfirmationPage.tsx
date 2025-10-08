@@ -18,10 +18,8 @@ function OrderConfirmationPage() {
   const location = useLocation();
   const fromCheckout = location.state?.fromCheckout === true;
 
-  console.log("OrderConfirmationPage loaded with orderId:", orderId, "fromCheckout:", fromCheckout);
-
   useEffect(() => {
-    if (!orderId|| !fromCheckout) {
+    if (!orderId) {
       navigate("/");
     }
   }, [orderId]);
@@ -72,13 +70,13 @@ function OrderConfirmationPage() {
       <p>Order confirmation</p>
       {order && (
         <div>
-          <p>Order ID: {order.orderId}</p>
+          <p>Order ID: <span className="fw-bold">{order.orderId}</span></p>
           <p>Status: <span className={order.status === CartStatus.CONFIRMED ? "bg-success p-2" : "bg-danger p-2"}>{order.status}</span></p>
+          <p>Placed At: {new Date(order.placedAt).toLocaleString()}</p>
           {order.status === "CONFIRMED" && (
             <p>Total Price: {order.totalPrice.toFixed(2)}</p>
           )}
-          <p>Placed At: {new Date(order.placedAt).toLocaleString()}</p>
-          <h4>Items:</h4>
+          <p>Items:</p>
           <ul>
             {order.items.map((item) => (
               <li key={item.id}>

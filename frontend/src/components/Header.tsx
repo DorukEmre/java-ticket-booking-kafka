@@ -8,11 +8,23 @@ function Header() {
           <h1>Ticket Booking System</h1>
         </div>
       </Link>
-      <Link to="/cart" className="text-decoration-none">
-        <div className="p-3 bg-back-400 rounded">
-          Cart
-        </div>
-      </Link>
+      <div className="d-flex gap-3">
+        <Link to="/events" className="text-decoration-none">
+          <div className="p-3 bg-back-400 rounded">
+            Events
+          </div>
+        </Link>
+        <Link to="/orders" className="text-decoration-none">
+          <div className="p-3 bg-back-400 rounded">
+            Orders
+          </div>
+        </Link>
+        <Link to="/cart" className="text-decoration-none">
+          <div className="p-3 bg-back-400 rounded">
+            Cart
+          </div>
+        </Link>
+      </div>
     </header>
   )
 }
