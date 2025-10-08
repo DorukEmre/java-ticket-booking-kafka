@@ -2,14 +2,17 @@ import { Routes, Route } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Header from '@/components/Header';
+
 import HomePage from '@/pages/HomePage';
 import VenuesPage from '@/pages/VenuesPage';
 import VenueDetailPage from '@/pages/VenueDetailPage';
 import EventsPage from '@/pages/EventsPage';
 import EventDetailPage from '@/pages/EventDetailPage';
 import CartPage from '@/pages/CartPage';
-// import OrderConfirmationPage from '@/pages/OrderConfirmationPage';
+import OrderConfirmationPage from "@/pages/OrderConfirmationPage";
 // import UserOrdersPage from '@/pages/UserOrdersPage';
+// import OrderDetailsPage from '@/pages/OrderDetailsPage';
+
 // import AdminPage from '@/pages/AdminPage';
 // import NotFoundPage from '@/pages/NotFoundPage';
 
@@ -28,12 +31,13 @@ function App() {
           <Route path="/venues/:venueId" element={<VenueDetailPage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/events/:eventId" element={<EventDetailPage />} />
+
           <Route path="/cart" element={<CartPage />} />
-          {/* <Route
-            path="/confirmation"
-            element={<OrderConfirmationPage />}
-          /> */}
-          {/* <Route path="/orders" element={<UserOrdersPage />} /> */}
+
+          <Route path="/orders/:orderId/confirmation" element={<OrderConfirmationPage />} />
+
+          {/* <Route path="/orders" element={<UserOrdersPage />} />
+          <Route path="/orders/:orderId" element={<OrderDetailsPage />} /> */}
 
           {/* Admin Route */}
           {/* <Route path="/admin" element={<AdminPage />} /> */}

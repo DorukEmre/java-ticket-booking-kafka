@@ -13,10 +13,10 @@ type Order = {
 
 type OrderItem = {
   id: number;
-  orderId: string;
   eventId: number;
-  quantity: number;
-  pricePerTicket: number;
+  orderId: string;
+  ticketCount: number;
+  ticketPrice: number;
 };
 
 type OrderResponse = {
