@@ -1,5 +1,5 @@
-import type { Cart, CartItem, CheckoutRequest } from "@/types/cart";
-import { createContext, useContext, useEffect, useState, useMemo, type ReactNode } from "react";
+import type { Cart, CartContextType, CartItem, CheckoutRequest } from "@/types/cart";
+import { createContext, useEffect, useState, useMemo, type ReactNode } from "react";
 import {
   apiCreateCart,
   apiSaveCartItem,
@@ -8,19 +8,8 @@ import {
   apiCheckoutCart,
 } from "@/api/cart";
 
-type CartContextType = {
-  cart: Cart | null;
-  setCartLocal: (c: Cart) => void;
-  addOrUpdateItem: (item: CartItem) => Promise<void>;
-  removeItem: (item: CartItem) => Promise<void>;
-  deleteCart: () => Promise<void>;
-  // refreshFromServer: () => Promise<void>;
-  checkout: (request: CheckoutRequest) => Promise<void>;
-  totalPrice: number;
 
-};
-
-const CartContext = createContext<CartContextType | undefined>(undefined);
+export const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
 
@@ -212,12 +201,4 @@ export function CartProvider({ children }: { children: ReactNode }) {
       {children}
     </CartContext.Provider>
   );
-}
-
-// Custom hook with guard against using the context outside of a provider
-export function useCart(): CartContextType {
-  const ctx = useContext(CartContext);
-  if (ctx === undefined)
-    throw new Error("useCart must be used within CartProvider");
-  return ctx;
 }

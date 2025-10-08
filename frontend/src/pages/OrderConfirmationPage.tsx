@@ -4,7 +4,7 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { fetchOrderById } from "@/api/order";
 import type { OrderResponse } from "@/types/order";
 import { CartStatus } from "@/utils/globals";
-import { useCart } from "@/context/CartContext";
+import { useCart } from "@/hooks/useCart";
 
 
 function OrderConfirmationPage() {

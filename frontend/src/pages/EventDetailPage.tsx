@@ -13,7 +13,7 @@ import { imageBaseUrl } from '@/utils/globals';
 
 import type { Event } from '@/types/catalog';
 import type { CartItem } from '@/types/cart';
-import { useCart } from '@/context/CartContext';
+import { useCart } from "@/hooks/useCart";
 
 function EventDetailPage() {
   const { addOrUpdateItem } = useCart();

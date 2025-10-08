@@ -1,4 +1,4 @@
-import { useCart } from "@/context/CartContext";
+import { useCart } from "@/hooks/useCart";
 import type { CartItem } from "@/types/cart";
 
 function CartItemEntry({ item, }

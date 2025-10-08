@@ -1,5 +1,5 @@
 import { apiFetchCartStatus } from "@/api/cart";
-import { useCart } from "@/context/CartContext";
+import { useCart } from "@/hooks/useCart";
 import type { CartStatusResponse, CartStatusType } from "@/types/cart";
 import { CartStatus } from "@/utils/globals";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";

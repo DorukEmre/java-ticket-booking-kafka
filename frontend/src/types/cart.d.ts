@@ -36,7 +36,17 @@ type CheckoutRequest = {
   items: CartItem[];
 };
 
+type CartContextType = {
+  cart: Cart | null;
+  setCartLocal: (c: Cart) => void;
+  addOrUpdateItem: (item: CartItem) => Promise<void>;
+  removeItem: (item: CartItem) => Promise<void>;
+  deleteCart: () => Promise<void>;
+  // refreshFromServer: () => Promise<void>;
+  checkout: (request: CheckoutRequest) => Promise<void>;
+  totalPrice: number;
+};
 
 type CartStatusType = typeof CartStatus[keyof typeof CartStatus];
 
-export { Cart, CartItem, CartResponse, CartIdResponse, CartStatusResponse, CheckoutRequest, CartStatusType };
+export { Cart, CartItem, CartResponse, CartIdResponse, CartStatusResponse, CheckoutRequest, CartStatusType, CartContextType };

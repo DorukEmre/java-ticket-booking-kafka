@@ -5,7 +5,7 @@ import type { CartStatusType, CheckoutRequest } from "@/types/cart";
 import { CartStatus } from "@/utils/globals";
 import OrderConfirmationStatus from "@/components/OrderConfirmationStatus";
 import CartItemEntry from "@/components/CartItemEntry";
-import { useCart } from "@/context/CartContext";
+import { useCart } from "@/hooks/useCart";
 
 function CartPage() {
   const { cart, checkout, deleteCart, totalPrice } = useCart();
@@ -87,21 +87,23 @@ function CartPage() {
             )}
           </div>
 
-          <div>
-            <p>Total Price: {totalPrice.toFixed(2)}</p>
-          </div>
+          {cart && cart.items.length > 0 && (
+            <>
+              <div>
+                <p>Total Price: {totalPrice.toFixed(2)}</p>
+              </div>
 
-          <div>
-            {cart && cart.items.length > 0 && (
-              <CheckoutForm
-                handleCheckout={handleCheckout}
-                customerName={customerName}
-                email={email}
-                setCustomerName={setCustomerName}
-                setEmail={setEmail}
-              />
-            )}
-          </div>
+              <div>
+                <CheckoutForm
+                  handleCheckout={handleCheckout}
+                  customerName={customerName}
+                  email={email}
+                  setCustomerName={setCustomerName}
+                  setEmail={setEmail}
+                />
+              </div>
+            </>
+          )}
         </div>
       )}
     </>
