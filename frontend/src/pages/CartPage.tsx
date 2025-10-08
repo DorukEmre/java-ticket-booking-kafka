@@ -8,7 +8,7 @@ import CartItemEntry from "@/components/CartItemEntry";
 import { useCart } from "@/context/CartContext";
 
 function CartPage() {
-  const { cart, checkout, deleteCart } = useCart();
+  const { cart, checkout, deleteCart, totalPrice } = useCart();
 
   const [customerName, setCustomerName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -67,7 +67,7 @@ function CartPage() {
           setCartStatus={setCartStatus}
         />
       ) : (
-        <>
+        <div>
           <div>
             <p>Cart</p>
             {cart &&
@@ -88,6 +88,10 @@ function CartPage() {
           </div>
 
           <div>
+            <p>Total Price: {totalPrice.toFixed(2)}</p>
+          </div>
+
+          <div>
             {cart && cart.items.length > 0 && (
               <CheckoutForm
                 handleCheckout={handleCheckout}
@@ -98,7 +102,7 @@ function CartPage() {
               />
             )}
           </div>
-        </>
+        </div>
       )}
     </>
   )

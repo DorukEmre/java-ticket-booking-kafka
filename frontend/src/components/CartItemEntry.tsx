@@ -18,7 +18,7 @@ function CartItemEntry({ item, }
 
   return (
     <li className="d-flex align-items-center gap-3">
-      <p>Event ID: {item.eventId}, Ticket Count: {item.ticketCount}</p>
+      <p>Event ID: {item.eventId}, Ticket Count: {item.ticketCount}, Price: {item.ticketPrice}</p>
       <button type="button" onClick={handleDeleteItem}>Remove</button>
     </li>
   )

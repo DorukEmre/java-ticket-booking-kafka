@@ -1,5 +1,5 @@
 import type { Cart, CartItem, CheckoutRequest } from "@/types/cart";
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useMemo, type ReactNode } from "react";
 import {
   apiCreateCart,
   apiSaveCartItem,
@@ -16,6 +16,8 @@ type CartContextType = {
   deleteCart: () => Promise<void>;
   // refreshFromServer: () => Promise<void>;
   checkout: (request: CheckoutRequest) => Promise<void>;
+  totalPrice: number;
+
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -68,7 +70,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
 
   async function addOrUpdateItem(item: CartItem) {
-  const { cartId: cid, cartObj: prevCart } = await ensureCartId();
+    const { cartId: cid, cartObj: prevCart } = await ensureCartId();
     if (!cid)
       throw new Error("No cartId available");
 
@@ -180,6 +182,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const totalPrice = useMemo(() => {
+    if (!cart?.items?.length)
+      return 0;
+
+    let total = cart.items.reduce((sum, it) => {
+      const price = Number(it.ticketPrice ?? 0);
+      const qty = Number(it.ticketCount ?? 1);
+      return sum + price * qty;
+    }, 0);
+
+    return total;
+
+  }, [cart, cart?.items]);
+
   const value: CartContextType = {
     cart,
     setCartLocal,
@@ -188,6 +204,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     deleteCart,
     // refreshFromServer,
     checkout,
+    totalPrice,
   };
 
   return (

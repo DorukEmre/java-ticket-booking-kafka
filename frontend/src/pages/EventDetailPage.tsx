@@ -43,7 +43,8 @@ function EventDetailPage() {
     try {
       let item: CartItem = {
         eventId: id,
-        ticketCount: ticketCount
+        ticketCount: ticketCount,
+        ticketPrice: event ? event.ticketPrice : 0,
       }
       console.log("EventDetailPage > Saving cart item:", item);
 
@@ -70,7 +71,7 @@ function EventDetailPage() {
             <p>Location: {event.venue.location}</p>
             <p>Total Capacity: {event.venue.totalCapacity}</p>
             <p>Event Date: {new Date(event.eventDate).toLocaleString()}</p>
-            <p>Ticket Price: ${event.ticketPrice.toFixed(2)}</p>
+            <p>Ticket Price: {event.ticketPrice.toFixed(2)}</p>
             <p>Description: {event.description}</p>
             {event.imageUrl && (
               <img

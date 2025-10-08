@@ -3,14 +3,13 @@ import type { CartStatus } from "@/utils/globals";
 type CartItem = {
   eventId: number;
   ticketCount: number;
-  ticketPrice?: number;
+  ticketPrice: number;
 };
 
 type Cart = {
   cartId: string;
   items: CartItem[];
   status: CartStatusType;
-  totalPrice?: number;
 };
 
 type CartIdResponse = {
