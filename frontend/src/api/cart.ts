@@ -2,7 +2,7 @@ import type { CartItem, CartResponse, CartIdResponse, CartStatusResponse, Checko
 import { axiosDeleteWithErrorHandling, axiosGetWithErrorHandling, axiosPostWithErrorHandling, axiosPutWithErrorHandling } from '@/utils/axios';
 
 // GET /cart/:cartId 
-async function fetchCartById(cartId: string)
+async function apiFetchCartById(cartId: string)
   : Promise<CartResponse> {
 
   const path = `/cart/${cartId}`;
@@ -11,7 +11,7 @@ async function fetchCartById(cartId: string)
 }
 
 // POST /cart
-async function createCart()
+async function apiCreateCart()
   : Promise<CartIdResponse> {
 
   const path = `/cart`;
@@ -20,7 +20,7 @@ async function createCart()
 }
 
 // PUT /cart/:cartId/items
-async function saveCartItem(cartId: string, item: CartItem)
+async function apiSaveCartItem(cartId: string, item: CartItem)
   : Promise<number> {
 
   const path = `/cart/${cartId}/items`;
@@ -29,7 +29,7 @@ async function saveCartItem(cartId: string, item: CartItem)
 }
 
 // DELETE /cart/:cartId/items
-async function deleteCartItem(cartId: string, item: CartItem)
+async function apiDeleteCartItem(cartId: string, item: CartItem)
   : Promise<number> {
 
   const path = `/cart/${cartId}/items`;
@@ -38,7 +38,7 @@ async function deleteCartItem(cartId: string, item: CartItem)
 }
 
 // POST /cart/:cartId/checkout
-async function checkoutCart(cartId: string, request: CheckoutRequest)
+async function apiCheckoutCart(cartId: string, request: CheckoutRequest)
   : Promise<number> {
 
   const path = `/cart/${cartId}/checkout`;
@@ -47,7 +47,7 @@ async function checkoutCart(cartId: string, request: CheckoutRequest)
 }
 
 // GET /cart/:cartId/status
-async function fetchCartStatus(cartId: string)
+async function apiFetchCartStatus(cartId: string)
   : Promise<CartStatusResponse> {
 
   const path = `/cart/${cartId}/status`;
@@ -55,5 +55,5 @@ async function fetchCartStatus(cartId: string)
   return axiosGetWithErrorHandling<CartStatusResponse>(path);
 }
 
-export { createCart, fetchCartById, saveCartItem, deleteCartItem, checkoutCart, fetchCartStatus };
+export { apiCreateCart, apiFetchCartById, apiSaveCartItem, apiDeleteCartItem, apiCheckoutCart, apiFetchCartStatus };
 

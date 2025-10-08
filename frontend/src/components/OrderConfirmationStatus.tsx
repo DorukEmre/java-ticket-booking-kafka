@@ -1,4 +1,4 @@
-import { fetchCartStatus } from "@/api/cart";
+import { apiFetchCartStatus } from "@/api/cart";
 import type { CartStatusResponse, CartStatusType } from "@/types/cart";
 import { CartStatus } from "@/utils/globals";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
@@ -20,7 +20,7 @@ function OrderConfirmationStatus(
 
     const interval = setInterval(async () => {
       try {
-        const cartStatusResponse: CartStatusResponse = await fetchCartStatus(cartid);
+        const cartStatusResponse: CartStatusResponse = await apiFetchCartStatus(cartid);
         console.log("Fetched cart status:", cartStatusResponse);
 
         if (cartStatusResponse.status !== cartStatus) {
