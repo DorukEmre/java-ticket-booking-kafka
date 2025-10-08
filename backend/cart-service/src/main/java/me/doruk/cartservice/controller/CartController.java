@@ -47,6 +47,12 @@ public class CartController {
     return cartService.deleteCartItem(cartId, request);
   }
 
+  @DeleteMapping(value = "/cart/{cartId}", produces = "application/json")
+  public ResponseEntity<Void> deleteCart(@PathVariable("cartId") UUID cartId) {
+    System.out.println("DELETE /api/v1/cart/{cartId} called");
+    return cartService.deleteCart(cartId);
+  }
+
   @PostMapping(value = "/cart/{cartId}/checkout", consumes = "application/json", produces = "application/json")
   public ResponseEntity<?> checkout(@PathVariable("cartId") UUID cartId,
       @RequestBody CheckoutRequest request) {

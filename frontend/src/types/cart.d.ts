@@ -9,6 +9,8 @@ type CartItem = {
 type Cart = {
   cartId: string;
   items: CartItem[];
+  status: CartStatusType;
+  totalPrice?: number;
 };
 
 type CartIdResponse = {

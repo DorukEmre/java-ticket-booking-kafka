@@ -8,13 +8,25 @@ import CartItemEntry from "@/components/CartItemEntry";
 import { useCart } from "@/context/CartContext";
 
 function CartPage() {
-  const { cart, checkout } = useCart();
+  const { cart, checkout, deleteCart } = useCart();
 
   const [customerName, setCustomerName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [cartStatus, setCartStatus] = useState<CartStatusType>(CartStatus.IN_PROGRESS);
 
   console.log("CartPage existing cart:", cart);
+
+  async function handleDeleteCart() {
+
+    try {
+      await deleteCart();
+      console.log("handleDeleteCart > Cart deleted");
+
+    } catch (error) {
+      console.error("Delete cart failed:", error);
+
+    }
+  }
 
   async function handleCheckout(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -58,6 +70,7 @@ function CartPage() {
         <>
           <div>
             <p>Cart</p>
+            <button onClick={handleDeleteCart}>Delete cart</button>
             {cart && cart.items.length > 0 ? (
               <ul>
                 {cart.items.map((item, index) => (

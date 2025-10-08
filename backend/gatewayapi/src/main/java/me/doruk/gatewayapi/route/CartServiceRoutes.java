@@ -44,6 +44,12 @@ public class CartServiceRoutes {
             .filters(f -> f.prefixPath("/api/v1"))
             .uri(uri))
 
+        .route("delete-cart", r -> r
+            .path("/cart/{cartId}")
+            .and().method(HttpMethod.DELETE)
+            .filters(f -> f.prefixPath("/api/v1"))
+            .uri(uri))
+
         .route("checkout", r -> r
             .path("/cart/{cartId}/checkout")
             .and().method(HttpMethod.POST)

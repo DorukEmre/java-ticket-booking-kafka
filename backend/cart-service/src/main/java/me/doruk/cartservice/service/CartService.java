@@ -47,12 +47,16 @@ public class CartService {
     return "cart:" + cartId;
   }
 
-  public CartCacheEntry getCartFromRedis(UUID cartId) {
+  private CartCacheEntry getCartFromRedis(UUID cartId) {
     return (CartCacheEntry) redisTemplate.opsForValue().get(key(cartId));
   }
 
-  public void saveCartToRedis(UUID cartId, CartCacheEntry cartCache) {
+  private void saveCartToRedis(UUID cartId, CartCacheEntry cartCache) {
     redisTemplate.opsForValue().set(key(cartId), cartCache, CART_TTL_SECONDS, TimeUnit.SECONDS);
+  }
+
+  private void deleteCartFromRedis(UUID cartId) {
+    redisTemplate.opsForValue().getAndDelete(key(cartId));
   }
 
   // Get cart by ID
@@ -146,6 +150,26 @@ public class CartService {
     try {
       saveCartToRedis(cartId, cartCache);
       log.info("Deleted item from cart: {}", cartCache);
+    } catch (Exception e) {
+      log.error("Error interacting with Redis", e);
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to connect to Redis");
+    }
+
+    return ResponseEntity.noContent().build();
+  }
+
+  // Delete cart
+  public ResponseEntity<Void> deleteCart(final UUID cartId) {
+    System.out.println("Delete cart called: " + cartId);
+
+    CartCacheEntry cartCache = getCartFromRedis(cartId);
+    if (cartCache == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found");
+    }
+
+    try {
+      deleteCartFromRedis(cartId);
+      log.info("Deleted cart: {}", cartId);
     } catch (Exception e) {
       log.error("Error interacting with Redis", e);
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to connect to Redis");

@@ -4,7 +4,7 @@ import {
   apiCreateCart,
   apiSaveCartItem,
   apiDeleteCartItem,
-  apiFetchCartById,
+  apiDeleteCart,
   apiCheckoutCart,
 } from "@/api/cart";
 
@@ -13,6 +13,7 @@ type CartContextType = {
   setCartLocal: (c: Cart) => void;
   addOrUpdateItem: (item: CartItem) => Promise<void>;
   // removeItem: (item: CartItem) => Promise<void>;
+  deleteCart: () => Promise<void>;
   // refreshFromServer: () => Promise<void>;
   checkout: (request: CheckoutRequest) => Promise<void>;
 };
@@ -34,12 +35,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-
   // Save to localStorage
   const setCartLocal = (c: Cart) => {
     setCart(c);
     localStorage.setItem("cart", JSON.stringify(c));
   };
+
 
   // Create cart and save it if none present
   async function ensureCartId(): Promise<string | null> {
@@ -49,7 +50,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         const res = await apiCreateCart();
         const newCart: Cart = {
           cartId: res.cartId,
-          items: cart?.items ?? []
+          items: cart?.items ?? [],
+          status: cart?.status ?? "IN_PROGRESS"
         };
         setCartLocal(newCart);
         return res.cartId;
@@ -84,7 +86,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (!found)
       newItems.push(item);
 
-    const newCart: Cart = { cartId: cid, items: newItems };
+    const newCart: Cart =
+      { cartId: cid, items: newItems, status: prevCart!.status };
 
     // Optimistic update to local state and localStorage
     setCartLocal(newCart);
@@ -122,12 +125,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function deleteCart() {
+    const cid = await ensureCartId();
+    if (!cid)
+      throw new Error("No cartId available");
+
+    try {
+      await apiDeleteCart(cid);
+
+      localStorage.removeItem("cart");
+      setCart(null);
+
+    } catch (error) {
+      console.error("Failed to delete cart from backend", error);
+    }
+  }
 
   const value: CartContextType = {
     cart,
     setCartLocal,
     addOrUpdateItem,
     // removeItem,
+    deleteCart,
     // refreshFromServer,
     checkout,
   };

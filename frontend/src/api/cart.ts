@@ -37,6 +37,15 @@ async function apiDeleteCartItem(cartId: string, item: CartItem)
   return axiosDeleteWithErrorHandling<number>(path, item, true);
 }
 
+// DELETE /cart/:cartId
+async function apiDeleteCart(cartId: string)
+  : Promise<number> {
+
+  const path = `/cart/${cartId}`;
+
+  return axiosDeleteWithErrorHandling<number>(path, {}, true);
+}
+
 // POST /cart/:cartId/checkout
 async function apiCheckoutCart(cartId: string, request: CheckoutRequest)
   : Promise<number> {
@@ -55,5 +64,5 @@ async function apiFetchCartStatus(cartId: string)
   return axiosGetWithErrorHandling<CartStatusResponse>(path);
 }
 
-export { apiCreateCart, apiFetchCartById, apiSaveCartItem, apiDeleteCartItem, apiCheckoutCart, apiFetchCartStatus };
+export { apiCreateCart, apiFetchCartById, apiSaveCartItem, apiDeleteCartItem, apiDeleteCart, apiCheckoutCart, apiFetchCartStatus };
 
