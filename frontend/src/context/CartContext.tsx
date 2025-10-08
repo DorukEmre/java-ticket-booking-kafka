@@ -42,10 +42,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
 
-  // Create cart and save it if none present
-  async function ensureCartId(): Promise<string | null> {
+  // Create cart and save it if none present, return cart or newCart
+  async function ensureCartId(): Promise<{ cartId: string | null, cartObj: Cart | null }> {
 
     if (!cart || cart.cartId === "null" || !cart.cartId) {
+
       try {
         const res = await apiCreateCart();
         const newCart: Cart = {
@@ -54,24 +55,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
           status: cart?.status ?? "IN_PROGRESS"
         };
         setCartLocal(newCart);
-        return res.cartId;
+        return { cartId: res.cartId, cartObj: newCart };
 
       } catch (error) {
         console.error("Failed to create cart", error);
-        return null;
+        return { cartId: null, cartObj: null };
       }
     }
-    return cart.cartId;
+
+    return { cartId: cart.cartId, cartObj: cart };
   }
 
 
   async function addOrUpdateItem(item: CartItem) {
-    const cid = await ensureCartId();
+  const { cartId: cid, cartObj: prevCart } = await ensureCartId();
     if (!cid)
       throw new Error("No cartId available");
 
-    // Keep cart state for rollback
-    const prevCart = cart;
 
     // Update item in cart items list if present, append otherwise
     const currentItems = prevCart?.items ?? [];
@@ -111,7 +111,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   async function checkout(request: CheckoutRequest) {
-    const cid = await ensureCartId();
+    const { cartId: cid } = await ensureCartId();
     if (!cid)
       throw new Error("No cartId available");
 
@@ -126,7 +126,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   async function removeItem(item: CartItem) {
-    const cid = await ensureCartId();
+    const { cartId: cid, cartObj: prevCart } = await ensureCartId();
     if (!cid)
       throw new Error("No cartId available");
 
@@ -134,9 +134,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const existing = cart?.items.find(i => i.eventId === item.eventId);
     if (!existing)
       return;
-
-    // Keep cart state for rollback
-    const prevCart = cart;
 
     // Build new items array without the item
     const newItems = (prevCart?.items ?? []).filter(i => i.eventId !== item.eventId);
@@ -165,15 +162,17 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   async function deleteCart() {
-    const cid = await ensureCartId();
+    const { cartId: cid } = await ensureCartId();
     if (!cid)
       throw new Error("No cartId available");
 
+    localStorage.removeItem("cart");
+    setCart(null);
+
+    console.log("deleteCart > delete carrId:", cid);
+
     try {
       await apiDeleteCart(cid);
-
-      localStorage.removeItem("cart");
-      setCart(null);
 
     } catch (error) {
       console.error("Failed to delete cart from backend", error);
