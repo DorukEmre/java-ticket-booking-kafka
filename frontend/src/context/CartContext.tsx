@@ -12,7 +12,7 @@ type CartContextType = {
   cart: Cart | null;
   setCartLocal: (c: Cart) => void;
   addOrUpdateItem: (item: CartItem) => Promise<void>;
-  // removeItem: (item: CartItem) => Promise<void>;
+  removeItem: (item: CartItem) => Promise<void>;
   deleteCart: () => Promise<void>;
   // refreshFromServer: () => Promise<void>;
   checkout: (request: CheckoutRequest) => Promise<void>;
@@ -125,6 +125,45 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function removeItem(item: CartItem) {
+    const cid = await ensureCartId();
+    if (!cid)
+      throw new Error("No cartId available");
+
+    // check item to delete exists
+    const existing = cart?.items.find(i => i.eventId === item.eventId);
+    if (!existing)
+      return;
+
+    // Keep cart state for rollback
+    const prevCart = cart;
+
+    // Build new items array without the item
+    const newItems = (prevCart?.items ?? []).filter(i => i.eventId !== item.eventId);
+
+    const newCart: Cart = {
+      cartId: cid, items: newItems, status: prevCart?.status ?? "IN_PROGRESS",
+    };
+
+    // Optimistic update to local state and localStorage
+    setCartLocal(newCart);
+    console.log("addOrUpdateItem > Updated local cart:", newCart);
+
+    try {
+      await apiDeleteCartItem(cid, item);
+
+    } catch (error) {
+      console.error("removeItem > apiDeleteCartItem failed — rolling back", error);
+      if (prevCart) {
+        setCartLocal(prevCart);
+      } else {
+        setCart(null);
+        localStorage.removeItem("cart");
+      }
+      throw error; // rethrow to pass to user      
+    }
+  }
+
   async function deleteCart() {
     const cid = await ensureCartId();
     if (!cid)
@@ -138,6 +177,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     } catch (error) {
       console.error("Failed to delete cart from backend", error);
+      throw error; // rethrow to pass to user
     }
   }
 
@@ -145,7 +185,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     cart,
     setCartLocal,
     addOrUpdateItem,
-    // removeItem,
+    removeItem,
     deleteCart,
     // refreshFromServer,
     checkout,

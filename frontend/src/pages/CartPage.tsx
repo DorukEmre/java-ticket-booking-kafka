@@ -70,7 +70,9 @@ function CartPage() {
         <>
           <div>
             <p>Cart</p>
-            <button onClick={handleDeleteCart}>Delete cart</button>
+            {cart &&
+              <button onClick={handleDeleteCart}>Delete cart</button>
+            }
             {cart && cart.items.length > 0 ? (
               <ul>
                 {cart.items.map((item, index) => (
