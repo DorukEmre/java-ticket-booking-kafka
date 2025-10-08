@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import me.doruk.orderservice.entity.OrderItem;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -16,7 +17,7 @@ import java.util.List;
 public class OrderResponse {
   private String orderId;
   private BigDecimal totalPrice;
-  private String placedAt;
+  private LocalDateTime placedAt;
   private Long customerId;
   private String status;
   private List<OrderItem> items;

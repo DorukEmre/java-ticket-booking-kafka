@@ -8,9 +8,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Data
@@ -30,8 +32,8 @@ public class Order {
 
   @CreationTimestamp
   @Column(name = "placed_at", updatable = false, nullable = false)
-  @NotBlank(message = "Placed date is required")
-  private String placedAt;
+  @NotNull(message = "Placed date is required")
+  private LocalDateTime placedAt;
 
   @Column(name = "customer_id")
   @NotNull(message = "Customer ID is required")

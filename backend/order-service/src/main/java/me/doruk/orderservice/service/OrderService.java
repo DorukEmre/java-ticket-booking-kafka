@@ -33,6 +33,7 @@ import org.springframework.web.server.ResponseStatusException;
 import jakarta.transaction.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -197,6 +198,7 @@ public class OrderService {
         .save(OrderRequestLog.builder()
             .cartId(cartId)
             .orderId(order.getId())
+            .processedAt(LocalDateTime.now())
             .build());
 
     System.out.println("cartId marked as processed.");
@@ -217,6 +219,7 @@ public class OrderService {
         .id(NanoIdUtils.randomNanoId(NanoIdUtils.DEFAULT_NUMBER_GENERATOR, NanoIdUtils.DEFAULT_ALPHABET, 8))
         .customerId(customerId)
         .status("PENDING")
+        .placedAt(LocalDateTime.now())
         .build();
   }
 

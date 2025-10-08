@@ -1,5 +1,6 @@
 package me.doruk.orderservice.entity;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -35,6 +36,6 @@ public class OrderRequestLog {
 
   @CreationTimestamp
   @Column(name = "processed_at", updatable = false, nullable = false)
-  @NotBlank(message = "Processed date is required")
-  private String processedAt;
+  @NotNull(message = "Processed date is required")
+  private LocalDateTime processedAt;
 }
