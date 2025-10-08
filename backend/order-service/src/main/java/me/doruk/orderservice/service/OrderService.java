@@ -47,6 +47,8 @@ public class OrderService {
   private final OrderItemRepository orderItemRepository;
   private final KafkaTemplate<String, Object> kafkaTemplate;
 
+  // User methods
+
   public ResponseEntity<?> getOrderById(final String orderId) {
     final Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
@@ -81,6 +83,15 @@ public class OrderService {
 
     return ResponseEntity.ok(orderResponses);
   }
+
+  public ResponseEntity<?> getAllOrdersByEmail(final String email) {
+    Customer customer = customerRepository.findByEmail(email)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+    return getAllOrdersByUser(customer.getId());
+  }
+
+  // Admin methods
 
   public List<UserResponse> GetAllUsers() {
     final List<Customer> users = customerRepository.findAll();

@@ -33,10 +33,16 @@ public class OrderController {
     return orderService.getOrderById(orderId);
   }
 
-  @GetMapping("/users/{customerId}/orders")
+  @GetMapping("/users/id/{customerId}/orders")
   public ResponseEntity<?> getAllOrdersByUser(@PathVariable("customerId") Long customerId) {
-    System.out.println("GET /api/v1/orders/{orderId} called");
+    System.out.println("GET /api/v1/users/{customerId}/orders called");
     return orderService.getAllOrdersByUser(customerId);
+  }
+
+  @GetMapping("/users/email/{email}/orders")
+  public ResponseEntity<?> getAllOrdersByEmail(@PathVariable("email") String email) {
+    System.out.println("GET /api/v1/users/{email}/orders called");
+    return orderService.getAllOrdersByEmail(email);
   }
 
   // Admin routes

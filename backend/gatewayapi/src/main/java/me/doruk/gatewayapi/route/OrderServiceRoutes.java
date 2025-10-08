@@ -26,8 +26,14 @@ public class OrderServiceRoutes {
             .filters(f -> f.prefixPath("/api/v1"))
             .uri(uri))
 
-        .route("orders-for-customerId", r -> r
-            .path("/users/{customerId}/orders")
+        .route("orders-by-customerId", r -> r
+            .path("/users/id/{customerId}/orders")
+            .and().method(HttpMethod.GET)
+            .filters(f -> f.prefixPath("/api/v1"))
+            .uri(uri))
+
+        .route("orders-by-email", r -> r
+            .path("/users/email/{email}/orders")
             .and().method(HttpMethod.GET)
             .filters(f -> f.prefixPath("/api/v1"))
             .uri(uri))

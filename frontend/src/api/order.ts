@@ -10,13 +10,22 @@ async function fetchOrderById(orderId: string)
   return axiosGetWithErrorHandling<OrderResponse>(path);
 }
 
-// GET /events/:customerId
+// GET /users/id/:customerId/orders
 async function fetchOrdersByCustomerId(customerId: number)
   : Promise<OrderResponse[]> {
 
-  const path = `/events/${customerId}`;
+  const path = `/users/id/${customerId}/orders`;
 
   return axiosGetWithErrorHandling<OrderResponse[]>(path);
 }
 
-export { fetchOrderById, fetchOrdersByCustomerId };
+// GET /users/email/:email/orders
+async function fetchOrdersByEmail(email: string)
+  : Promise<OrderResponse[]> {
+
+  const path = `/users/email/${email}/orders`;
+
+  return axiosGetWithErrorHandling<OrderResponse[]>(path);
+}
+
+export { fetchOrderById, fetchOrdersByCustomerId, fetchOrdersByEmail };
