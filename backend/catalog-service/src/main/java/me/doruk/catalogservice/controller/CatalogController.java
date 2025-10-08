@@ -10,11 +10,15 @@ import me.doruk.ticketingcommonlibrary.model.Cart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 
 import java.util.List;
 import java.util.Map;
 
+@Validated
 @RestController
 @RequestMapping("api/v1")
 public class CatalogController {
@@ -51,14 +55,14 @@ public class CatalogController {
   }
 
   @PostMapping(value = "/catalog/add-venue", consumes = "application/json", produces = "application/json")
-  public ResponseEntity<VenueResponse> createVenue(@RequestBody VenueCreateRequest request) {
+  public ResponseEntity<VenueResponse> createVenue(@RequestBody @Valid VenueCreateRequest request) {
     System.out.println("POST /api/v1/catalog/add-venue called");
     VenueResponse createdVenue = catalogService.createVenue(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdVenue);
   }
 
   @PostMapping(value = "/catalog/add-event", consumes = "application/json", produces = "application/json")
-  public ResponseEntity<EventResponse> createEvent(@RequestBody EventCreateRequest request) {
+  public ResponseEntity<EventResponse> createEvent(@RequestBody @Valid EventCreateRequest request) {
     System.out.println("POST /api/v1/catalog/add-event called");
     EventResponse createdEvent = catalogService.createEvent(request);
     return ResponseEntity.status(HttpStatus.CREATED).body(createdEvent);
