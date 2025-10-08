@@ -1,6 +1,9 @@
 package me.doruk.orderservice.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,12 +29,15 @@ public class OrderItem {
   private Long id;
 
   @Column(name = "order_id")
+  @NotBlank(message = "Order ID is required")
   private String orderId;
 
   @Column(name = "event_id")
+  @NotNull(message = "Event ID is required")
   private Long eventId;
 
   @Column(name = "quantity")
+  @Min(value = 1, message = "Ticket count must be at least 1")
   private int ticketCount;
 
   @Column(name = "ticket_price")
