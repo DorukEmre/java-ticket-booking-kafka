@@ -1,30 +1,20 @@
 import { useState } from "react";
 
 import CheckoutForm from "@/components/CheckoutForm";
-import type { Cart, CartStatusType, CheckoutRequest } from "@/types/cart";
+import type { CartStatusType, CheckoutRequest } from "@/types/cart";
 import { CartStatus } from "@/utils/globals";
-import { checkoutCart } from "@/api/cart";
 import OrderConfirmationStatus from "@/components/OrderConfirmationStatus";
 import CartItemEntry from "@/components/CartItemEntry";
+import { useCart } from "@/context/CartContext";
 
 function CartPage() {
+  const { cart, checkout } = useCart();
+
   const [customerName, setCustomerName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [cartStatus, setCartStatus] = useState<CartStatusType>(CartStatus.IN_PROGRESS);
 
-  let existingCart = localStorage.getItem("cart");
-
-  let cart: Cart = existingCart
-    ? JSON.parse(existingCart)
-    : null;
-
   console.log("CartPage existing cart:", cart);
-
-  if (cart && cart.items.length > 0) {
-    console.log("Cart items:", cart.items);
-  } else {
-    console.log("Cart is empty");
-  }
 
   async function handleCheckout(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -38,12 +28,14 @@ function CartPage() {
           email,
           items: cart ? cart.items : []
         };
-        let response = await checkoutCart(cart.cartId, request);
-        console.log("Checkout response:", response);
+
+        await checkout(request);
 
         setCustomerName("");
         setEmail("");
         setCartStatus(CartStatus.PENDING);
+        console.log("handleCheckout > Checkout successful, status set to PENDING");
+
       } catch (error) {
         console.error("Checkout failed:", error);
         setCartStatus(CartStatus.FAILED);
@@ -56,7 +48,7 @@ function CartPage() {
 
   return (
     <>
-      {(cartStatus != CartStatus.IN_PROGRESS) ? (
+      {(cart && cartStatus != CartStatus.IN_PROGRESS) ? (
         <OrderConfirmationStatus
           cartid={cart.cartId}
           cartStatus={cartStatus}

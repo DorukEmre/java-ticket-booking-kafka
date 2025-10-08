@@ -1,11 +1,11 @@
 import type { Cart, CartItem, CheckoutRequest } from "@/types/cart";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import {
-  createCart as apiCreateCart,
-  saveCartItem as apiSaveCartItem,
-  deleteCartItem as apiDeleteCartItem,
-  fetchCartById as apiFetchCartById,
-  checkoutCart as apiCheckoutCart,
+  apiCreateCart,
+  apiSaveCartItem,
+  apiDeleteCartItem,
+  apiFetchCartById,
+  apiCheckoutCart,
 } from "@/api/cart";
 
 type CartContextType = {
@@ -14,7 +14,7 @@ type CartContextType = {
   addOrUpdateItem: (item: CartItem) => Promise<void>;
   // removeItem: (item: CartItem) => Promise<void>;
   // refreshFromServer: () => Promise<void>;
-  // checkout: (request: CheckoutRequest) => Promise<void>;
+  checkout: (request: CheckoutRequest) => Promise<void>;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -94,6 +94,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       await apiSaveCartItem(cid, item);
       console.log("addOrUpdateItem > Successfully saved cart item to backend");
+
     } catch (error) {
       console.error("apiSaveCartItem failed — rolling back", error);
       if (prevCart) {
@@ -106,6 +107,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function checkout(request: CheckoutRequest) {
+    const cid = await ensureCartId();
+    if (!cid)
+      throw new Error("No cartId available");
+
+    try {
+      await apiCheckoutCart(cid, request);
+      console.log("Checkout successful");
+
+    } catch (error) {
+      console.error("checkout failed", error);
+      throw error; // rethrow to pass to user
+    }
+  }
 
 
   const value: CartContextType = {
@@ -114,7 +129,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     addOrUpdateItem,
     // removeItem,
     // refreshFromServer,
-    // checkout,
+    checkout,
   };
 
   return (
