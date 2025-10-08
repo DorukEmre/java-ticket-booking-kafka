@@ -9,16 +9,20 @@ import TicketQuantitySelector from '@/components/TicketQuantitySelector';
 import ApiErrorMessage from '@/components/ApiErrorMessage';
 
 import { fetchEventById } from '@/api/catalog';
-import { createCart, saveCartItem } from '@/api/cart';
 import { imageBaseUrl } from '@/utils/globals';
 
 import type { Event } from '@/types/catalog';
-import type { Cart, CartItem } from '@/types/cart';
+import type { CartItem } from '@/types/cart';
+import { useCart } from '@/context/CartContext';
 
 function EventDetailPage() {
+  const { addOrUpdateItem } = useCart();
+
   const [ticketCount, setTicketCount] = useState<number>(1);
+
   const { eventId } = useParams<{ eventId: string }>();
   const id = Number(eventId);
+
 
   // Use cached data first, then fetch
   const eventQuery = useQuery<Event>({
@@ -33,62 +37,21 @@ function EventDetailPage() {
   const { data: event, isLoading, isError, error } = eventQuery;
 
   async function saveItemToCart() {
-    console.log("Add to cart clicked");
-
-    // Get existing cart from localStorage
-    let existingCart = localStorage.getItem("cart");
-
-    let cart: Cart = existingCart
-      ? JSON.parse(existingCart)
-      : { cartId: "null", items: [] };
-
-    console.log("existing cartId:", existingCart);
-
-    // If no cartId, create a new cart
-    if (cart.cartId === "null") {
-      try {
-        let response = await createCart();
-
-        if (response && response.cartId) {
-          cart.cartId = response.cartId;
-          localStorage.setItem("cart", JSON.stringify(cart));
-          console.log("Cart ID saved to localStorage:", cart.cartId);
-        }
-
-      } catch (error) {
-        console.error("Error creating cart:", error);
-        // Error creating cart: Object { status: 500, message: "Unable to connect to Redis" }
-        return;
-      }
-    }
+    console.log("EventDetailPage > Add to cart clicked");
 
     // Save item to local cart and backend
     try {
-
-      // Create cart item
       let item: CartItem = {
         eventId: id,
         ticketCount: ticketCount
       }
-      console.log("Saving cart item:", item);
+      console.log("EventDetailPage > Saving cart item:", item);
 
-      // Replace or add item in local cart
-      const existingItemIndex = cart.items.findIndex(item => item.eventId === id);
-      if (existingItemIndex !== -1) {
-        cart.items[existingItemIndex].ticketCount = ticketCount;
-      } else {
-        cart.items.push({ eventId: id, ticketCount: ticketCount });
-      }
-      localStorage.setItem("cart", JSON.stringify(cart));
-      console.log("Cart item saved to localStorage stringify:", JSON.stringify(cart));
-
-      // Save item to backend
-      let response = await saveCartItem(cart.cartId, item);
-      console.log("saveCartItem response:", response);
+      await addOrUpdateItem(item);
 
     } catch (error) {
-      console.error("Error saving cart:", error);
-
+      console.error("EventDetailPage > Error saving cart:", error);
+      // TODO: Show error to user
     }
   }
 
@@ -116,11 +79,13 @@ function EventDetailPage() {
                 style={{ maxWidth: '300px', height: 'auto' }}
               />
             )}
-            <TicketQuantitySelector
-              ticketCount={ticketCount}
-              setTicketCount={setTicketCount}
-            />
-            <button className="px-4 py-2 bg-back-300 text-compl-300 border-2 border-compl-300" onClick={saveItemToCart}>Add to Cart</button>
+            <div className='d-flex align-items-center gap-5 my-3'>
+              <TicketQuantitySelector
+                ticketCount={ticketCount}
+                setTicketCount={setTicketCount}
+              />
+              <button className="px-4 py-2 bg-back-300 text-compl-300 border-2 border-compl-300" onClick={saveItemToCart}>Add to Cart</button>
+            </div>
           </div>
         )}
 

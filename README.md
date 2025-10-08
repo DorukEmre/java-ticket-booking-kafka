@@ -39,6 +39,17 @@ The backend consists of Java-based microservices (e.g., CatalogService) running 
 - Backend services process requests, interact with the MySQL database, and return responses to the frontend.
 - All services are orchestrated using Docker Compose.
 
+## Architecture & Data Flow
+
+- Client keeps a local cartId in localStorage with cartId and a local copy of items for instant UI.
+- Server exposes idempotent APIs: createCart, getCart(cartId), saveCartItem(cartId, item), deleteCartItem(cartId, item), checkout(cartId).
+- On saveCartItem, createCart on server if needed and persist cartId locally.
+- Server stores cart in Redis for fast reads.
+
+- Server treated as source of truth: price and availability validated at checkout and when presenting totals.
+- Items not reserved on saveCartItem, only at checkout
+- Abandoned cart TTL: server expires carts after some time.
+
 ## Purchase Flow
 Ticket purchase request flow through the system. Each service communicates via Kafka events to ensure reliable and decoupled processing.
 
