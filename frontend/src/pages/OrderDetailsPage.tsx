@@ -4,11 +4,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import { fetchOrderById } from "@/api/order";
 import type { OrderResponse } from "@/types/order";
 import { CartStatus } from "@/utils/globals";
-import { useCart } from "@/context/CartContext";
 
 
 function OrderDetailsPage() {
-  const {orderId} = useParams<{ orderId: string }>();
+  const { orderId } = useParams<{ orderId: string }>();
   const [order, setOrder] = useState<OrderResponse | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -19,17 +18,17 @@ function OrderDetailsPage() {
       navigate("/");
     }
   }, [orderId]);
-  
+
   useEffect(() => {
 
     async function getOrderDetails() {
 
       // type OrderItem = {
-        // id: number;
-        // eventId: number;
-        // orderId: string;
-        // ticketCount: number;
-        // ticketPrice: number;
+      // id: number;
+      // eventId: number;
+      // orderId: string;
+      // ticketCount: number;
+      // ticketPrice: number;
       // };
 
       // type OrderResponse = {
@@ -46,16 +45,16 @@ function OrderDetailsPage() {
         console.log("Order details:", response);
         setOrder(response);
 
-      } catch (error) {
+      } catch (error: any) {
         console.error("Failed to fetch order details:", error);
         setErrorMsg(error.message ? error.message : "Failed to fetch order details");
-        
+
       }
     }
     getOrderDetails();
 
   }, []);
-  
+
   return (
     <>
       <p>Order details</p>
@@ -82,7 +81,7 @@ function OrderDetailsPage() {
                   <span>{item.ticketCount} {item.ticketCount > 1 ? "tickets" : "ticket"} </span>
                   <span>for event {item.eventId} </span>
                   {order.status === "CONFIRMED" && (
-                        <span>at {item.ticketPrice.toFixed(2)} each</span>
+                    <span>at {item.ticketPrice.toFixed(2)} each</span>
                   )}
                 </p>
               </li>

@@ -1,17 +1,15 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
-import { fetchOrderById } from "@/api/order";
 import type { OrderResponse } from "@/types/order";
 import { CartStatus } from "@/utils/globals";
-import { useCart } from "@/context/CartContext";
 import { fetchOrdersByEmail } from "@/api/order";
 
 function UserOrdersPage() {
 
   const [orders, setOrders] = useState<OrderResponse[] | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [email, setEmail] = useState<string | null>("");
+  const [email, setEmail] = useState<string>("");
 
   async function handleGetOrders(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -29,11 +27,15 @@ function UserOrdersPage() {
       setOrders(response);
       setErrorMsg(null);
 
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Failed to fetch orders:", error);
-      setErrorMsg(error.message ? error.message : "Failed to fetch orders");
+      if (error instanceof Error) {
+        setErrorMsg(error.message);
+      } else {
+        setErrorMsg(String(error) || "Failed to fetch orders");
+      }
       setOrders(null);
-      
+
     }
   }
 
@@ -69,7 +71,7 @@ function UserOrdersPage() {
             autoComplete="email"
             placeholder="Enter your email"
           />
-          <button  className="px-4 py-2 bg-back-300 text-compl-300 border-2 border-compl-300" onClick={handleGetOrders}>Get My Orders</button>
+          <button className="px-4 py-2 bg-back-300 text-compl-300 border-2 border-compl-300">Get My Orders</button>
         </form>
       </div>
       {errorMsg && (
@@ -111,8 +113,8 @@ function UserOrdersPage() {
                 </li>
               ))}
             </ul>
-          )}  
-          
+          )}
+
         </div>
       )}
     </>

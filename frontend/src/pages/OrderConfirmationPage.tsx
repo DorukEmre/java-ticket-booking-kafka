@@ -10,8 +10,8 @@ import { useCart } from "@/context/CartContext";
 function OrderConfirmationPage() {
 
   const { deleteCart } = useCart();
-  
-  const {orderId} = useParams<{ orderId: string }>();
+
+  const { orderId } = useParams<{ orderId: string }>();
   const [order, setOrder] = useState<OrderResponse | null>(null);
 
   const navigate = useNavigate();
@@ -27,17 +27,17 @@ function OrderConfirmationPage() {
   useEffect(() => {
     if (!fromCheckout) {
       navigate("/");
-      return ;
+      return;
     }
 
     async function getOrderDetails() {
 
       // type OrderItem = {
-        // id: number;
-        // eventId: number;
-        // orderId: string;
-        // ticketCount: number;
-        // ticketPrice: number;
+      // id: number;
+      // eventId: number;
+      // orderId: string;
+      // ticketCount: number;
+      // ticketPrice: number;
       // };
 
       // type OrderResponse = {
@@ -55,16 +55,16 @@ function OrderConfirmationPage() {
         setOrder(response);
 
         await deleteCart(); // delete cart after successful order
-        
+
       } catch (error) {
         console.error("Failed to fetch order details:", error);
-        
+
       }
     }
     getOrderDetails();
 
   }, []);
-  
+
   return (
     <>
       <p>Order confirmation</p>
@@ -84,7 +84,7 @@ function OrderConfirmationPage() {
                   <span>{item.ticketCount} {item.ticketCount > 1 ? "tickets" : "ticket"} </span>
                   <span>for event {item.eventId} </span>
                   {order.status === "CONFIRMED" && (
-                        <span>at {item.ticketPrice.toFixed(2)} each</span>
+                    <span>at {item.ticketPrice.toFixed(2)} each</span>
                   )}
                 </p>
               </li>
