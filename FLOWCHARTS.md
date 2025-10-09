@@ -18,7 +18,7 @@ flowchart LR
         OrderRequested[🟣 order-requested]
         ReserveInventory[🟢 reserve-inventory]
         InventoryReserved[🟣 inventory-reserved]
-        InventoryReservationFailed[🟣 inventory-reservation-failed]
+        InventoryReservationResponse[🟣 inventory-reservation-invalid]
         OrderCreated[🟣 order-created]
         OrderFailed[🟣 order-failed]
     end
@@ -31,10 +31,10 @@ flowchart LR
     ReserveInventory --> CatalogService
 
     CatalogService -->|🟣 InventoryReserved| InventoryReserved
-    CatalogService -->|🟣 InventoryReservationFailed| InventoryReservationFailed
+    CatalogService -->|🟣 InventoryReservationResponse| InventoryReservationResponse
 
     InventoryReserved --> OrderService
-    InventoryReservationFailed --> OrderService
+    InventoryReservationResponse --> OrderService
 
     OrderService -->|🟣 OrderCreated| OrderCreated
     OrderService -->|🟣 OrderFailed| OrderFailed

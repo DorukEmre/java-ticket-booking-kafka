@@ -12,7 +12,7 @@ import me.doruk.ticketingcommonlibrary.model.CartItem;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InventoryReservationSucceeded {
+public class InventoryReservationResponse {
   String orderId;
   List<CartItem> items;
 }

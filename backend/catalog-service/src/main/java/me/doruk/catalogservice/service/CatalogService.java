@@ -10,8 +10,7 @@ import me.doruk.catalogservice.request.EventCreateRequest;
 import me.doruk.catalogservice.request.VenueCreateRequest;
 import me.doruk.catalogservice.response.EventResponse;
 import me.doruk.catalogservice.response.VenueResponse;
-import me.doruk.ticketingcommonlibrary.event.InventoryReservationFailed;
-import me.doruk.ticketingcommonlibrary.event.InventoryReservationSucceeded;
+import me.doruk.ticketingcommonlibrary.event.InventoryReservationResponse;
 import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
 import me.doruk.ticketingcommonlibrary.model.Cart;
 import me.doruk.ticketingcommonlibrary.model.CartItem;
@@ -164,7 +163,7 @@ public class CatalogService {
           && item.getTicketCount() > 0
           && event.getRemainingCapacity() >= item.getTicketCount();
 
-      log.warn("Item " + item + " is valid: " + isValid
+      log.info("Item " + item + " is valid: " + isValid
           + ". Event null? " + (event == null)
           + ", remaining capacity: " + (event != null ? event.getRemainingCapacity() : "N/A")
           + ", requested: " + item.getTicketCount());
@@ -215,14 +214,31 @@ public class CatalogService {
       updatedItems.add(updated);
     }
 
-    // Valid is available and NO priceChanged
+    // Check if all items have a ticket price and an eventId
+    boolean allHavePrice = updatedItems.stream()
+        .allMatch(i -> i.getTicketPrice() != null && i.getTicketPrice().compareTo(BigDecimal.ZERO) > 0);
+    boolean allHaveEventId = updatedItems.stream()
+        .allMatch(i -> i.getEventId() != null);
+
+    if (!allHavePrice && !allHaveEventId) {
+      log.warn("Reservation failed due to database error: {}", updatedItems);
+
+      kafkaTemplate.send("inventory-reservation-failed", InventoryReservationResponse.builder()
+          .orderId(request.getOrderId())
+          .items(updatedItems)
+          .build());
+
+      return;
+    }
+
+    // Valid item is available and NO priceChanged
     boolean allValid = updatedItems.stream().allMatch(i -> i.isAvailable() && !i.isPriceChanged());
 
-    // If not all valid, send InventoryReservationFailed and return
+    // If not all valid, send InventoryReservationResponse and return
     if (!allValid) {
-      log.warn("Reservation failed: {}", updatedItems);
+      log.warn("Reservation invalid: {}", updatedItems);
 
-      kafkaTemplate.send("inventory-reservation-failed", InventoryReservationFailed.builder()
+      kafkaTemplate.send("inventory-reservation-invalid", InventoryReservationResponse.builder()
           .orderId(request.getOrderId())
           .items(updatedItems)
           .build());
@@ -248,7 +264,7 @@ public class CatalogService {
     log.info("Successfully reserved inventory for order " + request.getOrderId());
 
     // Send InventoryReservationSucceeded event
-    kafkaTemplate.send("inventory-reservation-succeeded", InventoryReservationSucceeded.builder()
+    kafkaTemplate.send("inventory-reservation-succeeded", InventoryReservationResponse.builder()
         .orderId(request.getOrderId())
         .items(updatedItems)
         .build());

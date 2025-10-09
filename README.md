@@ -59,18 +59,20 @@ Ticket purchase request flow through the system. Each service communicates via K
 
 2) Order Service consumes
 - Check cart not already processed
-- Save Order(`PENDING`)
+- Save Order(`VALIDATING`)
 
   → emit `ReserveInventory`
 
 3) Catalog Service consumes
 - Checks availability and updates stock
 
-  → emit `InventoryReservationSucceeded` OR `InventoryReservationFailed`
+  → emit `InventoryReservationResponse`
 
 4) Order Service consumes
-- If success: update Order(`CONFIRMED`)  
+- If success: update Order(`PENDING_PAYMENT`)  
   → emit `OrderCreationSucceeded`
+- If invalid: update Order(`INVALID`)  
+  → emit `OrderCreationInvalid`
 - If fail: update Order(`FAILED`)  
   → emit `OrderCreationFailed`
 
@@ -79,8 +81,8 @@ Ticket purchase request flow through the system. Each service communicates via K
 
 6) Frontend Cart Update
   - Poll `/cart/{cartId}/status` (or subscribe via WebSocket for real-time updates)
-  - If status = `CONFIRMED` → redirect to /orders/{orderId}
-  - If status = `FAILED` → display checkout failed
+  - If status = `PENDING_PAYMENT` → redirect to /orders/{orderId}
+  - If status = `INVALID` → display checkout INVALID
 
 
 ## Microservice Structure
