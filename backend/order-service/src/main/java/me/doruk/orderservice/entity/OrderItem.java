@@ -41,6 +41,7 @@ public class OrderItem {
   private int ticketCount;
 
   @Column(name = "ticket_price")
+  @NotNull(message = "Ticket price is required")
   private BigDecimal ticketPrice;
 
 }

@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.doruk.cartservice.client.CatalogServiceClient;
 import me.doruk.cartservice.model.CartCacheEntry;
-import me.doruk.cartservice.model.CartStatus;
 import me.doruk.cartservice.request.CheckoutRequest;
 import me.doruk.cartservice.response.CartIdResponse;
 import me.doruk.cartservice.response.CartResponse;
@@ -15,6 +14,7 @@ import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationSucceeded;
 import me.doruk.ticketingcommonlibrary.model.Cart;
 import me.doruk.ticketingcommonlibrary.model.CartItem;
+import me.doruk.ticketingcommonlibrary.model.CartStatus;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -114,9 +114,12 @@ public class CartService {
     cartCache.getItems().stream()
         .filter(i -> i.getEventId().equals(item.getEventId()))
         .findFirst()
-        .ifPresentOrElse(
-            existing -> existing.setTicketCount(item.getTicketCount()),
-            () -> cartCache.getItems().add(item));
+        .ifPresentOrElse(existing -> {
+          existing.setTicketCount(item.getTicketCount());
+          if (item.getTicketPrice() != null) {
+            existing.setTicketPrice(item.getTicketPrice());
+          }
+        }, () -> cartCache.getItems().add(item));
 
     try {
       saveCartToRedis(cartId, cartCache);
@@ -242,6 +245,7 @@ public class CartService {
             .map((CartItem item) -> CartItem.builder()
                 .eventId(item.getEventId())
                 .ticketCount(item.getTicketCount())
+                .ticketPrice(item.getTicketPrice())
                 .build())
             .toList())
         .build();

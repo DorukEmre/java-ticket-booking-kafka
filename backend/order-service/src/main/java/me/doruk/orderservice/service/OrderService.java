@@ -11,6 +11,7 @@ import me.doruk.ticketingcommonlibrary.event.OrderCreationFailed;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationSucceeded;
 import me.doruk.ticketingcommonlibrary.model.CartItem;
+import me.doruk.ticketingcommonlibrary.model.CartStatus;
 import me.doruk.orderservice.entity.Customer;
 import me.doruk.orderservice.entity.OrderItem;
 import me.doruk.orderservice.entity.OrderRequestLog;
@@ -28,9 +29,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
-import jakarta.transaction.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -180,6 +180,7 @@ public class OrderService {
         .map(item -> CartItem.builder()
             .eventId(item.getEventId())
             .ticketCount(item.getTicketCount())
+            .ticketPrice(item.getTicketPrice())
             .build())
         .toList();
 
@@ -209,6 +210,7 @@ public class OrderService {
         .map(item -> OrderItem.builder()
             .eventId(item.getEventId())
             .ticketCount(item.getTicketCount())
+            .ticketPrice(item.getTicketPrice())
             .build())
         .toList();
   }
@@ -218,7 +220,7 @@ public class OrderService {
     return Order.builder()
         .id(NanoIdUtils.randomNanoId(NanoIdUtils.DEFAULT_NUMBER_GENERATOR, NanoIdUtils.DEFAULT_ALPHABET, 8))
         .customerId(customerId)
-        .status("PENDING")
+        .status(CartStatus.PENDING.name())
         .placedAt(LocalDateTime.now())
         .build();
   }
