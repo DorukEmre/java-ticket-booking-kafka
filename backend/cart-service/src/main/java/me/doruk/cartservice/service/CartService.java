@@ -78,7 +78,8 @@ public class CartService {
     UUID cartId = UUID.randomUUID();
     System.out.println("createCart > Generated cartId: " + cartId);
 
-    CartCacheEntry cartCache = new CartCacheEntry(cartId, null, CartStatus.IN_PROGRESS, new ArrayList<>());
+    CartCacheEntry cartCache = new CartCacheEntry(
+        cartId, null, CartStatus.PENDING, new ArrayList<>());
 
     try {
       saveCartToRedis(cartId, cartCache);
@@ -101,7 +102,7 @@ public class CartService {
     if (cartCache == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found");
     }
-    if (cartCache.getStatus() != CartStatus.IN_PROGRESS) {
+    if (cartCache.getStatus() != CartStatus.PENDING) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart already checked out");
     }
 
@@ -140,7 +141,7 @@ public class CartService {
     if (cartCache == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found");
     }
-    if (cartCache.getStatus() != CartStatus.IN_PROGRESS) {
+    if (cartCache.getStatus() != CartStatus.PENDING) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart already checked out");
     }
 
@@ -209,7 +210,7 @@ public class CartService {
     if (cartCache == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found");
     }
-    if (cartCache.getStatus() != CartStatus.IN_PROGRESS) {
+    if (cartCache.getStatus() != CartStatus.PENDING) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart already checked out");
     }
     if (cartCache.getItems() == null || cartCache.getItems().isEmpty()) {
@@ -235,7 +236,7 @@ public class CartService {
               .build());
     }
 
-    // Update cart status to PENDING before sending event
+    // Update cart status to IN_PROGRESS before sending event
     cartCache.setStatus(CartStatus.IN_PROGRESS);
     saveCartToRedis(cartId, cartCache);
 
