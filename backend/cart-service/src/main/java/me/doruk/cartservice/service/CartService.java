@@ -4,17 +4,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.doruk.cartservice.client.CatalogServiceClient;
 import me.doruk.cartservice.model.CartCacheEntry;
+import me.doruk.cartservice.model.CartStatus;
 import me.doruk.cartservice.request.CheckoutRequest;
 import me.doruk.cartservice.response.CartIdResponse;
 import me.doruk.cartservice.response.CartResponse;
 import me.doruk.cartservice.response.CartStatusResponse;
 import me.doruk.cartservice.response.InvalidCheckoutResponse;
-import me.doruk.ticketingcommonlibrary.event.OrderCreationFailed;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
-import me.doruk.ticketingcommonlibrary.event.OrderCreationSucceeded;
+import me.doruk.ticketingcommonlibrary.event.OrderCreationResponse;
 import me.doruk.ticketingcommonlibrary.model.Cart;
 import me.doruk.ticketingcommonlibrary.model.CartItem;
-import me.doruk.ticketingcommonlibrary.model.CartStatus;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -38,7 +37,7 @@ public class CartService {
   private static final long CART_TTL_SECONDS = 86400; // 24 hours
 
   private final CatalogServiceClient catalogServiceClient;
-  private final KafkaTemplate<String, OrderCreationRequested> kafkaTemplate;
+  private final KafkaTemplate<String, Object> kafkaTemplate;
   private final RedisTemplate<String, Object> redisTemplate;
 
   // Redis methods
@@ -216,7 +215,7 @@ public class CartService {
     }
 
     // Update cart status to PENDING before sending event
-    cartCache.setStatus(CartStatus.PENDING);
+    cartCache.setStatus(CartStatus.IN_PROGRESS);
     saveCartToRedis(cartId, cartCache);
 
     // Create order-requested event
@@ -266,9 +265,9 @@ public class CartService {
     return ResponseEntity.ok(statusResponse);
   }
 
-  // Consumer for OrderCreationFailed events from order-service
+  // Consumer for order-failed events from order-service
   @KafkaListener(topics = "order-failed", groupId = "cart-service")
-  public void handleOrderCreationFailed(OrderCreationFailed request) {
+  public void handleOrderCreationFailed(OrderCreationResponse request) {
     System.out.println("Received order creation failed for orderId: " + request);
 
     CartCacheEntry cart = getCartFromRedis(request.getCartId());
@@ -284,9 +283,28 @@ public class CartService {
     log.info("Updated cart in Redis with failed order: {}", request.getOrderId());
   }
 
-  // Consumer for OrderCreationSucceeded events from order-service
+  // Consumer for order-invalid events from order-service
+  @KafkaListener(topics = "order-invalid", groupId = "cart-service")
+  public void handleOrderCreationInvalid(OrderCreationResponse request) {
+    System.out.println("Received order creation invalid for orderId: " + request);
+
+    CartCacheEntry cart = getCartFromRedis(request.getCartId());
+    if (cart == null) {
+      log.error("Cart not found in Redis for cartId: {}", request.getCartId());
+      return;
+    }
+    cart.setOrderId(request.getOrderId());
+    cart.setStatus(CartStatus.INVALID);
+    cart.setItems(request.getItems()); // Update items with invalid state
+
+    saveCartToRedis(request.getCartId(), cart);
+
+    log.info("Updated cart in Redis with invalid order: {}", request.getOrderId());
+  }
+
+  // Consumer for order-succeeded events from order-service
   @KafkaListener(topics = "order-succeeded", groupId = "cart-service")
-  public void handleOrderCreationSucceeded(OrderCreationSucceeded request) {
+  public void handleOrderCreationSucceeded(OrderCreationResponse request) {
     System.out.println("Received order creation succeeded for orderId: " + request);
 
     CartCacheEntry cart = getCartFromRedis(request.getCartId());
