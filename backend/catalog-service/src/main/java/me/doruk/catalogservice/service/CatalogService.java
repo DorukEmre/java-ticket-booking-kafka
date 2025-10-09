@@ -10,6 +10,7 @@ import me.doruk.catalogservice.request.EventCreateRequest;
 import me.doruk.catalogservice.request.VenueCreateRequest;
 import me.doruk.catalogservice.response.EventResponse;
 import me.doruk.catalogservice.response.VenueResponse;
+import me.doruk.ticketingcommonlibrary.event.InventoryReleaseRequested;
 import me.doruk.ticketingcommonlibrary.event.InventoryReservationResponse;
 import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
 import me.doruk.ticketingcommonlibrary.model.Cart;
@@ -269,6 +270,42 @@ public class CatalogService {
         .items(updatedItems)
         .build());
 
+  }
+
+  // Listen for release-inventory events from order-service
+  @Transactional
+  @KafkaListener(topics = "reserve-inventory", groupId = "catalog-service")
+  public void releaseInventory(InventoryReleaseRequested request) {
+    System.out.println("Received release inventory: " + request);
+
+    List<CartItem> items = request.getItems();
+    List<Long> eventIds = items.stream().map(CartItem::getEventId).toList();
+    List<Event> eventsToUpdate = eventRepository.findAllByIdForUpdate(eventIds);
+
+    // Update remaining capacities
+    for (CartItem item : items) {
+      Event event = eventsToUpdate.stream()
+          .filter(e -> e.getId().equals(item.getEventId()))
+          .findFirst()
+          .orElse(null);
+
+      if (event != null) {
+        event.setRemainingCapacity(
+            event.getRemainingCapacity() + item.getTicketCount());
+
+        // Ensure remainingCapacity does not exceed totalCapacity
+        if (event.getRemainingCapacity() > event.getTotalCapacity()) {
+          event.setRemainingCapacity(event.getTotalCapacity());
+
+          log.warn("Adjusted remaining capacity for event {} to not exceed total capacity.", event.getId());
+        }
+
+        eventRepository.save(event);
+
+        log.info("Released {} tickets for event {}. New remaining capacity: {}",
+            item.getTicketCount(), event.getId(), event.getRemainingCapacity());
+      }
+    }
   }
 
 }

@@ -5,6 +5,7 @@ import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
+import me.doruk.ticketingcommonlibrary.event.InventoryReleaseRequested;
 import me.doruk.ticketingcommonlibrary.event.InventoryReservationResponse;
 import me.doruk.ticketingcommonlibrary.event.OrderCancelledRequested;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
@@ -135,6 +136,7 @@ public class OrderService {
     return orderItemRepository.findAllByOrderId(orderId).orElse(List.of());
   }
 
+  // Listen for order-requested events from cart-service
   @Transactional
   @KafkaListener(topics = "order-requested", groupId = "order-service")
   public void orderEvent(OrderCreationRequested request) {
@@ -224,7 +226,7 @@ public class OrderService {
         .build();
   }
 
-  // Listen for InventoryReservationResponse events from order-service
+  // Listen for inventory-reservation-failed events from catalog-service
   @KafkaListener(topics = "inventory-reservation-failed", groupId = "order-service")
   public void handleInventoryReservationFailed(InventoryReservationResponse request) {
     System.out.println("Received inventory reservation failed for orderId: " + request.getOrderId());
@@ -246,7 +248,7 @@ public class OrderService {
 
   }
 
-  // Listen for InventoryReservationResponse events from order-service
+  // Listen for inventory-reservation-invalid events from catalog-service
   @KafkaListener(topics = "inventory-reservation-invalid", groupId = "order-service")
   public void handleInventoryReservationInvalid(InventoryReservationResponse request) {
     System.out.println("Received inventory reservation invalid for orderId: " + request.getOrderId());
@@ -268,16 +270,44 @@ public class OrderService {
 
   }
 
-  // Listen for InventoryReservationResponse events from order-service
+  // Listen for inventory-reservation-succeeded events from catalog-service
   @Transactional
   @KafkaListener(topics = "inventory-reservation-succeeded", groupId = "order-service")
   public void handleInventoryReservationSucceeded(InventoryReservationResponse request) {
     System.out.println("Received inventory reservation succeeded for orderId: " + request);
 
+    Order order = orderRepository.findById(request.getOrderId()).orElse(null);
+    if (order == null) {
+      log.warn("No order found with id={}, skipping.", request.getOrderId());
+      return;
+    }
+
     // Get OrderItems
     List<OrderItem> orderItems = orderItemRepository.findAllByOrderId(request.getOrderId()).orElse(List.of());
 
-    System.out.println("Fetched order items: " + orderItems);
+    // Release inventory if order is already CANCELLED
+    if (order.getStatus().equals(OrderStatus.CANCELLED.name())) {
+      log.info("Order {} is CANCELLED, release inventory required.", order.getId());
+
+      // Send event to catalog-service to release inventory
+      kafkaTemplate.send("release-inventory",
+          InventoryReleaseRequested.builder()
+              .orderId(order.getId())
+              .items(orderItems.stream().map(item -> CartItem.builder()
+                  .eventId(item.getEventId())
+                  .ticketCount(item.getTicketCount())
+                  .ticketPrice(item.getTicketPrice())
+                  .build()).toList())
+              .build());
+
+      return;
+    }
+
+    // Skip if order is not in VALIDATING status
+    if (!order.getStatus().equals(OrderStatus.VALIDATING.name())) {
+      log.info("Order {} is not VALIDATING, skipping.", order.getId());
+      return;
+    }
 
     // Update ticket prices in OrderItems
     orderItems.forEach(item -> {
@@ -291,11 +321,7 @@ public class OrderService {
     });
     orderItemRepository.saveAll(orderItems);
 
-    System.out.println("Updated order items ticket price: " + orderItems);
-
-    // Get and update Order with status and total price
-    Order order = orderRepository.findById(request.getOrderId()).orElse(null);
-
+    // Update Order status and total price
     BigDecimal totalPrice = orderItems.stream()
         .map(item -> item.getTicketPrice().multiply(BigDecimal.valueOf(item.getTicketCount())))
         .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -304,7 +330,7 @@ public class OrderService {
     order.setStatus(OrderStatus.PENDING_PAYMENT.name());
     orderRepository.save(order);
 
-    log.info("Order {} saved to db as PENDING_PAYMENT.", order.getId() + ", totalPrice=" + totalPrice);
+    log.info("Order {} saved to db as PENDING_PAYMENT.", order.getId() + ", totalPrice=" + totalPrice, orderItems);
 
     List<CartItem> cartItems = orderItems.stream()
         .map(item -> CartItem.builder()
@@ -330,37 +356,52 @@ public class OrderService {
   public void handleOrderCancelled(OrderCancelledRequested request) {
     System.out.println("Received order cancelled for cartId: " + request.getCartId());
 
-    // // Get Order by cartId
-    // OrderRequestLog orderRequestLog =
-    // orderRequestLogRepository.findByCartId(request.getCartId())
-    // .orElse(null);
-    // if (orderRequestLog == null) {
-    // log.warn("No order found for cartId={}, skipping cancellation.",
-    // request.getCartId());
-    // return; // No order found for this cartId
-    // }
-    // Order order = orderRepository.findById(orderRequestLog.getOrderId())
-    // .orElse(null);
-    // if (order == null) {
-    // log.warn("No order found with id={}, skipping cancellation.",
-    // orderRequestLog.getOrderId());
-    // return; // No order found with this id
-    // }
-    // if (order.getStatus().equals(OrderStatus.CANCELLED.name())) {
-    // log.info("Order {} is already CANCELLED, skipping.", order.getId());
-    // return; // Order already cancelled
-    // }
-    // // Update order status to CANCELLED
-    // order.setStatus(OrderStatus.CANCELLED.name());
-    // orderRepository.save(order);
-    // log.info("Order {} marked as CANCELLED.", order.getId());
-    // // Send event to catalog-service to release inventory
-    // kafkaTemplate.send("release-inventory",
-    // InventoryReservationResponse.builder()
-    // .orderId(order.getId())
-    // .items(request.getItems())
-    // .build());
-    // log.info("Sent release-inventory event for order {}.", order.getId());
+    // Get Order by cartId
+    OrderRequestLog orderRequestLog = orderRequestLogRepository.findById(request.getCartId()).orElse(null);
+    if (orderRequestLog == null) {
+      log.warn("No order found for cartId={}, skipping cancellation.",
+          request.getCartId());
+      return;
+    }
+
+    Order order = orderRepository.findById(orderRequestLog.getOrderId())
+        .orElse(null);
+    if (order == null) {
+      log.warn("No order found with id={}, skipping cancellation.",
+          orderRequestLog.getOrderId());
+      return;
+    }
+
+    if (!order.getStatus().equals(OrderStatus.VALIDATING.name())
+        || !order.getStatus().equals(OrderStatus.INVALID.name())
+        || !order.getStatus().equals(OrderStatus.PENDING_PAYMENT.name())) {
+      log.info("Order {} is not VALIDATING, INVALID or PENDING_PAYMENT, skipping.", order.getId());
+      return;
+    }
+
+    String previousStatus = order.getStatus();
+
+    // Update order status to CANCELLED
+    order.setStatus(OrderStatus.CANCELLED.name());
+    orderRepository.save(order);
+    log.info("Order {} marked as CANCELLED.", order.getId());
+
+    // If PENDING_PAYMENT, send event to catalog-service to release inventory
+    if (previousStatus.equals(OrderStatus.PENDING_PAYMENT.name())) {
+
+      List<OrderItem> orderItems = orderItemRepository.findAllByOrderId(order.getId()).orElse(List.of());
+
+      kafkaTemplate.send("release-inventory",
+          InventoryReleaseRequested.builder()
+              .orderId(order.getId())
+              .items(orderItems.stream().map(item -> CartItem.builder()
+                  .eventId(item.getEventId())
+                  .ticketCount(item.getTicketCount())
+                  .ticketPrice(item.getTicketPrice())
+                  .build()).toList())
+              .build());
+      log.info("Sent release-inventory event for order {}.", order.getId());
+    }
 
   }
 }
