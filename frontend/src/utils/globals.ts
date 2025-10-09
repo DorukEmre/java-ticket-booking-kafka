@@ -17,8 +17,9 @@ function addBaseUrl(path: string): string {
 
 const CartStatus = {
   PENDING: 'PENDING',
-  CONFIRMED: 'CONFIRMED',
   IN_PROGRESS: 'IN_PROGRESS',
+  INVALID: 'INVALID',
+  CONFIRMED: 'CONFIRMED',
   FAILED: 'FAILED'
 } as const;
 

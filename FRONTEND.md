@@ -22,24 +22,30 @@ Frontend documentation for pages and API endpoints
 
 6) Cart Page
   - Shows items in the user's cart `GET /cart/{cartId}`
-  - Collects customer info (name, email)
-  - Allows checkout `POST /cart/{cartId}/checkout`
+    - Allows "Proceed to checkout"
 
-7) Order Confirmation Page
+7) Checkout Page
+  - Shows checkout `POST /cart/{cartId}/checkout`
+    - Backend checked Order items for price and availability
+    - Displays server-validated total price, and any INVALID item 
+    - Collects customer info (name, email) (and payment details)
+    - Allows mock "Make payment"
+
+8) Order Confirmation Page
   - Confirms purchase and shows status `GET /cart/{cartId}/status`
   - Shows order details after successful checkout `GET /orders/{orderId}`
 
-8) User Orders Page
+9) User Orders Page
   - Lists all orders for a user `GET /users/{userId}/orders`
 
-9) Admin Page
+10) Admin Page
   - Add Venue   `POST /admin/venues/new`
   - Add Event   `POST /admin/events/new`
   - List all users `GET /admin/users`
   - List all orders `GET /admin/orders`
   - Add User    `POST /admin/user/new`
 
-10) Error/404 Page
+11) Error/404 Page
 
 Component architecture
 
