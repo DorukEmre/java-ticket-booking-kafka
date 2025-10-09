@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
 import me.doruk.ticketingcommonlibrary.event.InventoryReservationResponse;
+import me.doruk.ticketingcommonlibrary.event.OrderCancelledRequested;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationResponse;
 import me.doruk.ticketingcommonlibrary.model.CartItem;
@@ -323,4 +324,43 @@ public class OrderService {
 
   }
 
+  // Listen for order-cancelled from cart-service
+  @Transactional
+  @KafkaListener(topics = "order-cancelled", groupId = "order-service")
+  public void handleOrderCancelled(OrderCancelledRequested request) {
+    System.out.println("Received order cancelled for cartId: " + request.getCartId());
+
+    // // Get Order by cartId
+    // OrderRequestLog orderRequestLog =
+    // orderRequestLogRepository.findByCartId(request.getCartId())
+    // .orElse(null);
+    // if (orderRequestLog == null) {
+    // log.warn("No order found for cartId={}, skipping cancellation.",
+    // request.getCartId());
+    // return; // No order found for this cartId
+    // }
+    // Order order = orderRepository.findById(orderRequestLog.getOrderId())
+    // .orElse(null);
+    // if (order == null) {
+    // log.warn("No order found with id={}, skipping cancellation.",
+    // orderRequestLog.getOrderId());
+    // return; // No order found with this id
+    // }
+    // if (order.getStatus().equals(OrderStatus.CANCELLED.name())) {
+    // log.info("Order {} is already CANCELLED, skipping.", order.getId());
+    // return; // Order already cancelled
+    // }
+    // // Update order status to CANCELLED
+    // order.setStatus(OrderStatus.CANCELLED.name());
+    // orderRepository.save(order);
+    // log.info("Order {} marked as CANCELLED.", order.getId());
+    // // Send event to catalog-service to release inventory
+    // kafkaTemplate.send("release-inventory",
+    // InventoryReservationResponse.builder()
+    // .orderId(order.getId())
+    // .items(request.getItems())
+    // .build());
+    // log.info("Sent release-inventory event for order {}.", order.getId());
+
+  }
 }

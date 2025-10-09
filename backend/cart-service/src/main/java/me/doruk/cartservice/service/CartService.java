@@ -10,6 +10,7 @@ import me.doruk.cartservice.response.CartIdResponse;
 import me.doruk.cartservice.response.CartResponse;
 import me.doruk.cartservice.response.CartStatusResponse;
 import me.doruk.cartservice.response.InvalidCheckoutResponse;
+import me.doruk.ticketingcommonlibrary.event.OrderCancelledRequested;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationResponse;
 import me.doruk.ticketingcommonlibrary.model.Cart;
@@ -175,6 +176,26 @@ public class CartService {
     } catch (Exception e) {
       log.error("Error interacting with Redis", e);
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to connect to Redis");
+    }
+
+    System.out.println("Cart deleted from Redis: " + cartId + ", status: " + cartCache.getStatus() +
+        ", orderId: " + cartCache.getOrderId());
+
+    // Mark order as cancelled if exists
+    if (cartCache.getOrderId() != null) {
+      final OrderCancelledRequested orderCancelledEvent = OrderCancelledRequested.builder()
+          .cartId(cartCache.getCartId())
+          .orderId(cartCache.getOrderId())
+          .build();
+
+      kafkaTemplate.send("order-cancelled", orderCancelledEvent)
+          .thenAccept(result -> log.info("Order cancelled event sent successfully: {}",
+              orderCancelledEvent))
+          .exceptionally(ex -> {
+            log.error("Failed to send order-cancelled event: {}", orderCancelledEvent,
+                ex);
+            return null;
+          });
     }
 
     return ResponseEntity.noContent().build();
