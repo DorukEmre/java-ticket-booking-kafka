@@ -20,10 +20,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -174,40 +176,61 @@ public class CatalogService {
   }
 
   // Listen for ReserveInventory events from order-service
+  @Transactional
   @KafkaListener(topics = "reserve-inventory", groupId = "catalog-service")
   public void reserveInventory(ReserveInventory request) {
     System.out.println("Received reserve inventory: " + request);
 
     List<CartItem> items = request.getItems();
-    List<Event> eventsToUpdate = eventRepository.findAllById(
-        items.stream().map(CartItem::getEventId).toList());
+    List<Long> eventIds = items.stream().map(CartItem::getEventId).toList();
+    List<Event> eventsToUpdate = eventRepository.findAllByIdForUpdate(eventIds);
 
-    // Check all events have enough capacity
-    boolean allValid = true;
+    List<CartItem> updatedItems = new ArrayList<CartItem>();
+
+    // Validate items' price and capacity
     for (CartItem item : items) {
       Event event = eventsToUpdate.stream()
           .filter(e -> e.getId().equals(item.getEventId()))
           .findFirst()
           .orElse(null);
 
-      if (event == null || event.getRemainingCapacity() < item.getTicketCount()) {
-        allValid = false;
-        break;
-      }
+      // Check price change
+      BigDecimal previousPrice = item.getTicketPrice() == null ? BigDecimal.ZERO : item.getTicketPrice();
+      BigDecimal currentPrice = (event != null && event.getTicketPrice() != null) ? event.getTicketPrice()
+          : BigDecimal.ZERO;
+      boolean priceChanged = previousPrice.compareTo(currentPrice) != 0;
+
+      // Check capacity
+      boolean available = event != null && event.getRemainingCapacity() >= item.getTicketCount();
+
+      CartItem updated = CartItem.builder()
+          .eventId(item.getEventId())
+          .ticketCount(item.getTicketCount())
+          .previousPrice(previousPrice)
+          .ticketPrice(currentPrice)
+          .priceChanged(priceChanged)
+          .available(available)
+          .build();
+
+      updatedItems.add(updated);
     }
+
+    // Valid is available and NO priceChanged
+    boolean allValid = updatedItems.stream().allMatch(i -> i.isAvailable() && !i.isPriceChanged());
 
     // If not all valid, send InventoryReservationFailed and return
     if (!allValid) {
-      log.warn("Reservation failed due to insufficient capacity.");
+      log.warn("Reservation failed: {}", updatedItems);
 
       kafkaTemplate.send("inventory-reservation-failed", InventoryReservationFailed.builder()
           .orderId(request.getOrderId())
+          .items(updatedItems)
           .build());
 
       return;
     }
 
-    // If all valid, update capacities
+    // If all valid, update remaining event capacities
     for (CartItem item : items) {
       Event event = eventsToUpdate.stream()
           .filter(e -> e.getId().equals(item.getEventId()))
@@ -220,21 +243,9 @@ public class CatalogService {
       }
     }
 
+    // Save updated events to db
     eventRepository.saveAll(eventsToUpdate);
     log.info("Successfully reserved inventory for order " + request.getOrderId());
-
-    // Add ticket price to items
-    List<CartItem> updatedItems = items.stream()
-        .map(item -> CartItem.builder()
-            .eventId(item.getEventId())
-            .ticketCount(item.getTicketCount())
-            .ticketPrice(eventsToUpdate.stream()
-                .filter(e -> e.getId().equals(item.getEventId()))
-                .findFirst()
-                .map(Event::getTicketPrice)
-                .orElse(BigDecimal.ZERO))
-            .build())
-        .toList();
 
     // Send InventoryReservationSucceeded event
     kafkaTemplate.send("inventory-reservation-succeeded", InventoryReservationSucceeded.builder()

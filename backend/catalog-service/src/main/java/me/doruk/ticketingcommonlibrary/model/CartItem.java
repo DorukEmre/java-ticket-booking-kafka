@@ -17,4 +17,8 @@ public class CartItem {
   private Long eventId;
   private int ticketCount;
   private BigDecimal ticketPrice;
+
+  private BigDecimal previousPrice;
+  private boolean priceChanged;
+  private boolean available;
 }

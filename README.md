@@ -27,17 +27,17 @@ Demo set up to make a get and a post request to catalog backend
 
 ## Backend
 
-The backend consists of Java-based microservices (e.g., CatalogService) running in separate Docker containers. Each service exposes RESTful APIs for the frontend to interact with. The backend services connect to the MySQL database for data persistence and retrieval.
+The backend consists of Java-based microservices (e.g., CatalogService) running in separate Docker containers and orchestrated using Docker Compose. Each service exposes RESTful APIs for the frontend to interact with. The backend services connect to the MySQL database for data persistence and retrieval.
 
 - Each backend service has its own Dockerfile and configuration.
 - Services communicate with the database using JDBC or ORM frameworks.
 - API endpoints are designed for CRUD operations and business logic.
 
-### Interactions
-
-- The frontend (React) sends HTTP requests to the Gateway API that forwards the allowed routes to backend endpoints.
-- Backend services process requests, interact with the MySQL database, and return responses to the frontend.
-- All services are orchestrated using Docker Compose.
+## Role of each microservice
+- gateway-api → entry point (routing, throttling)
+- cart-service → temporary state, fast (Redis)
+- order-service → orchestrator, creates orders (Order, Customer)
+- catalog-service → source of truth for availability and price (Event, Venue)
 
 ## Architecture & Data Flow
 
