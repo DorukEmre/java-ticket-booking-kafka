@@ -13,6 +13,6 @@ import me.doruk.ticketingcommonlibrary.model.CartItem;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReserveInventory {
-  String orderId;
-  List<CartItem> items;
+  private String orderId;
+  private List<CartItem> items;
 }

@@ -14,7 +14,7 @@ import me.doruk.ticketingcommonlibrary.model.CartItem;
 @NoArgsConstructor
 @Builder
 public class OrderCreationResponse {
-  UUID cartId;
-  String orderId;
-  List<CartItem> items;
+  private UUID cartId;
+  private String orderId;
+  private List<CartItem> items;
 }
