@@ -1,6 +1,5 @@
 package me.doruk.ticketingcommonlibrary.event;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,9 +13,8 @@ import me.doruk.ticketingcommonlibrary.model.CartItem;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderCreationSucceeded {
+public class OrderCreationResponse {
   UUID cartId;
   String orderId;
-  BigDecimal totalPrice;
   List<CartItem> items;
 }

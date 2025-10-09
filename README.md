@@ -70,11 +70,9 @@ Ticket purchase request flow through the system. Each service communicates via K
 
 4) Order Service consumes
 - If success: update Order(`PENDING_PAYMENT`)  
-  → emit `OrderCreationSucceeded`
-- If invalid: update Order(`INVALID`)  
-  → emit `OrderCreationInvalid`
+- If invalid: update Order(`INVALID`) 
 - If fail: update Order(`FAILED`)  
-  → emit `OrderCreationFailed`
+  → emit `OrderCreationResponse`
 
 5) Cart Service consumes
 - Update cart/order status

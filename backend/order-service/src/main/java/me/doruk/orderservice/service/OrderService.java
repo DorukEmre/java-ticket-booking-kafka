@@ -5,16 +5,14 @@ import com.aventrix.jnanoid.jnanoid.NanoIdUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
-import me.doruk.ticketingcommonlibrary.event.InventoryReservationFailed;
-import me.doruk.ticketingcommonlibrary.event.InventoryReservationSucceeded;
-import me.doruk.ticketingcommonlibrary.event.OrderCreationFailed;
+import me.doruk.ticketingcommonlibrary.event.InventoryReservationResponse;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
-import me.doruk.ticketingcommonlibrary.event.OrderCreationSucceeded;
+import me.doruk.ticketingcommonlibrary.event.OrderCreationResponse;
 import me.doruk.ticketingcommonlibrary.model.CartItem;
-import me.doruk.ticketingcommonlibrary.model.CartStatus;
 import me.doruk.orderservice.entity.Customer;
 import me.doruk.orderservice.entity.OrderItem;
 import me.doruk.orderservice.entity.OrderRequestLog;
+import me.doruk.orderservice.model.OrderStatus;
 import me.doruk.orderservice.entity.Order;
 import me.doruk.orderservice.repository.OrderRepository;
 import me.doruk.orderservice.repository.OrderRequestLogRepository;
@@ -220,25 +218,25 @@ public class OrderService {
     return Order.builder()
         .id(NanoIdUtils.randomNanoId(NanoIdUtils.DEFAULT_NUMBER_GENERATOR, NanoIdUtils.DEFAULT_ALPHABET, 8))
         .customerId(customerId)
-        .status(CartStatus.PENDING.name())
+        .status(OrderStatus.VALIDATING.name())
         .placedAt(LocalDateTime.now())
         .build();
   }
 
-  // Listen for InventoryReservationFailed events from order-service
+  // Listen for InventoryReservationResponse events from order-service
   @KafkaListener(topics = "inventory-reservation-failed", groupId = "order-service")
-  public void handleInventoryReservationFailed(InventoryReservationFailed request) {
+  public void handleInventoryReservationFailed(InventoryReservationResponse request) {
     System.out.println("Received inventory reservation failed for orderId: " + request.getOrderId());
 
-    // Update order status to FAILED
+    // Update order status to INVALID
     Order order = orderRepository.findById(request.getOrderId()).orElse(null);
 
-    order.setStatus("FAILED");
+    order.setStatus(OrderStatus.FAILED.name());
     orderRepository.save(order);
 
-    log.info("Order {} marked as FAILED due to inventory reservation failure.", order.getId());
+    log.info("Order {} marked as FAILED.", order.getId());
 
-    kafkaTemplate.send("order-failed", OrderCreationFailed.builder()
+    kafkaTemplate.send("order-failed", OrderCreationResponse.builder()
         .orderId(order.getId())
         .cartId(orderRequestLogRepository.findByOrderId(order.getId())
             .map(OrderRequestLog::getCartId)
@@ -247,10 +245,32 @@ public class OrderService {
 
   }
 
-  // Listen for InventoryReservationSucceeded events from order-service
+  // Listen for InventoryReservationResponse events from order-service
+  @KafkaListener(topics = "inventory-reservation-invalid", groupId = "order-service")
+  public void handleInventoryReservationInvalid(InventoryReservationResponse request) {
+    System.out.println("Received inventory reservation invalid for orderId: " + request.getOrderId());
+
+    // Update order status to INVALID
+    Order order = orderRepository.findById(request.getOrderId()).orElse(null);
+
+    order.setStatus(OrderStatus.INVALID.name());
+    orderRepository.save(order);
+
+    log.info("Order {} marked as INVALID.", order.getId());
+
+    kafkaTemplate.send("order-invalid", OrderCreationResponse.builder()
+        .orderId(order.getId())
+        .cartId(orderRequestLogRepository.findByOrderId(order.getId())
+            .map(OrderRequestLog::getCartId)
+            .orElse(null))
+        .build());
+
+  }
+
+  // Listen for InventoryReservationResponse events from order-service
   @Transactional
   @KafkaListener(topics = "inventory-reservation-succeeded", groupId = "order-service")
-  public void handleInventoryReservationSucceeded(InventoryReservationSucceeded request) {
+  public void handleInventoryReservationSucceeded(InventoryReservationResponse request) {
     System.out.println("Received inventory reservation succeeded for orderId: " + request);
 
     // Get OrderItems
@@ -272,21 +292,18 @@ public class OrderService {
 
     System.out.println("Updated order items ticket price: " + orderItems);
 
-    // Calculate total price
+    // Get and update Order with status and total price
+    Order order = orderRepository.findById(request.getOrderId()).orElse(null);
+
     BigDecimal totalPrice = orderItems.stream()
         .map(item -> item.getTicketPrice().multiply(BigDecimal.valueOf(item.getTicketCount())))
         .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-    System.out.println("Calculated total price: " + totalPrice);
-
-    // Update order status to CONFIRMED
-    Order order = orderRepository.findById(request.getOrderId()).orElse(null);
-
     order.setTotalPrice(totalPrice);
-    order.setStatus("CONFIRMED");
+    order.setStatus(OrderStatus.PENDING_PAYMENT.name());
     orderRepository.save(order);
 
-    log.info("Order {} marked as CONFIRMED.", order.getId());
+    log.info("Order {} saved to db as PENDING_PAYMENT.", order.getId() + ", totalPrice=" + totalPrice);
 
     List<CartItem> cartItems = orderItems.stream()
         .map(item -> CartItem.builder()
@@ -296,12 +313,11 @@ public class OrderService {
             .build())
         .toList();
 
-    kafkaTemplate.send("order-succeeded", OrderCreationSucceeded.builder()
+    kafkaTemplate.send("order-succeeded", OrderCreationResponse.builder()
         .orderId(order.getId())
         .cartId(orderRequestLogRepository.findByOrderId(order.getId())
             .map(OrderRequestLog::getCartId)
             .orElse(null))
-        .totalPrice(totalPrice)
         .items(cartItems)
         .build());
 
