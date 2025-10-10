@@ -236,12 +236,22 @@ public class CartService {
               .build());
     }
 
-    // Update cart status to IN_PROGRESS before sending event
+    // Update cart items and cart status to IN_PROGRESS before sending event
+    cartCache.setItems(request.getItems().stream()
+        .map((CartItem item) -> CartItem.builder()
+            .eventId(item.getEventId())
+            .ticketCount(item.getTicketCount())
+            .ticketPrice(item.getTicketPrice())
+            .build())
+        .toList());
     cartCache.setStatus(CartStatus.IN_PROGRESS);
     saveCartToRedis(cartId, cartCache);
 
     // Create order-requested event
-    final OrderCreationRequested orderCreationRequested = createOrderRequested(request, cartCache);
+    final OrderCreationRequested orderCreationRequested = OrderCreationRequested.builder()
+        .cartId(cart.getCartId())
+        .items(cart.getItems())
+        .build();
     System.out.println(orderCreationRequested);
 
     // Send cart to order-service with Kafka
@@ -253,21 +263,6 @@ public class CartService {
         });
 
     return ResponseEntity.status(HttpStatus.ACCEPTED).build();
-  }
-
-  private OrderCreationRequested createOrderRequested(
-      final CheckoutRequest request, final CartCacheEntry cart) {
-
-    return OrderCreationRequested.builder()
-        .cartId(cart.getCartId())
-        .items(request.getItems().stream()
-            .map((CartItem item) -> CartItem.builder()
-                .eventId(item.getEventId())
-                .ticketCount(item.getTicketCount())
-                .ticketPrice(item.getTicketPrice())
-                .build())
-            .toList())
-        .build();
   }
 
   public ResponseEntity<?> checkCartStatus(final UUID cartId) {
