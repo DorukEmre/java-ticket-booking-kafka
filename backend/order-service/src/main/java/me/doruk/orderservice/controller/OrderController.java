@@ -40,15 +40,15 @@ public class OrderController {
   }
 
   @GetMapping("/users/id/{customerId}/orders")
-  public ResponseEntity<?> getAllOrdersByUser(@PathVariable("customerId") Long customerId) {
+  public ResponseEntity<?> listOrdersByUserId(@PathVariable("customerId") Long customerId) {
     System.out.println("GET /api/v1/users/{customerId}/orders called");
-    return orderService.getAllOrdersByUser(customerId);
+    return orderService.listOrdersByUserId(customerId);
   }
 
   @GetMapping("/users/email/{email}/orders")
-  public ResponseEntity<?> getAllOrdersByEmail(@PathVariable("email") @Email String email) {
+  public ResponseEntity<?> listOrdersByEmail(@PathVariable("email") @Email String email) {
     System.out.println("GET /api/v1/users/{email}/orders called");
-    return orderService.getAllOrdersByEmail(email);
+    return orderService.listOrdersByEmail(email);
   }
 
   @PostMapping(value = "/orders/{orderId}/payment", consumes = "application/json", produces = "application/json")
@@ -63,13 +63,13 @@ public class OrderController {
   @GetMapping("/orders")
   public List<OrderResponse> getOrders() {
     System.out.println("GET /api/v1/orders called");
-    return orderService.getAllOrders();
+    return orderService.listAllOrders();
   }
 
   @GetMapping("/users")
   public List<UserResponse> getUsers() {
     System.out.println("GET /api/v1/users called");
-    return orderService.GetAllUsers();
+    return orderService.listAllUsers();
   }
 
   @PostMapping(value = "/users/new", consumes = "application/json", produces = "application/json")

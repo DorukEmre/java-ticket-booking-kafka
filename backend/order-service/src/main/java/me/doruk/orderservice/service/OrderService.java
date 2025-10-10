@@ -61,13 +61,13 @@ public class OrderService {
         .totalPrice(order.getTotalPrice())
         .placedAt(order.getPlacedAt())
         .status(order.getStatus())
-        .items(getOrderItems(order.getId()))
+        .items(listOrderItems(order.getId()))
         .build();
 
     return ResponseEntity.ok(reponse);
   }
 
-  public ResponseEntity<?> getAllOrdersByUser(final Long customerId) {
+  public ResponseEntity<?> listOrdersByUserId(final Long customerId) {
     customerRepository.findById(customerId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
@@ -80,22 +80,22 @@ public class OrderService {
         .totalPrice(order.getTotalPrice())
         .placedAt(order.getPlacedAt())
         .status(order.getStatus())
-        .items(getOrderItems(order.getId()))
+        .items(listOrderItems(order.getId()))
         .build()).toList();
 
     return ResponseEntity.ok(orderResponses);
   }
 
-  public ResponseEntity<?> getAllOrdersByEmail(final String email) {
+  public ResponseEntity<?> listOrdersByEmail(final String email) {
     Customer customer = customerRepository.findByEmail(email)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-    return getAllOrdersByUser(customer.getId());
+    return listOrdersByUserId(customer.getId());
   }
 
   // Admin methods
 
-  public List<UserResponse> GetAllUsers() {
+  public List<UserResponse> listAllUsers() {
     final List<Customer> users = customerRepository.findAll();
 
     return users.stream().map(user -> UserResponse.builder()
@@ -120,7 +120,7 @@ public class OrderService {
         .build();
   }
 
-  public List<OrderResponse> getAllOrders() {
+  public List<OrderResponse> listAllOrders() {
     final List<Order> orders = orderRepository.findAll();
 
     return orders.stream().map((Order order) -> OrderResponse.builder()
@@ -129,11 +129,11 @@ public class OrderService {
         .totalPrice(order.getTotalPrice())
         .placedAt(order.getPlacedAt())
         .status(order.getStatus())
-        .items(getOrderItems(order.getId()))
+        .items(listOrderItems(order.getId()))
         .build()).toList();
   }
 
-  private List<OrderItem> getOrderItems(String orderId) {
+  private List<OrderItem> listOrderItems(String orderId) {
     return orderItemRepository.findAllByOrderId(orderId).orElse(List.of());
   }
 
