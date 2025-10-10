@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Header from '@/components/Header';
 
@@ -9,6 +8,7 @@ import VenueDetailPage from '@/pages/VenueDetailPage';
 import EventsPage from '@/pages/EventsPage';
 import EventDetailPage from '@/pages/EventDetailPage';
 import CartPage from '@/pages/CartPage';
+import CheckoutPage from '@/pages/CheckoutPage';
 import OrderConfirmationPage from "@/pages/OrderConfirmationPage";
 import UserOrdersPage from '@/pages/UserOrdersPage';
 import OrderDetailsPage from '@/pages/OrderDetailsPage';
@@ -33,6 +33,8 @@ function App() {
           <Route path="/events/:eventId" element={<EventDetailPage />} />
 
           <Route path="/cart" element={<CartPage />} />
+
+          <Route path="/checkout" element={<CheckoutPage />} />
 
           <Route path="/orders/:orderId/confirmation" element={<OrderConfirmationPage />} />
 
