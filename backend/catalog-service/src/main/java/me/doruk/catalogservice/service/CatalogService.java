@@ -13,6 +13,8 @@ import me.doruk.catalogservice.response.VenueResponse;
 import me.doruk.ticketingcommonlibrary.event.InventoryReleaseRequested;
 import me.doruk.ticketingcommonlibrary.event.InventoryReservationResponse;
 import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
+import me.doruk.ticketingcommonlibrary.kafka.GroupIds;
+import me.doruk.ticketingcommonlibrary.kafka.Topics;
 import me.doruk.ticketingcommonlibrary.model.Cart;
 import me.doruk.ticketingcommonlibrary.model.CartItem;
 
@@ -177,7 +179,7 @@ public class CatalogService {
 
   // Listen for ReserveInventory events from order-service
   @Transactional
-  @KafkaListener(topics = "reserve-inventory", groupId = "catalog-service")
+  @KafkaListener(topics = Topics.RESERVE_INVENTORY, groupId = GroupIds.CATALOG_SERVICE)
   public void reserveInventory(ReserveInventory request) {
     System.out.println("Received reserve inventory: " + request);
 
@@ -274,7 +276,7 @@ public class CatalogService {
 
   // Listen for release-inventory events from order-service
   @Transactional
-  @KafkaListener(topics = "reserve-inventory", groupId = "catalog-service")
+  @KafkaListener(topics = Topics.RELEASE_INVENTORY, groupId = GroupIds.CATALOG_SERVICE)
   public void releaseInventory(InventoryReleaseRequested request) {
     System.out.println("Received release inventory: " + request);
 
@@ -282,7 +284,7 @@ public class CatalogService {
     List<Long> eventIds = items.stream().map(CartItem::getEventId).toList();
     List<Event> eventsToUpdate = eventRepository.findAllByIdForUpdate(eventIds);
 
-    // Update remaining capacities
+    // Update remaining capacities by adding back the ticketCount
     for (CartItem item : items) {
       Event event = eventsToUpdate.stream()
           .filter(e -> e.getId().equals(item.getEventId()))

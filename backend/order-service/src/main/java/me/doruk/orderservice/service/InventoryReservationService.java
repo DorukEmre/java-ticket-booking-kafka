@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import me.doruk.ticketingcommonlibrary.event.InventoryReleaseRequested;
 import me.doruk.ticketingcommonlibrary.event.InventoryReservationResponse;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationResponse;
+import me.doruk.ticketingcommonlibrary.kafka.GroupIds;
+import me.doruk.ticketingcommonlibrary.kafka.Topics;
 import me.doruk.ticketingcommonlibrary.model.CartItem;
 import me.doruk.orderservice.entity.OrderItem;
 import me.doruk.orderservice.entity.OrderRequestLog;
@@ -33,7 +35,7 @@ public class InventoryReservationService {
   private final KafkaTemplate<String, Object> kafkaTemplate;
 
   // Listen for inventory-reservation-failed events from catalog-service
-  @KafkaListener(topics = "inventory-reservation-failed", groupId = "order-service")
+  @KafkaListener(topics = Topics.INVENTORY_RESERVATION_FAILED, groupId = GroupIds.ORDER_SERVICE)
   public void handleInventoryReservationFailed(InventoryReservationResponse request) {
     System.out.println("Received inventory reservation failed for orderId: " + request.getOrderId());
 
@@ -59,7 +61,7 @@ public class InventoryReservationService {
   }
 
   // Listen for inventory-reservation-invalid events from catalog-service
-  @KafkaListener(topics = "inventory-reservation-invalid", groupId = "order-service")
+  @KafkaListener(topics = Topics.INVENTORY_RESERVATION_INVALID, groupId = GroupIds.ORDER_SERVICE)
   public void handleInventoryReservationInvalid(InventoryReservationResponse request) {
     System.out.println("Received inventory reservation invalid for orderId: " + request.getOrderId());
 
@@ -86,7 +88,7 @@ public class InventoryReservationService {
 
   // Listen for inventory-reservation-succeeded events from catalog-service
   @Transactional
-  @KafkaListener(topics = "inventory-reservation-succeeded", groupId = "order-service")
+  @KafkaListener(topics = Topics.INVENTORY_RESERVATION_SUCCEEDED, groupId = GroupIds.ORDER_SERVICE)
   public void handleInventoryReservationSucceeded(InventoryReservationResponse request) {
     System.out.println("Received inventory reservation succeeded for orderId: " + request);
 

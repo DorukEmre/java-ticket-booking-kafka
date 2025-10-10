@@ -15,31 +15,39 @@ flowchart LR
     end
 
     subgraph Kafka[Kafka Topics]
-        OrderRequested[🟣 order-requested]
+        OrderCreationRequested[🟣 order-requested]
+        OrderCancelledRequested[🟣 order-cancelled]
         ReserveInventory[🟢 reserve-inventory]
-        InventoryReserved[🟣 inventory-reserved]
-        InventoryReservationResponse[🟣 inventory-reservation-invalid]
-        OrderCreated[🟣 order-created]
+        InventoryReleaseRequested[🟢 release-inventory]
+        InventoryReservationFailed[🟣 inventory-reservation-failed]
+        InventoryReservationInvalid[🟣 inventory-reservation-invalid]
+        InventoryReservationSucceeded[🟣 inventory-reservation-succeeded]
         OrderFailed[🟣 order-failed]
+        OrderInvalid[🟣 order-invalid]
+        OrderSucceeded[🟣 order-succeeded]
     end
 
     FE -->|CheckoutCart (HTTP)| CartService
-    CartService -->|🟣 OrderRequested| OrderRequested
-    OrderRequested --> OrderService
+    CartService -->|🟣 OrderCreationRequested| OrderCreationRequested
+    OrderCreationRequested --> OrderService
 
-    OrderService -->|🟢 ReserveInventory| ReserveInventory
+    OrderService -->|🟢 reserve-inventory| ReserveInventory
     ReserveInventory --> CatalogService
 
-    CatalogService -->|🟣 InventoryReserved| InventoryReserved
-    CatalogService -->|🟣 InventoryReservationResponse| InventoryReservationResponse
+    CatalogService -->|🟣 inventory-reservation-failed| InventoryReservationFailed
+    CatalogService -->|🟣 inventory-reservation-invalid| InventoryReservationInvalid
+    CatalogService -->|🟣 inventory-reservation-succeeded| InventoryReservationSucceeded
 
-    InventoryReserved --> OrderService
-    InventoryReservationResponse --> OrderService
+    InventoryReservationFailed --> OrderService
+    InventoryReservationInvalid --> OrderService
+    InventoryReservationSucceeded --> OrderService
 
-    OrderService -->|🟣 OrderCreated| OrderCreated
-    OrderService -->|🟣 OrderFailed| OrderFailed
+    OrderService -->|🟣 order-succeeded| OrderSucceeded
+    OrderService -->|🟣 order-failed| OrderFailed
+    OrderService -->|🟣 order-invalid| OrderInvalid
 
-    OrderCreated --> CartService
+    OrderSucceeded --> CartService
     OrderFailed --> CartService
+    OrderInvalid --> CartService
 
     CartService -->|Return status (poll/push)| FE

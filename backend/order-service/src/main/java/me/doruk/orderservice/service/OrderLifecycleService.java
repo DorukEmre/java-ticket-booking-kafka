@@ -3,6 +3,8 @@ package me.doruk.orderservice.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.doruk.ticketingcommonlibrary.event.ReserveInventory;
+import me.doruk.ticketingcommonlibrary.kafka.GroupIds;
+import me.doruk.ticketingcommonlibrary.kafka.Topics;
 import me.doruk.ticketingcommonlibrary.event.InventoryReleaseRequested;
 import me.doruk.ticketingcommonlibrary.event.OrderCancelledRequested;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
@@ -38,7 +40,7 @@ public class OrderLifecycleService {
 
   // Listen for order-requested events from cart-service
   @Transactional
-  @KafkaListener(topics = "order-requested", groupId = "order-service")
+  @KafkaListener(topics = Topics.ORDER_REQUESTED, groupId = GroupIds.ORDER_SERVICE)
   public void handleOrderCreationRequested(OrderCreationRequested request) {
     log.info("Received order event: {}", request);
 
@@ -115,9 +117,9 @@ public class OrderLifecycleService {
 
   // Listen for order-cancelled from cart-service
   @Transactional
-  @KafkaListener(topics = "order-cancelled", groupId = "order-service")
+  @KafkaListener(topics = Topics.ORDER_CANCELLED, groupId = GroupIds.ORDER_SERVICE)
   public void handleOrderCancelled(OrderCancelledRequested request) {
-    System.out.println("Received order cancelled for cartId: " + request.getCartId());
+    log.info("Received order cancelled for cartId: " + request.getCartId());
 
     // Get Order by cartId
     OrderRequestLog orderRequestLog = orderRequestLogRepository.findById(request.getCartId()).orElse(null);

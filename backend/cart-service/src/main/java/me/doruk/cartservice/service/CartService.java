@@ -13,6 +13,8 @@ import me.doruk.cartservice.response.InvalidCheckoutResponse;
 import me.doruk.ticketingcommonlibrary.event.OrderCancelledRequested;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationResponse;
+import me.doruk.ticketingcommonlibrary.kafka.GroupIds;
+import me.doruk.ticketingcommonlibrary.kafka.Topics;
 import me.doruk.ticketingcommonlibrary.model.Cart;
 import me.doruk.ticketingcommonlibrary.model.CartItem;
 
@@ -281,7 +283,7 @@ public class CartService {
   }
 
   // Consumer for order-failed events from order-service
-  @KafkaListener(topics = "order-failed", groupId = "cart-service")
+  @KafkaListener(topics = Topics.ORDER_FAILED, groupId = GroupIds.CART_SERVICE)
   public void handleOrderCreationFailed(OrderCreationResponse request) {
     System.out.println("Received order creation failed for orderId: " + request);
 
@@ -299,7 +301,7 @@ public class CartService {
   }
 
   // Consumer for order-invalid events from order-service
-  @KafkaListener(topics = "order-invalid", groupId = "cart-service")
+  @KafkaListener(topics = Topics.ORDER_INVALID, groupId = GroupIds.CART_SERVICE)
   public void handleOrderCreationInvalid(OrderCreationResponse request) {
     System.out.println("Received order creation invalid for orderId: " + request);
 
@@ -318,7 +320,7 @@ public class CartService {
   }
 
   // Consumer for order-succeeded events from order-service
-  @KafkaListener(topics = "order-succeeded", groupId = "cart-service")
+  @KafkaListener(topics = Topics.ORDER_SUCCEEDED, groupId = GroupIds.CART_SERVICE)
   public void handleOrderCreationSucceeded(OrderCreationResponse request) {
     System.out.println("Received order creation succeeded for orderId: " + request);
 
