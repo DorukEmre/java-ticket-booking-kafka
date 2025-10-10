@@ -260,9 +260,7 @@ public class CartService {
 
     return OrderCreationRequested.builder()
         .cartId(cart.getCartId())
-        .customerName(request.getCustomerName())
-        .email(request.getEmail())
-        .items(cart.getItems().stream()
+        .items(request.getItems().stream()
             .map((CartItem item) -> CartItem.builder()
                 .eventId(item.getEventId())
                 .ticketCount(item.getTicketCount())

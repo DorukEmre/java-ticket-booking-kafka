@@ -13,7 +13,5 @@ import me.doruk.ticketingcommonlibrary.model.CartItem;
 @NoArgsConstructor
 @Builder
 public class CheckoutRequest {
-  private String customerName;
-  private String email;
   private List<CartItem> items;
 }
