@@ -140,7 +140,7 @@ public class OrderService {
   // Listen for order-requested events from cart-service
   @Transactional
   @KafkaListener(topics = "order-requested", groupId = "order-service")
-  public void orderEvent(OrderCreationRequested request) {
+  public void handleOrderCreationRequested(OrderCreationRequested request) {
     log.info("Received order event: {}", request);
 
     // Idempotency check: skip if order for this cart already exists
@@ -393,8 +393,8 @@ public class OrderService {
     }
 
     if (!order.getStatus().equals(OrderStatus.VALIDATING.name())
-        || !order.getStatus().equals(OrderStatus.INVALID.name())
-        || !order.getStatus().equals(OrderStatus.PENDING_PAYMENT.name())) {
+        && !order.getStatus().equals(OrderStatus.INVALID.name())
+        && !order.getStatus().equals(OrderStatus.PENDING_PAYMENT.name())) {
       log.info("Order {} is not VALIDATING, INVALID or PENDING_PAYMENT, skipping.", order.getId());
       return;
     }
