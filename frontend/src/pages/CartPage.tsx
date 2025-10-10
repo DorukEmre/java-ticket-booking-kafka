@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-import CheckoutForm from "@/components/CheckoutForm";
 import type { CartStatusType, CheckoutRequest } from "@/types/cart";
 import { CartStatus } from "@/utils/globals";
 import OrderConfirmationStatus from "@/components/OrderConfirmationStatus";
@@ -8,11 +7,9 @@ import CartItemEntry from "@/components/CartItemEntry";
 import { useCart } from "@/hooks/useCart";
 
 function CartPage() {
-  const { cart, checkout, deleteCart, totalPrice } = useCart();
+  const { cart, proceedToCheckout, deleteCart, totalPrice } = useCart();
 
-  const [customerName, setCustomerName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [cartStatus, setCartStatus] = useState<CartStatusType>(CartStatus.IN_PROGRESS);
+  const [cartStatus, setCartStatus] = useState<CartStatusType>(CartStatus.PENDING);
 
   console.log("CartPage existing cart:", cart);
 
@@ -36,17 +33,14 @@ function CartPage() {
     if (cart && cart.items.length > 0) {
       try {
         let request: CheckoutRequest = {
-          customerName,
-          email,
           items: cart ? cart.items : []
         };
 
-        await checkout(request);
+        const response = await proceedToCheckout(request);
+        console.log("handleCheckout > proceedToCheckout response:", response);
 
-        setCustomerName("");
-        setEmail("");
-        setCartStatus(CartStatus.PENDING);
-        console.log("handleCheckout > Checkout successful, status set to PENDING");
+        setCartStatus(CartStatus.IN_PROGRESS);
+        console.log("handleCheckout > proceedToCheckout successful, status set to PENDING");
 
       } catch (error) {
         console.error("Checkout failed:", error);
@@ -60,7 +54,7 @@ function CartPage() {
 
   return (
     <>
-      {(cart && cartStatus != CartStatus.IN_PROGRESS) ? (
+      {(cart && cartStatus != CartStatus.PENDING) ? (
         <OrderConfirmationStatus
           cartid={cart.cartId}
           cartStatus={cartStatus}
@@ -68,11 +62,13 @@ function CartPage() {
         />
       ) : (
         <div>
-          <div>
+          <div className="pb-3">
             <p>Cart</p>
             {cart &&
               <button onClick={handleDeleteCart}>Delete cart</button>
             }
+          </div>
+          <div>
             {cart && cart.items.length > 0 ? (
               <ul>
                 {cart.items.map((item, index) => (
@@ -88,21 +84,19 @@ function CartPage() {
           </div>
 
           {cart && cart.items.length > 0 && (
-            <>
+            <div className="d-flex align-items-center gap-4 mt-4">
               <div>
                 <p>Total Price: {totalPrice.toFixed(2)}</p>
               </div>
 
               <div>
-                <CheckoutForm
-                  handleCheckout={handleCheckout}
-                  customerName={customerName}
-                  email={email}
-                  setCustomerName={setCustomerName}
-                  setEmail={setEmail}
-                />
+                <form onSubmit={handleCheckout}>
+                  <button type="submit" className="px-4 py-2 bg-back-300 text-compl-300 border-2 border-compl-300">
+                    Proceed to checkout
+                  </button>
+                </form>
               </div>
-            </>
+            </div>
           )}
         </div>
       )}

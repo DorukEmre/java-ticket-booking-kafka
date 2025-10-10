@@ -1,14 +1,14 @@
 import { useEffect, useRef, type Dispatch, type FormEventHandler, type SetStateAction } from "react"
 
-function CheckoutForm(
+function PaymentForm(
   {
-    handleCheckout,
+    handlePayment,
     customerName,
     email,
     setCustomerName,
     setEmail
   }: {
-    handleCheckout: FormEventHandler<HTMLFormElement>;
+    handlePayment: FormEventHandler<HTMLFormElement>;
     customerName: string;
     email: string;
     setCustomerName: Dispatch<SetStateAction<string>>;
@@ -22,7 +22,7 @@ function CheckoutForm(
   }, [])
 
   return (
-    <form onSubmit={handleCheckout}>
+    <form onSubmit={handlePayment}>
       <div className="">
         <label htmlFor="customerName">Name</label>
         <input
@@ -46,8 +46,8 @@ function CheckoutForm(
           autoComplete="email"
         />
       </div>
-      <button className="px-4 py-2 bg-back-300 text-compl-300 border-2 border-compl-300">Checkout</button>
+      <button className="px-4 py-2 bg-back-300 text-compl-300 border-2 border-compl-300">Pay now</button>
     </form>)
 }
 
-export default CheckoutForm;
+export default PaymentForm;

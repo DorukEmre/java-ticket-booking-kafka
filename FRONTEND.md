@@ -22,6 +22,9 @@ Frontend documentation for pages and API endpoints
 
 6) Cart Page
   - Shows items in the user's cart `GET /cart/{cartId}`
+    - Can delete cart `DELETE /cart/:cartId`
+    - Can update items (`PUT /cart/:cartId/items`)
+    - Can delete item `DELETE /cart/:cartId/items`
     - Allows "Proceed to checkout" `POST /cart/{cartId}/checkout`
 
 7) Checkout Page
@@ -29,7 +32,7 @@ Frontend documentation for pages and API endpoints
     - Backend checked Order items for price and availability
     - Displays server-validated total price, and any INVALID item 
     - Collects customer info (name, email) (and payment details)
-    - Allows mock "Make payment" -> `POST /orders/{orderId}/payment`
+    - Allows mock "Pay now" -> `POST /orders/{orderId}/payment`
       - If OK, delete cart and redirect to Confirmation Page
 
 8) Order Confirmation Page

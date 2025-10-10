@@ -28,4 +28,9 @@ type OrderResponse = {
   items: OrderItem[];
 }
 
-export { Customer, Order, OrderItem, OrderResponse };
+type PaymentRequest = {
+  customerName: string;
+  email: string;
+}
+
+export { Customer, Order, OrderItem, OrderResponse, PaymentRequest };

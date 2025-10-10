@@ -7,6 +7,7 @@ import {
   apiDeleteCart,
   apiCheckoutCart,
 } from "@/api/cart";
+import { CartStatus } from "@/utils/globals";
 
 
 export const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -43,7 +44,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         const newCart: Cart = {
           cartId: res.cartId,
           items: cart?.items ?? [],
-          status: cart?.status ?? "IN_PROGRESS"
+          status: cart?.status ?? CartStatus.PENDING,
         };
         setCartLocal(newCart);
         return { cartId: res.cartId, cartObj: newCart };
@@ -101,7 +102,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  async function checkout(request: CheckoutRequest) {
+  async function proceedToCheckout(request: CheckoutRequest) {
     const { cartId: cid } = await ensureCartId();
     if (!cid)
       throw new Error("No cartId available");
@@ -130,7 +131,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const newItems = (prevCart?.items ?? []).filter(i => i.eventId !== item.eventId);
 
     const newCart: Cart = {
-      cartId: cid, items: newItems, status: prevCart?.status ?? "IN_PROGRESS",
+      cartId: cid, items: newItems, status: prevCart?.status ?? CartStatus.PENDING,
     };
 
     // Optimistic update to local state and localStorage
@@ -192,7 +193,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     removeItem,
     deleteCart,
     // refreshFromServer,
-    checkout,
+    proceedToCheckout,
     totalPrice,
   };
 

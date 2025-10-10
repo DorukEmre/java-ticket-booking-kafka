@@ -31,8 +31,6 @@ type CartStatusResponse = {
 };
 
 type CheckoutRequest = {
-  customerName: string;
-  email: string;
   items: CartItem[];
 };
 
@@ -43,7 +41,7 @@ type CartContextType = {
   removeItem: (item: CartItem) => Promise<void>;
   deleteCart: () => Promise<void>;
   // refreshFromServer: () => Promise<void>;
-  checkout: (request: CheckoutRequest) => Promise<void>;
+  proceedToCheckout: (request: CheckoutRequest) => Promise<void>;
   totalPrice: number;
 };
 
