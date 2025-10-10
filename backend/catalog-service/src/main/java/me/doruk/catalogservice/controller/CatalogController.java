@@ -7,28 +7,24 @@ import me.doruk.catalogservice.response.VenueResponse;
 import me.doruk.catalogservice.service.CatalogService;
 import me.doruk.ticketingcommonlibrary.model.Cart;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
 
 @Validated
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("api/v1")
 public class CatalogController {
 
   private final CatalogService catalogService;
-
-  @Autowired
-  public CatalogController(final CatalogService catalogService) {
-    this.catalogService = catalogService;
-  }
 
   @GetMapping("/catalog/events/{eventId}")
   public @ResponseBody EventResponse catalogByEventId(@PathVariable("eventId") Long eventId) {

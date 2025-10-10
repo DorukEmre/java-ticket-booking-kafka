@@ -5,7 +5,6 @@ import me.doruk.orderservice.request.UserCreateRequest;
 import me.doruk.orderservice.response.OrderResponse;
 import me.doruk.orderservice.response.UserResponse;
 import me.doruk.orderservice.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,20 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 @Validated
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("api/v1")
 public class OrderController {
 
   private final OrderService orderService;
-
-  @Autowired
-  public OrderController(final OrderService orderService) {
-    this.orderService = orderService;
-  }
 
   @GetMapping("/orders/{orderId}")
   public ResponseEntity<?> getOrderById(@PathVariable("orderId") String orderId) {

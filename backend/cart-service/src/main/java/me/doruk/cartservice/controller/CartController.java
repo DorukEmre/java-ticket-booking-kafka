@@ -8,20 +8,17 @@ import me.doruk.ticketingcommonlibrary.model.CartItem;
 
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("api/v1")
 public class CartController {
 
   private final CartService cartService;
-
-  @Autowired
-  public CartController(final CartService cartService) {
-    this.cartService = cartService;
-  }
 
   @PostMapping(value = "/cart", produces = "application/json")
   public ResponseEntity<CartIdResponse> createCart() {
