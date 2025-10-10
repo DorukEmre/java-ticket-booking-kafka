@@ -18,6 +18,7 @@ import me.doruk.orderservice.model.OrderStatus;
 import me.doruk.orderservice.entity.Order;
 import me.doruk.orderservice.repository.OrderRepository;
 import me.doruk.orderservice.repository.OrderRequestLogRepository;
+import me.doruk.orderservice.request.PaymentRequest;
 import me.doruk.orderservice.request.UserCreateRequest;
 import me.doruk.orderservice.repository.OrderItemRepository;
 import me.doruk.orderservice.repository.CustomerRepository;
@@ -151,23 +152,11 @@ public class OrderService {
 
     System.out.println("Idempotency check passed for cartId=" + cartId);
 
-    // Create or get Customer
-    Customer customer = customerRepository.findByEmail(request.getEmail())
-        .orElseGet(() -> {
-          Customer newCustomer = Customer.builder()
-              .name(request.getCustomerName())
-              .email(request.getEmail())
-              .build();
-          customerRepository.saveAndFlush(newCustomer);
-          log.info("Created new customer: {}", newCustomer);
-          return newCustomer;
-        });
-
     // Create OrderItems
     List<OrderItem> orderItems = createOrderItems(request);
 
     // Create Order object and save to db
-    Order order = createInitialOrder(customer.getId());
+    Order order = createInitialOrder();
     orderRepository.saveAndFlush(order);
 
     // Add order id to each order item and save to db
@@ -216,14 +205,45 @@ public class OrderService {
         .toList();
   }
 
-  private Order createInitialOrder(Long customerId) {
+  private Order createInitialOrder() {
 
     return Order.builder()
         .id(NanoIdUtils.randomNanoId(NanoIdUtils.DEFAULT_NUMBER_GENERATOR, NanoIdUtils.DEFAULT_ALPHABET, 8))
-        .customerId(customerId)
         .status(OrderStatus.VALIDATING.name())
         .placedAt(LocalDateTime.now())
         .build();
+  }
+
+  public ResponseEntity<?> processPayment(final String orderId, final PaymentRequest request) {
+
+    // Check order is PENDING_PAYMENT
+    Order order = orderRepository.findById(orderId)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
+
+    if (!order.getStatus().equals(OrderStatus.PENDING_PAYMENT.name())) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Order is not pending payment");
+    }
+
+    // Create or get Customer
+    Customer customer = customerRepository.findByEmail(request.getEmail())
+        .orElseGet(() -> {
+          Customer newCustomer = Customer.builder()
+              .name(request.getCustomerName())
+              .email(request.getEmail())
+              .build();
+          customerRepository.saveAndFlush(newCustomer);
+          log.info("Created new customer: {}", newCustomer);
+          return newCustomer;
+        });
+
+    // Update order status to COMPLETED and link Customer
+    order.setStatus(OrderStatus.COMPLETED.name());
+    order.setCustomerId(customer.getId());
+    orderRepository.save(order);
+
+    log.info("Order {} marked as COMPLETED.", order.getId());
+
+    return ResponseEntity.ok().build();
   }
 
   // Listen for inventory-reservation-failed events from catalog-service

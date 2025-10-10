@@ -38,6 +38,12 @@ public class OrderServiceRoutes {
             .filters(f -> f.prefixPath("/api/v1"))
             .uri(uri))
 
+        .route("order-payment", r -> r
+            .path("/orders/{orderId}/payment")
+            .and().method(HttpMethod.POST)
+            .filters(f -> f.prefixPath("/api/v1"))
+            .uri(uri))
+
         // admin routes
         .route("orders", r -> r
             .path("/admin/orders")

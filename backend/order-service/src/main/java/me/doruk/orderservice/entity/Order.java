@@ -36,7 +36,6 @@ public class Order {
   private LocalDateTime placedAt;
 
   @Column(name = "customer_id")
-  @NotNull(message = "Customer ID is required")
   private Long customerId;
 
   @Column(name = "status")

@@ -1,5 +1,6 @@
 package me.doruk.orderservice.controller;
 
+import me.doruk.orderservice.request.PaymentRequest;
 import me.doruk.orderservice.request.UserCreateRequest;
 import me.doruk.orderservice.response.OrderResponse;
 import me.doruk.orderservice.response.UserResponse;
@@ -48,6 +49,13 @@ public class OrderController {
   public ResponseEntity<?> getAllOrdersByEmail(@PathVariable("email") @Email String email) {
     System.out.println("GET /api/v1/users/{email}/orders called");
     return orderService.getAllOrdersByEmail(email);
+  }
+
+  @PostMapping(value = "/orders/{orderId}/payment", consumes = "application/json", produces = "application/json")
+  public ResponseEntity<?> processPayment(@PathVariable("orderId") String orderId,
+      @RequestBody PaymentRequest request) {
+    System.out.println("POST /api/v1/orders/{orderId}/payment called");
+    return orderService.processPayment(orderId, request);
   }
 
   // Admin routes

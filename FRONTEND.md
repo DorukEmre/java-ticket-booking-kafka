@@ -22,18 +22,19 @@ Frontend documentation for pages and API endpoints
 
 6) Cart Page
   - Shows items in the user's cart `GET /cart/{cartId}`
-    - Allows "Proceed to checkout"
+    - Allows "Proceed to checkout" `POST /cart/{cartId}/checkout`
 
 7) Checkout Page
-  - Shows checkout `POST /cart/{cartId}/checkout`
+  - Shows checkout, polling status `GET /cart/{cartId}/status`
     - Backend checked Order items for price and availability
     - Displays server-validated total price, and any INVALID item 
     - Collects customer info (name, email) (and payment details)
-    - Allows mock "Make payment"
+    - Allows mock "Make payment" -> `POST /orders/{orderId}/payment`
+      - If OK, delete cart and redirect to Confirmation Page
 
 8) Order Confirmation Page
-  - Confirms purchase and shows status `GET /cart/{cartId}/status`
-  - Shows order details after successful checkout `GET /orders/{orderId}`
+  - Confirms purchase `GET /orders/{orderId}`
+  - Shows order details after successful checkout
 
 9) User Orders Page
   - Lists all orders for a user `GET /users/{userId}/orders`
