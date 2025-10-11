@@ -56,12 +56,6 @@ public class CartServiceRoutes {
             .filters(f -> f.prefixPath("/api/v1"))
             .uri(uri))
 
-        .route("cart-status", r -> r
-            .path("/cart/{cartId}/status")
-            .and().method(HttpMethod.GET)
-            .filters(f -> f.prefixPath("/api/v1"))
-            .uri(uri))
-
         .build();
   }
 

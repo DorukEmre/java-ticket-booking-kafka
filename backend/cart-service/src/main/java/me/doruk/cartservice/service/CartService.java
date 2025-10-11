@@ -8,7 +8,6 @@ import me.doruk.cartservice.model.CartStatus;
 import me.doruk.cartservice.request.CheckoutRequest;
 import me.doruk.cartservice.response.CartIdResponse;
 import me.doruk.cartservice.response.CartResponse;
-import me.doruk.cartservice.response.CartStatusResponse;
 import me.doruk.cartservice.response.InvalidCheckoutResponse;
 import me.doruk.ticketingcommonlibrary.event.OrderCancelledRequested;
 import me.doruk.ticketingcommonlibrary.event.OrderCreationRequested;
@@ -262,21 +261,6 @@ public class CartService {
         });
 
     return ResponseEntity.status(HttpStatus.ACCEPTED).build();
-  }
-
-  public ResponseEntity<?> checkCartStatus(final UUID cartId) {
-    CartCacheEntry cart = getCartFromRedis(cartId);
-    if (cart == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found");
-    }
-
-    CartStatusResponse statusResponse = CartStatusResponse.builder()
-        .cartId(cartId)
-        .orderId(cart.getOrderId())
-        .status(cart.getStatus())
-        .build();
-
-    return ResponseEntity.ok(statusResponse);
   }
 
   // Consumer for order-failed events from order-service
