@@ -14,6 +14,7 @@ import { imageBaseUrl } from '@/utils/globals';
 import type { Event } from '@/types/catalog';
 import type { CartItem } from '@/types/cart';
 import { useCart } from "@/hooks/useCart";
+import ActionButton from '@/components/ActionButton';
 
 function EventDetailPage() {
   const { addOrUpdateItem } = useCart();
@@ -85,7 +86,18 @@ function EventDetailPage() {
                 ticketCount={ticketCount}
                 setTicketCount={setTicketCount}
               />
-              <button className="px-4 py-2 bg-back-300 text-compl-300 border-2 border-compl-300" onClick={saveItemToCart}>Add to Cart</button>
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={saveItemToCart}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    saveItemToCart();
+                  }
+                }}
+              >
+                <ActionButton text="Add to Cart" />
+              </div>
             </div>
           </div>
         )}

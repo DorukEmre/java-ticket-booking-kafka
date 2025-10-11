@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import type { OrderResponse } from "@/types/order";
 import { CartStatus } from "@/utils/globals";
 import { fetchOrdersByEmail } from "@/api/order";
+import ActionButton from "@/components/ActionButton";
 
 function UserOrdersPage() {
 
@@ -71,7 +72,7 @@ function UserOrdersPage() {
             autoComplete="email"
             placeholder="Enter your email"
           />
-          <button className="px-4 py-2 bg-back-300 text-compl-300 border-2 border-compl-300">Get My Orders</button>
+          <ActionButton text="Get My Orders" />
         </form>
       </div>
       {errorMsg && (
