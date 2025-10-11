@@ -83,7 +83,7 @@ public class OrderLifecycleService {
     System.out.println("Sending reserve inventory: " + reserveInventory);
 
     // Update inventory in catalog-service
-    kafkaTemplate.send("reserve-inventory", reserveInventory);
+    kafkaTemplate.send(Topics.RESERVE_INVENTORY, reserveInventory);
 
     // Mark cart as processed
     orderRequestLogRepository
@@ -159,7 +159,7 @@ public class OrderLifecycleService {
 
       List<OrderItem> orderItems = orderItemRepository.findAllByOrderId(order.getId()).orElse(List.of());
 
-      kafkaTemplate.send("release-inventory",
+      kafkaTemplate.send(Topics.RELEASE_INVENTORY,
           InventoryReleaseRequested.builder()
               .orderId(order.getId())
               .items(orderItems.stream().map(item -> CartItem.builder()

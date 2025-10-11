@@ -229,7 +229,7 @@ public class CatalogService {
     if (!allHavePrice && !allHaveEventId) {
       log.warn("Reservation failed due to database error: {}", updatedItems);
 
-      kafkaTemplate.send("inventory-reservation-failed", InventoryReservationResponse.builder()
+      kafkaTemplate.send(Topics.INVENTORY_RESERVATION_FAILED, InventoryReservationResponse.builder()
           .orderId(request.getOrderId())
           .items(updatedItems)
           .build());
@@ -244,7 +244,7 @@ public class CatalogService {
     if (!allValid) {
       log.warn("Reservation invalid: {}", updatedItems);
 
-      kafkaTemplate.send("inventory-reservation-invalid", InventoryReservationResponse.builder()
+      kafkaTemplate.send(Topics.INVENTORY_RESERVATION_INVALID, InventoryReservationResponse.builder()
           .orderId(request.getOrderId())
           .items(updatedItems)
           .build());
@@ -270,7 +270,7 @@ public class CatalogService {
     log.info("Successfully reserved inventory for order " + request.getOrderId());
 
     // Send InventoryReservationSucceeded event
-    kafkaTemplate.send("inventory-reservation-succeeded", InventoryReservationResponse.builder()
+    kafkaTemplate.send(Topics.INVENTORY_RESERVATION_SUCCEEDED, InventoryReservationResponse.builder()
         .orderId(request.getOrderId())
         .items(updatedItems)
         .build());

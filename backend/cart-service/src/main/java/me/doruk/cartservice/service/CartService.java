@@ -190,7 +190,7 @@ public class CartService {
           .orderId(cartCache.getOrderId())
           .build();
 
-      kafkaTemplate.send("order-cancelled", orderCancelledEvent)
+      kafkaTemplate.send(Topics.ORDER_CANCELLED, orderCancelledEvent)
           .thenAccept(result -> log.info("Order cancelled event sent successfully: {}",
               orderCancelledEvent))
           .exceptionally(ex -> {
@@ -253,7 +253,7 @@ public class CartService {
     System.out.println(orderCreationRequested);
 
     // Send cart to order-service with Kafka
-    kafkaTemplate.send("order-requested", orderCreationRequested)
+    kafkaTemplate.send(Topics.ORDER_REQUESTED, orderCreationRequested)
         .thenAccept(result -> log.info("Cart event sent successfully: {}", orderCreationRequested))
         .exceptionally(ex -> {
           log.error("Failed to send order-requested event: {}", orderCreationRequested, ex);

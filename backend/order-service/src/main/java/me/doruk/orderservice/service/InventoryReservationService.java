@@ -51,7 +51,7 @@ public class InventoryReservationService {
 
     log.info("Order {} marked as FAILED.", order.getId());
 
-    kafkaTemplate.send("order-failed", OrderCreationResponse.builder()
+    kafkaTemplate.send(Topics.ORDER_FAILED, OrderCreationResponse.builder()
         .orderId(order.getId())
         .cartId(orderRequestLogRepository.findByOrderId(order.getId())
             .map(OrderRequestLog::getCartId)
@@ -88,7 +88,7 @@ public class InventoryReservationService {
             .build())
         .toList();
 
-    kafkaTemplate.send("order-invalid", OrderCreationResponse.builder()
+    kafkaTemplate.send(Topics.ORDER_FAILED, OrderCreationResponse.builder()
         .orderId(order.getId())
         .cartId(orderRequestLogRepository.findByOrderId(order.getId())
             .map(OrderRequestLog::getCartId)
@@ -118,7 +118,7 @@ public class InventoryReservationService {
       log.info("Order {} is CANCELLED, release inventory required.", order.getId());
 
       // Send event to catalog-service to release inventory
-      kafkaTemplate.send("release-inventory",
+      kafkaTemplate.send(Topics.RELEASE_INVENTORY,
           InventoryReleaseRequested.builder()
               .orderId(order.getId())
               .items(orderItems.stream().map(item -> CartItem.builder()
@@ -168,7 +168,7 @@ public class InventoryReservationService {
             .build())
         .toList();
 
-    kafkaTemplate.send("order-succeeded", OrderCreationResponse.builder()
+    kafkaTemplate.send(Topics.ORDER_SUCCEEDED, OrderCreationResponse.builder()
         .orderId(order.getId())
         .cartId(orderRequestLogRepository.findByOrderId(order.getId())
             .map(OrderRequestLog::getCartId)
