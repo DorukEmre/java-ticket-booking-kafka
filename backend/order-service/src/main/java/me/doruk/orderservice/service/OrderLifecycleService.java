@@ -109,7 +109,10 @@ public class OrderLifecycleService {
   private Order createInitialOrder() {
 
     return Order.builder()
-        .id(NanoIdUtils.randomNanoId(NanoIdUtils.DEFAULT_NUMBER_GENERATOR, NanoIdUtils.DEFAULT_ALPHABET, 8))
+        .id(NanoIdUtils.randomNanoId(
+            NanoIdUtils.DEFAULT_NUMBER_GENERATOR,
+            "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray(),
+            8))
         .status(OrderStatus.VALIDATING.name())
         .placedAt(LocalDateTime.now())
         .build();

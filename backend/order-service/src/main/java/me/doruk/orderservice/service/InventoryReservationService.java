@@ -77,11 +77,23 @@ public class InventoryReservationService {
 
     log.info("Order {} marked as INVALID.", order.getId());
 
+    List<CartItem> cartItems = request.getItems().stream()
+        .map(item -> CartItem.builder()
+            .eventId(item.getEventId())
+            .ticketCount(item.getTicketCount())
+            .ticketPrice(item.getTicketPrice())
+            .previousPrice(item.getPreviousPrice())
+            .priceChanged(item.isPriceChanged())
+            .unavailable(item.isUnavailable())
+            .build())
+        .toList();
+
     kafkaTemplate.send("order-invalid", OrderCreationResponse.builder()
         .orderId(order.getId())
         .cartId(orderRequestLogRepository.findByOrderId(order.getId())
             .map(OrderRequestLog::getCartId)
             .orElse(null))
+        .items(cartItems)
         .build());
 
   }
