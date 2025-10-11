@@ -1,7 +1,7 @@
 import { useCart } from "@/hooks/useCart";
 import type { CartItem } from "@/types/cart";
 
-function CartItemEntry({ item, }
+function CartItemEntry({ item }
   : { item: CartItem; }) {
 
   const { removeItem } = useCart();
@@ -17,11 +17,28 @@ function CartItemEntry({ item, }
   }
 
   return (
-    <li className="d-flex align-items-center gap-3 mb-3">
-      <p className="m-0">Event ID: {item.eventId}, Ticket Count: {item.ticketCount}, Price: {item.ticketPrice}</p>
-      <button type="button" onClick={handleDeleteItem}>Remove</button>
-    </li>
-  )
+    <>
+      {item.unavailable && (
+        <li className="d-flex align-items-center gap-3 mb-3">
+          <p className="m-0">Event ID: {item.eventId}, Ticket Count: {item.ticketCount}</p>
+        </li>
+      )}
+
+      {item.priceChanged && !item.unavailable && (
+        <li className="d-flex align-items-center gap-3 mb-3">
+          <p className="m-0">Event ID: {item.eventId}, Ticket Count: {item.ticketCount}, Price: {item.ticketPrice}</p>
+          <button type="button" onClick={handleDeleteItem}>Remove</button>
+        </li>
+      )}
+
+      {!item.priceChanged && !item.unavailable && (
+        <li className="d-flex align-items-center gap-3 mb-3">
+          <p className="m-0">Event ID: {item.eventId}, Ticket Count: {item.ticketCount}, Price: {item.ticketPrice}</p>
+          <button type="button" onClick={handleDeleteItem}>Remove</button>
+        </li>
+      )}
+    </>
+  );
 }
 
 export default CartItemEntry;
