@@ -206,21 +206,24 @@ public class CartService {
 
   // Checkout cart (producer for order-service)
   public ResponseEntity<?> checkout(final UUID cartId, final CheckoutRequest request) {
-    System.out.println("Create cart called: " + request);
+    System.out.println("Checkout called: " + request);
 
     CartCacheEntry cartCache = getCartFromRedis(cartId);
+    System.out.println("Cart from Redis: " + cartCache);
     if (cartCache == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found");
     }
-    if (cartCache.getStatus() != CartStatus.PENDING) {
+    if (cartCache.getStatus() != CartStatus.PENDING
+        && cartCache.getStatus() != CartStatus.INVALID) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart already checked out");
     }
-    if (cartCache.getItems() == null || cartCache.getItems().isEmpty()) {
+    if ((cartCache.getItems() == null || cartCache.getItems().isEmpty())
+        && (request.getItems() == null || request.getItems().isEmpty())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cart is empty");
     }
 
     // Validate items in catalog-service
-    Cart cart = new Cart(cartCache.getCartId(), cartCache.getItems());
+    Cart cart = new Cart(cartCache.getCartId(), request.getItems());
     Map<Long, Boolean> itemsValidity = catalogServiceClient.validateCart(cart);
 
     boolean allValid = itemsValidity.values().stream().allMatch(Boolean::booleanValue);
@@ -239,13 +242,7 @@ public class CartService {
     }
 
     // Update cart items and cart status to IN_PROGRESS before sending event
-    cartCache.setItems(request.getItems().stream()
-        .map((CartItem item) -> CartItem.builder()
-            .eventId(item.getEventId())
-            .ticketCount(item.getTicketCount())
-            .ticketPrice(item.getTicketPrice())
-            .build())
-        .toList());
+    cartCache.setItems(request.getItems());
     cartCache.setStatus(CartStatus.IN_PROGRESS);
     saveCartToRedis(cartId, cartCache);
 
