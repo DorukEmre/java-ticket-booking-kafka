@@ -1,20 +1,13 @@
+import EventCard from '@/components/EventCard';
+
 import type { Event } from '@/types/catalog';
-import { Link } from 'react-router-dom';
 
-type EventListProps = {
-  events: Event[];
-};
-
-function EventList({ events }: EventListProps) {
+function EventList({ events }: { events: Event[] }) {
 
   return (
-    <ul>
+    <ul className="d-flex list-unstyled flex-wrap justify-content-center justify-content-md-between align-items-stretch gap-4">
       {events.map(event => (
-        <li key={event.eventId}>
-          <Link to={`/events/${event.eventId}`}>
-            Event ID {event.eventId}: {event.name} on {new Date(event.eventDate).toLocaleDateString()}
-          </Link>
-        </li>
+        <EventCard event={event} key={event.eventId} />
       ))}
     </ul>
   )

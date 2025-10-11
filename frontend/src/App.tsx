@@ -23,7 +23,7 @@ function App() {
     <div className="d-flex flex-column min-vh-100 bg-back-300 text-neutral-300">
       <Header />
 
-      <main className="flex-fill p-4">
+      <main className="flex-fill p-5">
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<HomePage />} />

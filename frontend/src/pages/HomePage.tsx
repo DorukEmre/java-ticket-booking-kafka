@@ -16,10 +16,7 @@ function HomePage() {
     isLoading: eventsLoading,
     isError: eventsError,
     error: eventsErrorObj,
-  } = useQuery<Event[]>({
-    queryKey: ["events"],
-    queryFn: fetchEvents,
-  });
+  } = useQuery<Event[]>({ queryKey: ["events"], queryFn: fetchEvents, });
 
   // Fetch venues
   const {
@@ -27,15 +24,16 @@ function HomePage() {
     isLoading: venuesLoading,
     isError: venuesError,
     error: venuesErrorObj,
-  } = useQuery<Venue[]>({
-    queryKey: ["venues"],
-    queryFn: fetchVenues,
-  });
+  } = useQuery<Venue[]>({ queryKey: ["venues"], queryFn: fetchVenues, });
 
   return (
     <>
-      <section>
-        <Link to="/events">Upcoming events:</Link>
+      <h1 className="visually-hidden">Home</h1>
+
+      <section className="">
+        <h2 className="section__title mb-4">
+          <Link to="/events">Upcoming events</Link>
+        </h2>
 
         {eventsLoading && <p>Loading events...</p>}
 
@@ -51,8 +49,10 @@ function HomePage() {
 
       </section>
 
-      <section>
-        <Link to="/venues">Browse venues:</Link>
+      <section className="mt-5">
+        <h2 className="section__title mb-4">
+          <Link to="/venues">Browse venues</Link>
+        </h2>
 
         {venuesLoading && <p>Loading venues...</p>}
 
