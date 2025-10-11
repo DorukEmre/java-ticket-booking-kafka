@@ -6,6 +6,7 @@ import {
   apiDeleteCartItem,
   apiDeleteCart,
   apiCheckoutCart,
+  apiFetchCartById,
 } from "@/api/cart";
 import { CartStatus } from "@/utils/globals";
 
@@ -35,7 +36,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
 
   // Create cart and save it if none present, return cart or newCart
-  async function ensureCartId(): Promise<{ cartId: string | null, cartObj: Cart | null }> {
+  async function ensureCartId(): Promise<{ cartId: string, cartObj: Cart | null }> {
 
     if (!cart || cart.cartId === "null" || !cart.cartId) {
 
@@ -51,7 +52,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
       } catch (error) {
         console.error("Failed to create cart", error);
-        return { cartId: null, cartObj: null };
+        throw new Error("Failed to create cart");
       }
     }
 
@@ -102,17 +103,57 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  async function proceedToCheckout(request: CheckoutRequest) {
-    const { cartId: cid } = await ensureCartId();
+  async function proceedToCheckout() {
+    let { cartId: cid, cartObj: prevCart } = await ensureCartId();
     if (!cid)
       throw new Error("No cartId available");
 
+    console.log("proceedToCheckout > Proceeding to checkout with cart:", cart);
+
     try {
+
+      let request: CheckoutRequest = {
+        items: cart ? cart.items.filter(item => !item.unavailable) : []
+      };
+
+      if (prevCart?.status === CartStatus.INVALID) {
+        await deleteCart();
+        try {
+          const res = await apiCreateCart();
+          cid = res.cartId;
+          const newCart: Cart = {
+            cartId: cid,
+            items: request.items,
+            status: CartStatus.PENDING
+          };
+          setCartLocal(newCart);
+          prevCart = newCart;
+        } catch (err) {
+          throw new Error("No cartId available after deleting invalid cart");
+        }
+      }
+
       await apiCheckoutCart(cid, request);
       console.log("Checkout successful");
 
+      // Checkout successful, set cart status to IN_PROGRESS
+      if (cart) {
+        const updatedCart = {
+          cartId: cid,
+          items: request.items, // unavailable items filtered out at checkout
+          status: CartStatus.IN_PROGRESS
+        };
+        setCartLocal(updatedCart);
+      }
+
     } catch (error) {
       console.error("checkout failed", error);
+
+      if (cart) {
+        const updatedCart = { ...cart, status: CartStatus.FAILED };
+        setCartLocal(updatedCart);
+      }
+
       throw error; // rethrow to pass to user
     }
   }
@@ -172,15 +213,42 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function refreshFromServer() {
+    const { cartId: cid, cartObj: prevCart } = await ensureCartId();
+    if (!cid)
+      throw new Error("No cartId available");
+
+    try {
+      const response = await apiFetchCartById(cid);
+
+      if (response.status && prevCart && response.status !== prevCart.status) {
+        const updatedCart = {
+          ...prevCart,
+          status: response.status,
+          items: response.items
+        };
+        setCartLocal(updatedCart);
+        console.log("refreshFromServer > Updated cart from server:", updatedCart);
+      }
+      return response;
+
+    } catch (error) {
+      console.error("refreshFromServer > Failed to fetch cart status", error);
+      throw error; // rethrow to pass to user
+    }
+  }
+
   const totalPrice = useMemo(() => {
     if (!cart?.items?.length)
       return 0;
 
-    let total = cart.items.reduce((sum, it) => {
-      const price = Number(it.ticketPrice ?? 0);
-      const qty = Number(it.ticketCount ?? 1);
-      return sum + price * qty;
-    }, 0);
+    let total = cart.items
+      .filter(item => !item.priceChanged && !item.unavailable)
+      .reduce((sum, it) => {
+        const price = Number(it.ticketPrice ?? 0);
+        const qty = Number(it.ticketCount ?? 1);
+        return sum + price * qty;
+      }, 0);
 
     return total;
 
@@ -192,7 +260,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     addOrUpdateItem,
     removeItem,
     deleteCart,
-    // refreshFromServer,
+    refreshFromServer,
     proceedToCheckout,
     totalPrice,
   };

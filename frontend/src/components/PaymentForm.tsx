@@ -1,52 +1,62 @@
 import { useEffect, useRef, type Dispatch, type FormEventHandler, type SetStateAction } from "react"
 
+import ActionButton from "@/components/ActionButton";
+import type { PaymentRequest } from "@/types/order";
+
 function PaymentForm(
   {
     handlePayment,
-    customerName,
-    email,
-    setCustomerName,
-    setEmail
+    paymentRequest,
+    setPaymentRequest
   }: {
     handlePayment: FormEventHandler<HTMLFormElement>;
-    customerName: string;
-    email: string;
-    setCustomerName: Dispatch<SetStateAction<string>>;
-    setEmail: Dispatch<SetStateAction<string>>;
+    paymentRequest: PaymentRequest;
+    setPaymentRequest: Dispatch<SetStateAction<PaymentRequest>>;
   }) {
-  const customerNameRef = useRef<HTMLInputElement>(null);
 
+  const customerNameRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     customerNameRef.current && customerNameRef.current.focus()
   }, [])
 
   return (
-    <form onSubmit={handlePayment}>
-      <div className="">
+    <form
+      onSubmit={handlePayment}
+      className="d-flex mt-3 flex-column gap-2"
+      style={{ maxWidth: "360px" }}
+    >
+      <div className="d-flex align-items-center gap-2">
         <label htmlFor="customerName">Name</label>
         <input
           type="text"
           id="customerName"
           ref={customerNameRef}
-          onChange={(e) => setCustomerName(e.target.value)}
-          value={customerName}
+          onChange={(e) => setPaymentRequest({
+            ...paymentRequest,
+            customerName: e.target.value
+          })}
+          value={paymentRequest.customerName}
           required
           autoComplete="name"
         />
       </div>
-      <div className="">
+      <div className="d-flex align-items-center gap-2">
         <label htmlFor="email">Email</label>
         <input
           type="email"
           id="email"
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => setPaymentRequest({
+            ...paymentRequest,
+            email: e.target.value
+          })}
+          value={paymentRequest.email}
           required
-          value={email}
           autoComplete="email"
         />
       </div>
-      <button className="px-4 py-2 bg-back-300 text-compl-300 border-2 border-compl-300">Pay now</button>
+      <p>Payment details</p>
+      <ActionButton text="Pay now" />
     </form>)
 }
 

@@ -1,47 +1,145 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+
+import { fetchOrderById, makePayment } from "@/api/order";
+import PaymentForm from "@/components/PaymentForm";
+import ProcessingPayment from "@/components/ProcessingPayment";
+import { useCart } from "@/hooks/useCart";
+
+import type { OrderResponse, PaymentRequest } from "@/types/order";
+import { CartStatus } from "@/utils/globals";
+
 
 function CheckoutPage() {
 
-  const [customerName, setCustomerName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
+  const navigate = useNavigate();
+  const location = useLocation();
+  const fromCartPage = location.state?.fromCartPage === true;
+
+  const { cart, deleteCart } = useCart();
+
+  const { orderId } = useParams<{ orderId: string }>();
+  const [order, setOrder] = useState<OrderResponse | null>(null);
+
+  const [paymentRequest, setPaymentRequest] = useState<PaymentRequest>({ customerName: "", email: "" });
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (!orderId) {
+      navigate("/");
+    }
+  }, [orderId]);
+
+  useEffect(() => {
+    if (!fromCartPage) {
+      navigate("/");
+      return;
+    }
+
+    async function getOrderDetails() {
+
+      try {
+        const response: OrderResponse = await fetchOrderById(orderId!);
+        console.log("Order details:", response);
+        setOrder(response);
+
+      } catch (error) {
+        console.error("Failed to fetch order details:", error);
+
+      }
+    }
+    getOrderDetails();
+
+  }, []);
 
 
-  async function handleCheckout(e: React.FormEvent<HTMLFormElement>) {
+  async function handleDeleteCart() {
+
+    try {
+      await deleteCart();
+      console.log("handleDeleteCart > Cart deleted");
+
+      navigate("/cart");
+
+    } catch (error) {
+      console.error("Delete cart failed:", error);
+
+    }
+  }
+
+  async function handlePayment(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    // console.log("Proceeding to checkout with cart:", cart);
+    console.log("Proceeding to payment with order:", order);
 
-    // if (cart && cart.items.length > 0) {
-    //   try {
-    //     let request: CheckoutRequest = {
-    //       customerName,
-    //       email,
-    //       items: cart ? cart.items : []
-    //     };
+    if (order && order.items.length > 0) {
+      try {
+        setIsProcessing(true);
 
-    //     await checkout(request);
+        await makePayment(order.orderId, paymentRequest);
 
-    //     setCustomerName("");
-    //     setEmail("");
-    //     setCartStatus(CartStatus.PENDING);
-    //     console.log("handleCheckout > Checkout successful, status set to PENDING");
+        setPaymentRequest({ customerName: "", email: "" });
 
-    //   } catch (error) {
-    //     console.error("Checkout failed:", error);
-    //     setCartStatus(CartStatus.FAILED);
+        console.log("handlePayment > Payment successful, redirecting to confirmation page");
 
-    //   }
-    // } else {
-    //   console.log("Cart is empty");
-    // }
+        // redirect inside <ProcessingPayment />
+
+      } catch (error) {
+        console.error("Checkout failed:", error);
+
+      }
+    } else {
+      console.log("Cart is empty");
+    }
   };
 
   return (
-    <div>
+    <>
       <h1>Checkout Page</h1>
-      <p>This is where users will review their cart and enter payment details.</p>
-    </div>
-  );
+      {isProcessing
+        ? <ProcessingPayment orderId={order?.orderId} />
+        : (
+          <>
+            {order && (
+              <div>
+                {cart &&
+                  <button onClick={handleDeleteCart}>Delete cart</button>
+                }
+
+                <div>
+                  <p>Order ID: <span className="fw-bold">{order.orderId}</span></p>
+                  <p>Status: <span className={order.status === CartStatus.CONFIRMED ? "bg-success p-2" : "bg-danger p-2"}>{order.status}</span></p>
+                  <p>Placed At: {new Date(order.placedAt).toLocaleString()}</p>
+                  {order.status === "CONFIRMED" && (
+                    <p>Total Price: {order.totalPrice.toFixed(2)}</p>
+                  )}
+                  <p>Items:</p>
+                  <ul>
+                    {order.items.map((item) => (
+                      <li key={item.id}>
+                        <p>
+                          <span>{item.ticketCount} {item.ticketCount > 1 ? "tickets" : "ticket"} </span>
+                          <span>for event {item.eventId} </span>
+                          {order.status === "CONFIRMED" && (
+                            <span>at {item.ticketPrice.toFixed(2)} each</span>
+                          )}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <PaymentForm
+                  handlePayment={handlePayment}
+                  paymentRequest={paymentRequest}
+                  setPaymentRequest={setPaymentRequest}
+                />
+              </div>
+            )}
+          </>
+        )}
+    </>
+  )
 }
 
 export default CheckoutPage;
