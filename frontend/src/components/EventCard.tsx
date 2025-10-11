@@ -5,6 +5,7 @@ import { imageBaseUrl } from "@/utils/globals";
 
 function EventCard({ event }: { event: Event }) {
 
+  // Background image of the card
   const bgImage = {
     ...(event.imageUrl
       ? { backgroundImage: `url(${imageBaseUrl}${event.imageUrl})` }
@@ -31,7 +32,7 @@ function EventCard({ event }: { event: Event }) {
           {event.ticketPrice.toFixed(2)}{'\u00A0€'}
         </div>
         <div data-role="detail" className="position-absolute bottom-0 start-0 text-white p-4 w-100">
-          <p className="fw-bold">{event.name}</p>
+          <p className="fw-bold fs-5">{event.name}</p>
           <p>{event.venue.location}</p>
         </div>
       </Link>
