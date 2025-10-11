@@ -1,17 +1,40 @@
-import { useState } from "react";
-
-import type { CartStatusType, CheckoutRequest } from "@/types/cart";
+import type { CartResponse } from "@/types/cart";
 import { CartStatus } from "@/utils/globals";
 import OrderConfirmationStatus from "@/components/OrderConfirmationStatus";
-import CartItemEntry from "@/components/CartItemEntry";
 import { useCart } from "@/hooks/useCart";
+import ListChangedPriceItems from "@/components/ListChangedPriceItems";
+import ListValidItems from "@/components/ListValidItems";
+import ListUnavailableItems from "@/components/ListUnavailableItems";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 function CartPage() {
-  const { cart, proceedToCheckout, deleteCart, totalPrice } = useCart();
+  const { cart, proceedToCheckout, deleteCart, totalPrice, refreshFromServer } = useCart();
+  const navigate = useNavigate();
 
-  const [cartStatus, setCartStatus] = useState<CartStatusType>(CartStatus.PENDING);
+  useEffect(() => {
+    console.log("CartPage existing cart:", cart);
 
-  console.log("CartPage existing cart:", cart);
+    async function redirectToCheckout() {
+
+      if (cart && cart.status === CartStatus.CONFIRMED) {
+        console.log("CartPage > Cart status CONFIRMED, redirecting to checkout page");
+        try {
+          const response: CartResponse = await refreshFromServer();
+
+          if (response.orderId) {
+            navigate(`/checkout/${response.orderId}`, { state: { fromCartPage: true } });
+          }
+
+        } catch (error) {
+
+        }
+
+      }
+    }
+    redirectToCheckout();
+
+  }, []);
 
   async function handleDeleteCart() {
 
@@ -32,19 +55,15 @@ function CartPage() {
 
     if (cart && cart.items.length > 0) {
       try {
-        let request: CheckoutRequest = {
-          items: cart ? cart.items : []
-        };
+        // let request: CheckoutRequest = {
+        //   items: cart ? cart.items.filter(item => !item.unavailable) : []
+        // };
 
-        const response = await proceedToCheckout(request);
+        const response = await proceedToCheckout();
         console.log("handleCheckout > proceedToCheckout response:", response);
-
-        setCartStatus(CartStatus.IN_PROGRESS);
-        console.log("handleCheckout > proceedToCheckout successful, status set to PENDING");
 
       } catch (error) {
         console.error("Checkout failed:", error);
-        setCartStatus(CartStatus.FAILED);
 
       }
     } else {
@@ -54,12 +73,10 @@ function CartPage() {
 
   return (
     <>
-      {(cart && cartStatus != CartStatus.PENDING) ? (
-        <OrderConfirmationStatus
-          cartid={cart.cartId}
-          cartStatus={cartStatus}
-          setCartStatus={setCartStatus}
-        />
+      {(cart && cart.status != CartStatus.PENDING && cart.status != CartStatus.INVALID) ? (
+
+        <OrderConfirmationStatus handleDeleteCart={handleDeleteCart} />
+
       ) : (
         <div>
           <div className="pb-3">
@@ -68,16 +85,14 @@ function CartPage() {
               <button onClick={handleDeleteCart}>Delete cart</button>
             }
           </div>
+
           <div>
             {cart && cart.items.length > 0 ? (
-              <ul>
-                {cart.items.map((item, index) => (
-                  <CartItemEntry item={item} key={index} />
-                ))}
-              </ul>
-
-              // <CartSummary total={...} />
-
+              <div className="d-flex flex-column gap-2">
+                <ListUnavailableItems items={cart.items} />
+                <ListChangedPriceItems items={cart.items} />
+                <ListValidItems items={cart.items} />
+              </div>
             ) : (
               <p>Your cart is empty.</p>
             )}

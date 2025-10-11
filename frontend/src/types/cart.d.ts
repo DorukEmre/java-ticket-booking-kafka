@@ -4,6 +4,10 @@ type CartItem = {
   eventId: number;
   ticketCount: number;
   ticketPrice: number;
+
+  previousPrice?: number | null;
+  priceChanged?: boolean;
+  unavailable?: boolean;
 };
 
 type Cart = {
@@ -21,13 +25,6 @@ type CartResponse = {
   orderId: string | null;
   status: CartStatusType;
   items: CartItem[];
-  totalPrice: number;
-};
-
-type CartStatusResponse = {
-  cartId: string;
-  orderId: string | null;
-  status: CartStatusType;
 };
 
 type CheckoutRequest = {
@@ -40,11 +37,14 @@ type CartContextType = {
   addOrUpdateItem: (item: CartItem) => Promise<void>;
   removeItem: (item: CartItem) => Promise<void>;
   deleteCart: () => Promise<void>;
-  // refreshFromServer: () => Promise<void>;
-  proceedToCheckout: (request: CheckoutRequest) => Promise<void>;
+  refreshFromServer: () => Promise<CartResponse>;
+  proceedToCheckout: () => Promise<void>;
   totalPrice: number;
 };
 
 type CartStatusType = typeof CartStatus[keyof typeof CartStatus];
 
-export { Cart, CartItem, CartResponse, CartIdResponse, CartStatusResponse, CheckoutRequest, CartStatusType, CartContextType };
+export {
+  Cart, CartItem, CartResponse, CartIdResponse,
+  CheckoutRequest, CartStatusType, CartContextType
+};

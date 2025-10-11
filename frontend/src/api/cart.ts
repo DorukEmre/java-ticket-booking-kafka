@@ -1,4 +1,4 @@
-import type { CartItem, CartResponse, CartIdResponse, CartStatusResponse, CheckoutRequest } from '@/types/cart';
+import type { CartItem, CartResponse, CartIdResponse, CheckoutRequest } from '@/types/cart';
 import { axiosDeleteWithErrorHandling, axiosGetWithErrorHandling, axiosPostWithErrorHandling, axiosPutWithErrorHandling } from '@/utils/axios';
 
 // GET /cart/:cartId 
@@ -55,14 +55,8 @@ async function apiCheckoutCart(cartId: string, request: CheckoutRequest)
   return axiosPostWithErrorHandling<number>(path, request, true);
 }
 
-// GET /cart/:cartId/status
-async function apiFetchCartStatus(cartId: string)
-  : Promise<CartStatusResponse> {
 
-  const path = `/cart/${cartId}/status`;
-
-  return axiosGetWithErrorHandling<CartStatusResponse>(path);
-}
-
-export { apiCreateCart, apiFetchCartById, apiSaveCartItem, apiDeleteCartItem, apiDeleteCart, apiCheckoutCart, apiFetchCartStatus };
+export {
+  apiCreateCart, apiFetchCartById, apiSaveCartItem, apiDeleteCartItem, apiDeleteCart, apiCheckoutCart,
+};
 
