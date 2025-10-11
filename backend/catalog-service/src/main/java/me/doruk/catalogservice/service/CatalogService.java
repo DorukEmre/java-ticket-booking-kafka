@@ -203,7 +203,10 @@ public class CatalogService {
       boolean priceChanged = previousPrice.compareTo(currentPrice) != 0;
 
       // Check capacity
-      boolean available = event != null && event.getRemainingCapacity() >= item.getTicketCount();
+      boolean unavailable = event != null && event.getRemainingCapacity() < item.getTicketCount();
+
+      if (item.getEventId() == 7)
+        unavailable = true; // TEMPORARY FOR TESTING
 
       CartItem updated = CartItem.builder()
           .eventId(item.getEventId())
@@ -211,7 +214,7 @@ public class CatalogService {
           .previousPrice(previousPrice)
           .ticketPrice(currentPrice)
           .priceChanged(priceChanged)
-          .available(available)
+          .unavailable(unavailable)
           .build();
 
       updatedItems.add(updated);
@@ -234,8 +237,8 @@ public class CatalogService {
       return;
     }
 
-    // Valid item is available and NO priceChanged
-    boolean allValid = updatedItems.stream().allMatch(i -> i.isAvailable() && !i.isPriceChanged());
+    // Valid item = !unavailable and !priceChanged
+    boolean allValid = updatedItems.stream().allMatch(i -> !i.isUnavailable() && !i.isPriceChanged());
 
     // If not all valid, send InventoryReservationResponse and return
     if (!allValid) {

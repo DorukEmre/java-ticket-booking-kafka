@@ -20,5 +20,5 @@ public class CartItem {
 
   private BigDecimal previousPrice;
   private boolean priceChanged;
-  private boolean available;
+  private boolean unavailable;
 }
