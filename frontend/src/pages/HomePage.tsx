@@ -26,6 +26,11 @@ function HomePage() {
     error: venuesErrorObj,
   } = useQuery<Venue[]>({ queryKey: ["venues"], queryFn: fetchVenues, });
 
+  // Sort 6 venues randomly
+  const venuesToDisplay = [...(venues ?? [])]
+    .sort(() => 0.5 - Math.random())
+    .slice(0, 6);
+
   return (
     <>
       <h1 className="visually-hidden">Home</h1>
@@ -59,7 +64,7 @@ function HomePage() {
         {venuesError && <ApiErrorMessage error={venuesErrorObj} />}
 
         {!venuesLoading && !venuesError && venues && venues.length > 0 && (
-          <VenueList venues={venues} />
+          <VenueList venues={venuesToDisplay} />
         )}
 
         {!venuesLoading && !venuesError && venues && venues.length === 0 && (
