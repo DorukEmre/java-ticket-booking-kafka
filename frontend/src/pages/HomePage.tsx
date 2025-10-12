@@ -45,7 +45,7 @@ function HomePage() {
         {eventsError && <ApiErrorMessage error={eventsErrorObj} />}
 
         {!eventsLoading && !eventsError && events && events.length > 0 && (
-          <EventList events={events} />
+          <EventList events={events} numberToDisplay={6} />
         )}
 
         {!eventsLoading && !eventsError && events && events.length === 0 && (

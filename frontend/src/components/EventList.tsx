@@ -2,7 +2,8 @@ import EventCard from '@/components/EventCard';
 
 import type { Event } from '@/types/catalog';
 
-function EventList({ events }: { events: Event[] }) {
+function EventList({ events, numberToDisplay }
+  : { events: Event[], numberToDisplay?: number }) {
 
   // Sort events by next occurrence date/month (ignore year) and take first 6
   const displayedEvents = [...events].sort((a: Event, b: Event) => {
@@ -26,7 +27,12 @@ function EventList({ events }: { events: Event[] }) {
     };
 
     return toNextOccurrenceTime(a) - toNextOccurrenceTime(b);
-  }).slice(0, 6);
+  });
+
+  // Only display a certain number of events if specified
+  if (numberToDisplay) {
+    displayedEvents.splice(numberToDisplay);
+  }
 
   return (
     <ul className="d-flex list-unstyled flex-wrap justify-content-center justify-content-md-between align-items-stretch gap-4">
