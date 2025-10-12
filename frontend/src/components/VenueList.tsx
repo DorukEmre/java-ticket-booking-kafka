@@ -21,11 +21,13 @@ function VenueList({ venues }: { venues: Venue[] }) {
   // create a new array with the colours  randomly ordered
   const shuffledColours = [...colours].sort(() => 0.5 - Math.random());
 
+  console.log(displayedEvents);
+
   return (
     <ul className="d-flex list-unstyled flex-wrap justify-content-center justify-content-md-between align-items-stretch gap-4">
       {displayedEvents.map(venue => (
         <VenueCard
-          key={venue.venueId}
+          key={venue.id}
           venue={venue}
           overlayColour={shuffledColours[displayedEvents.indexOf(venue)]}
         />

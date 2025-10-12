@@ -19,7 +19,7 @@ function EventCard({ event }: { event: Event }) {
 
   return (
     <li style={bgImage} className="event_card__image">
-      <Link to={`/events/${event.eventId}`}
+      <Link to={`/events/${event.id}`}
         className="position-relative d-flex gap-3 h-100 w-100"
       >
         <div className="event_card__overlay" aria-hidden="true" />

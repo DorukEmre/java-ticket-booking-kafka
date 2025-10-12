@@ -31,7 +31,10 @@ function EventList({ events }: { events: Event[] }) {
   return (
     <ul className="d-flex list-unstyled flex-wrap justify-content-center justify-content-md-between align-items-stretch gap-4">
       {displayedEvents.map(event => (
-        <EventCard event={event} key={event.eventId} />
+        <EventCard
+          key={event.id}
+          event={event}
+        />
       ))}
     </ul>
   )

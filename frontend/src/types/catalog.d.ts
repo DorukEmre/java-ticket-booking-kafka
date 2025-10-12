@@ -1,5 +1,5 @@
 type Venue = {
-  venueId: number;
+  id: number;
   name: string;
   location: string;
   totalCapacity: number;
@@ -7,7 +7,7 @@ type Venue = {
 }
 
 type Event = {
-  eventId: number;
+  id: number;
   name: string;
   capacity: number;
   venue: Venue;
@@ -17,4 +17,4 @@ type Event = {
   imageUrl: string;
 }
 
-export { Venue, Event, VenueResponse, EventResponse };
+export { Venue, Event };

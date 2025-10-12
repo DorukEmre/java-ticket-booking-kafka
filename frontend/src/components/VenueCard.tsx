@@ -15,7 +15,7 @@ function VenueCard({ venue, overlayColour }
           className="card-img-overlay venue_card__overlay"
           aria-hidden="true"
         />
-        <Link to={`/venues/${venue.venueId}`} className="card-img-overlay d-flex flex-column text-white text-decoration-none align-items-center justify-content-center">
+        <Link to={`/venues/${venue.id}`} className="card-img-overlay d-flex flex-column text-white text-decoration-none align-items-center justify-content-center">
           <p className="fs-3">{venue.name}</p>
           <p className="fs-3">{venue.location}</p>
         </Link>

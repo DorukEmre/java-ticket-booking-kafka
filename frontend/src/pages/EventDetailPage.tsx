@@ -7,17 +7,16 @@ import queryClient from '@/config/queryClient';
 
 import TicketQuantitySelector from '@/components/TicketQuantitySelector';
 import ApiErrorMessage from '@/components/ApiErrorMessage';
+import ActionButton from '@/components/ActionButton';
 
 import { fetchEventById } from '@/api/catalog';
 import { imageBaseUrl } from '@/utils/globals';
-
+import { useCart } from "@/hooks/useCart";
+import useDocumentTitle from '@/hooks/useDocumentTitle';
 import type { Event } from '@/types/catalog';
 import type { CartItem } from '@/types/cart';
-import { useCart } from "@/hooks/useCart";
-import ActionButton from '@/components/ActionButton';
-import useDocumentTitle from '@/hooks/useDocumentTitle';
+import { arrowBackIcon } from "@/assets";
 
-import { arrowTopLeftIcon } from "@/assets";
 
 function EventDetailPage() {
 
@@ -35,7 +34,7 @@ function EventDetailPage() {
     queryFn: () => fetchEventById(id),
     initialData: () => {
       const events = queryClient.getQueryData<Event[]>(["events"]);
-      return events?.find((v) => v.eventId === id);
+      return events?.find((ev) => ev.id === id);
     },
   });
 
@@ -72,7 +71,6 @@ function EventDetailPage() {
         {isError && <ApiErrorMessage error={error} />}
 
         {!isLoading && !isError && event && (
-          // <div className="card border-0 bg-transparent">
           <div className="card border-0 bg-transparent mb-3" style={{ maxWidth: '800px' }}>
             <div className="row g-4">
 
@@ -91,7 +89,7 @@ function EventDetailPage() {
                 <div className="card-body p-0">
 
                   <div className='text-neutral-300'>
-                    <h2>{event.name}, {event.eventId}</h2>
+                    <h2>{event.name}, {event.id}</h2>
                     <p>Location: {event.venue.location}</p>
                     <p>Total Capacity: {event.venue.totalCapacity}</p>
                     <p>Event Date: {new Date(event.eventDate).toLocaleString()}</p>
@@ -129,8 +127,8 @@ function EventDetailPage() {
           <p>Event not found.</p>
         )}
 
-        <Link to={"/events"} className='icon-link'>
-          <img src={arrowTopLeftIcon} aria-hidden="true" />
+        <Link to={"/events"} className='icon-link mt-5'>
+          <img src={arrowBackIcon} aria-hidden="true" />
           Back to events
         </Link >
 
