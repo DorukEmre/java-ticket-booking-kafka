@@ -2,7 +2,7 @@ import { Link } from "react-router-dom"
 
 import HeaderButton from "@/components/HeaderButton"
 
-import cartIcon from "@/assets/shopping_cart_24dp_C5C0B9_FILL0_wght400_GRAD0_opsz24.svg"
+import { cartIcon } from "@/assets"
 
 function Header() {
   return (

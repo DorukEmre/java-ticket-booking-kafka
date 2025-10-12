@@ -1,12 +1,14 @@
-import type { CartResponse } from "@/types/cart";
-import { CartStatus } from "@/utils/globals";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import OrderConfirmationStatus from "@/components/OrderConfirmationStatus";
-import { useCart } from "@/hooks/useCart";
 import ListChangedPriceItems from "@/components/ListChangedPriceItems";
 import ListValidItems from "@/components/ListValidItems";
 import ListUnavailableItems from "@/components/ListUnavailableItems";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+
+import { useCart } from "@/hooks/useCart";
+import { CartStatus } from "@/utils/globals";
+import type { CartResponse } from "@/types/cart";
 
 function CartPage() {
   const { cart, proceedToCheckout, deleteCart, totalPrice, refreshFromServer } = useCart();
@@ -82,7 +84,7 @@ function CartPage() {
           <div className="pb-3">
             <p>Cart</p>
             {cart &&
-              <button onClick={handleDeleteCart}>Delete cart</button>
+              <button onClick={handleDeleteCart} className="btn p-2 border-1 border-neutral-300 text-neutral-300">Delete cart</button>
             }
           </div>
 

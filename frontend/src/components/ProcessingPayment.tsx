@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import debitCard from "@/assets/icon_debit_card.png";
+import { debitCard } from "@/assets";
 
 function ProcessingPayment({ orderId }: { orderId: string | undefined }) {
 
