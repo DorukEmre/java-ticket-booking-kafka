@@ -47,6 +47,14 @@ h6 {
   border-color: var(--compl-300);
 }
 
+.control {
+  background-color: var(--back-300);
+}
+
+.control:hover {
+  background-color: var(--back-100);
+}
+
 .section__title {
   position: relative;
   padding-left: 1.5rem;

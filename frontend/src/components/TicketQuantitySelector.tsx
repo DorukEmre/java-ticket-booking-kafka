@@ -28,7 +28,7 @@ function TicketQuantitySelector({
           style={{ width: "28px", height: "28px" }}
           onClick={decrement}
           aria-label="Decrease tickets"
-          className="p-0 border-0 bg-transparent d-flex align-items-center justify-content-center"
+          className="p-0 border-0 d-flex align-items-center justify-content-center control"
         >
           <img src={removeIcon} aria-hidden="true" />
         </button>
@@ -42,7 +42,7 @@ function TicketQuantitySelector({
           style={{ width: "28px", height: "28px" }}
           onClick={increment}
           aria-label="Increase tickets"
-          className="p-0 border-0 bg-transparent d-flex align-items-center justify-content-center"
+          className="p-0 border-0 d-flex align-items-center justify-content-center control"
         >
           <img src={addIcon} aria-hidden="true" />
         </button>

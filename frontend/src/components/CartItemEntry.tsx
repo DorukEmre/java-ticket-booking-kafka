@@ -35,7 +35,7 @@ function CartItemEntry({ item }
             Event ID: {item.eventId}, Ticket Count: {item.ticketCount}, Price: {item.ticketPrice}
           </p>
           <button type="button" onClick={handleDeleteItem}
-            className={"btn p-1 border-1 border-neutral-300"}
+            className={"btn p-1 border-1 border-neutral-300 control"}
             aria-label={`Remove tickets for event ${item.eventId}`}
             title="Remove from cart"
           >
@@ -50,7 +50,7 @@ function CartItemEntry({ item }
             Event ID: {item.eventId}, Ticket Count: {item.ticketCount}, Price: {item.ticketPrice}
           </p>
           <button type="button" onClick={handleDeleteItem}
-            className={"btn p-1 border-1 border-neutral-300"}
+            className={"btn p-1 border-1 border-neutral-300 control"}
             aria-label={`Remove tickets for event ${item.eventId}`}
             title="Remove from cart"
           >

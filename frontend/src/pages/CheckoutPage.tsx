@@ -106,7 +106,10 @@ function CheckoutPage() {
             {order && (
               <div>
                 {cart &&
-                  <button onClick={handleDeleteCart}>Delete cart</button>
+                  <button onClick={handleDeleteCart}
+                    className="btn p-2 border-1 border-neutral-300 text-neutral-300 control">
+                    Delete cart
+                  </button>
                 }
 
                 <div>

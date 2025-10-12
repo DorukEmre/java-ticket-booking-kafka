@@ -10,6 +10,7 @@ import { useCart } from "@/hooks/useCart";
 import { CartStatus } from "@/utils/globals";
 import type { CartResponse } from "@/types/cart";
 import useDocumentTitle from "@/hooks/useDocumentTitle";
+import ActionButton from "@/components/ActionButton";
 
 function CartPage() {
   useDocumentTitle("Cart | Ticket Booking");
@@ -87,8 +88,10 @@ function CartPage() {
           <div className="pb-3">
             <h1 className='mb-4'>Cart</h1>
             {cart &&
-              <button onClick={handleDeleteCart} className="btn p-2 border-1 border-neutral-300 text-neutral-300">Delete cart</button>
-            }
+              <button onClick={handleDeleteCart}
+                className="btn p-2 border-1 border-neutral-300 text-neutral-300 control">
+                Delete cart
+              </button>}
           </div>
 
           <div>
@@ -111,9 +114,7 @@ function CartPage() {
 
               <div>
                 <form onSubmit={handleCheckout}>
-                  <button type="submit" className="px-4 py-2 bg-back-300 text-compl-300 border-2 border-compl-300">
-                    Proceed to checkout
-                  </button>
+                  <ActionButton text="Proceed to checkout" />
                 </form>
               </div>
             </div>
