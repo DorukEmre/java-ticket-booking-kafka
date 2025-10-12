@@ -85,7 +85,7 @@ function CartPage() {
       ) : (
         <div>
           <div className="pb-3">
-            <p>Cart</p>
+            <h1 className='mb-4'>Cart</h1>
             {cart &&
               <button onClick={handleDeleteCart} className="btn p-2 border-1 border-neutral-300 text-neutral-300">Delete cart</button>
             }

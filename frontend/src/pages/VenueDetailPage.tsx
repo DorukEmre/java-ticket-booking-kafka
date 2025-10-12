@@ -83,7 +83,7 @@ function VenueDetailPage() {
                   <div className="card-body p-0">
 
                     <div className='text-neutral-300'>
-                      <h2>{venue.name}, {venue.id}</h2>
+                      <h1 className='mb-4'>{venue.name}, {venue.id}</h1>
                       <p>{venue.location}</p>
                       <p>Total Capacity: {venue.totalCapacity}</p>
                     </div>
@@ -106,7 +106,7 @@ function VenueDetailPage() {
         {!eventsLoading && !eventsError && events && (
           <>
             <div>
-              <h3 className='mt-5 mb-4 fs-5'>Upcoming Events at this venue:</h3>
+              <h2 className='mt-5 mb-4 fs-5'>Upcoming Events at this venue:</h2>
               {events && events.length > 0 ? (
                 <ul className='d-flex list-unstyled flex-wrap justify-content-center justify-content-md-between align-items-stretch gap-4'>
                   {events.map((event) => (

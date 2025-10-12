@@ -25,7 +25,7 @@ function VenuesPage() {
   return (
     <>
       <section>
-        <p>Browse venues:</p>
+        <h1 className='mb-4'>Venues</h1>
 
         {isLoading && <p>Loading venues...</p>}
 

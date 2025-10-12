@@ -89,7 +89,7 @@ function EventDetailPage() {
                 <div className="card-body p-0">
 
                   <div className='text-neutral-300'>
-                    <h2>{event.name}, {event.id}</h2>
+                    <h1 className='mb-4'>{event.name}, {event.id}</h1>
                     <p>Location: {event.venue.location}</p>
                     <p>Total Capacity: {event.venue.totalCapacity}</p>
                     <p>Event Date: {new Date(event.eventDate).toLocaleString()}</p>

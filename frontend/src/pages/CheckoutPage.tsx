@@ -97,7 +97,8 @@ function CheckoutPage() {
 
   return (
     <>
-      <h1>Checkout Page</h1>
+      <h1 className='mb-4'>Checkout Page</h1>
+
       {isProcessing
         ? <ProcessingPayment orderId={order?.orderId} />
         : (

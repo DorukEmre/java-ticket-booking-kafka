@@ -25,7 +25,7 @@ function EventsPage() {
   return (
     <>
       <section>
-        <p>Upcoming events:</p>
+        <h1 className='mb-4'>Events</h1>
 
         {isLoading && <p>Loading events...</p>}
 

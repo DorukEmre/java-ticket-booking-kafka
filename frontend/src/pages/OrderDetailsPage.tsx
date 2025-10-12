@@ -43,7 +43,7 @@ function OrderDetailsPage() {
 
   return (
     <>
-      <p>Order details</p>
+      <h1 className="mb-4">Order details</h1>
 
       {errorMsg && (
         <div className="alert alert-danger" role="alert">

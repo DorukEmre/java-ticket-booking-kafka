@@ -62,7 +62,7 @@ function UserOrdersPage() {
 
   return (
     <>
-      <div>User Orders Page</div>
+      <h1 className="mb-4">My Orders</h1>
       <div>
         <form onSubmit={handleGetOrders} className="d-flex gap-2 align-items-center">
           <input

@@ -51,7 +51,8 @@ function OrderConfirmationPage() {
 
   return (
     <>
-      <p>Order confirmation</p>
+      <h1 className='mb-4'>Order confirmation</h1>
+
       {order && (
         <div>
           <p>Order ID: <span className="fw-bold">{order.orderId}</span></p>
