@@ -8,8 +8,10 @@ import { fetchVenueById } from '@/api/catalog';
 import { useParams } from 'react-router-dom';
 import queryClient from '@/config/queryClient';
 import { imageBaseUrl } from '@/utils/globals';
+import useDocumentTitle from '@/hooks/useDocumentTitle';
 
 function VenueDetailPage() {
+
   const { venueId } = useParams<{ venueId: string }>();
   const id = Number(venueId);
 
@@ -26,6 +28,9 @@ function VenueDetailPage() {
   const { data: venue, isLoading, isError, error } = venueQuery;
   console.log(venue);
   console.log(error);
+
+  useDocumentTitle(venue ? `${venue.name} | Ticket Booking` : "Ticket Booking");
+
 
   return (
     <>

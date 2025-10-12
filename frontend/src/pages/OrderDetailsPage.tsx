@@ -4,9 +4,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { fetchOrderById } from "@/api/order";
 import type { OrderResponse } from "@/types/order";
 import { CartStatus } from "@/utils/globals";
+import useDocumentTitle from "@/hooks/useDocumentTitle";
 
 
 function OrderDetailsPage() {
+  useDocumentTitle("Order Details | Ticket Booking");
+
   const { orderId } = useParams<{ orderId: string }>();
   const [order, setOrder] = useState<OrderResponse | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -22,23 +25,6 @@ function OrderDetailsPage() {
   useEffect(() => {
 
     async function getOrderDetails() {
-
-      // type OrderItem = {
-      // id: number;
-      // eventId: number;
-      // orderId: string;
-      // ticketCount: number;
-      // ticketPrice: number;
-      // };
-
-      // type OrderResponse = {
-      //   orderId: string;
-      //   totalPrice: number;
-      //   placedAt: string;
-      //   customerId: number;
-      //   status: string;
-      //   items: OrderItem[];
-      // }
 
       try {
         const response: OrderResponse = await fetchOrderById(orderId!);

@@ -8,9 +8,11 @@ import { useCart } from "@/hooks/useCart";
 
 import type { OrderResponse, PaymentRequest } from "@/types/order";
 import { CartStatus } from "@/utils/globals";
+import useDocumentTitle from "@/hooks/useDocumentTitle";
 
 
 function CheckoutPage() {
+  useDocumentTitle("Checkout | Ticket Booking");
 
   const navigate = useNavigate();
   const location = useLocation();

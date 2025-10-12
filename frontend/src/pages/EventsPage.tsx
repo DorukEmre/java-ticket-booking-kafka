@@ -6,8 +6,11 @@ import EventList from '@/components/EventList';
 import ApiErrorMessage from '@/components/ApiErrorMessage';
 
 import { fetchEvents } from '@/api/catalog';
+import useDocumentTitle from '@/hooks/useDocumentTitle';
 
 function EventsPage() {
+  useDocumentTitle("Events | Ticket Booking");
+
   // Fetch events
   const {
     data: events,

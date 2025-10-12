@@ -4,9 +4,11 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { fetchOrderById } from "@/api/order";
 import type { OrderResponse } from "@/types/order";
 import { useCart } from "@/hooks/useCart";
+import useDocumentTitle from "@/hooks/useDocumentTitle";
 
 
 function OrderConfirmationPage() {
+  useDocumentTitle("Confirmation | Ticket Booking");
 
   const { deleteCart } = useCart();
 

@@ -5,8 +5,10 @@ import type { OrderResponse } from "@/types/order";
 import { CartStatus } from "@/utils/globals";
 import { fetchOrdersByEmail } from "@/api/order";
 import ActionButton from "@/components/ActionButton";
+import useDocumentTitle from "@/hooks/useDocumentTitle";
 
 function UserOrdersPage() {
+  useDocumentTitle("My Orders | Ticket Booking");
 
   const [orders, setOrders] = useState<OrderResponse[] | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);

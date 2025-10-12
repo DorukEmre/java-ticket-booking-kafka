@@ -6,8 +6,11 @@ import VenueList from '@/components/VenueList';
 import ApiErrorMessage from '@/components/ApiErrorMessage';
 
 import { fetchVenues } from '@/api/catalog';
+import useDocumentTitle from '@/hooks/useDocumentTitle';
 
 function VenuesPage() {
+  useDocumentTitle("Venues | Ticket Booking");
+
   // Fetch venues
   const {
     data: venues,

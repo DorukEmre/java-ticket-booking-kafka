@@ -15,8 +15,10 @@ import type { Event } from '@/types/catalog';
 import type { CartItem } from '@/types/cart';
 import { useCart } from "@/hooks/useCart";
 import ActionButton from '@/components/ActionButton';
+import useDocumentTitle from '@/hooks/useDocumentTitle';
 
 function EventDetailPage() {
+
   const { addOrUpdateItem } = useCart();
 
   const [ticketCount, setTicketCount] = useState<number>(1);
@@ -36,6 +38,9 @@ function EventDetailPage() {
   });
 
   const { data: event, isLoading, isError, error } = eventQuery;
+
+  useDocumentTitle(event ? `${event.name} | Ticket Booking` : "Ticket Booking");
+
 
   async function saveItemToCart() {
     console.log("EventDetailPage > Add to cart clicked");

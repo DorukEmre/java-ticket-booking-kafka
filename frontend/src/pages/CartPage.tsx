@@ -9,8 +9,11 @@ import ListUnavailableItems from "@/components/ListUnavailableItems";
 import { useCart } from "@/hooks/useCart";
 import { CartStatus } from "@/utils/globals";
 import type { CartResponse } from "@/types/cart";
+import useDocumentTitle from "@/hooks/useDocumentTitle";
 
 function CartPage() {
+  useDocumentTitle("Cart | Ticket Booking");
+
   const { cart, proceedToCheckout, deleteCart, totalPrice, refreshFromServer } = useCart();
   const navigate = useNavigate();
 
