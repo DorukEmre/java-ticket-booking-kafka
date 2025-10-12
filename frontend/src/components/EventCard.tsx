@@ -18,17 +18,17 @@ function EventCard({ event }: { event: Event }) {
   const monthShort = date.toLocaleString(undefined, { month: 'short' });
 
   return (
-    <li style={bgImage} className="card__image">
+    <li style={bgImage} className="event_card__image">
       <Link to={`/events/${event.eventId}`}
         className="position-relative d-flex gap-3 h-100 w-100"
       >
-        <div className="card__overlay" aria-hidden="true" />
-        <div data-role="date" className="position-absolute top-0 text-white p-2 bg-compl-300 bg-opacity-75 d-flex flex-column align-items-center" style={{ left: '1.5rem', minWidth: '3.25rem' }}>
+        <div className="event_card__overlay" aria-hidden="true" />
+        <div data-role="date" className="position-absolute top-0 text-white p-2 bg-compl-200 bg-opacity-75 d-flex flex-column align-items-center" style={{ left: '1.5rem', minWidth: '3.25rem' }}>
           <span className="date__day fw-bold" aria-hidden="true">{dayOfMonth}</span>
           <span className="date__month" aria-hidden="true">{monthShort}</span>
           <span className="visually-hidden">{date.toLocaleDateString()}</span>
         </div>
-        <div data-role="price" className="position-absolute top-0 text-white p-2 fw-bold bg-compl-300 bg-opacity-75" style={{ right: '1.5rem', fontSize: '0.9rem' }}>
+        <div data-role="price" className="position-absolute top-0 text-white p-2 fw-bold bg-compl-200 bg-opacity-75" style={{ right: '1.5rem', fontSize: '0.9rem' }}>
           {event.ticketPrice.toFixed(2)}{'\u00A0€'}
         </div>
         <div data-role="detail" className="position-absolute bottom-0 start-0 text-white p-4 w-100">

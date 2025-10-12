@@ -5,7 +5,7 @@ import type { Event } from '@/types/catalog';
 function EventList({ events }: { events: Event[] }) {
 
   // Sort events by next occurrence date/month (ignore year) and take first 6
-  const shownEvents = [...events].sort((a: Event, b: Event) => {
+  const displayedEvents = [...events].sort((a: Event, b: Event) => {
     const toNextOccurrenceTime = (event: Event) => {
       const parsed = Date.parse(String(event.eventDate));
       if (Number.isNaN(parsed)) return Infinity; // unknown dates go to the end
@@ -30,7 +30,7 @@ function EventList({ events }: { events: Event[] }) {
 
   return (
     <ul className="d-flex list-unstyled flex-wrap justify-content-center justify-content-md-between align-items-stretch gap-4">
-      {shownEvents.map(event => (
+      {displayedEvents.map(event => (
         <EventCard event={event} key={event.eventId} />
       ))}
     </ul>
