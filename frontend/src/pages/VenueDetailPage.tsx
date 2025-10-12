@@ -1,14 +1,17 @@
+import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
-import type { Venue } from '@/types/catalog';
+import queryClient from '@/config/queryClient';
 
 import ApiErrorMessage from '@/components/ApiErrorMessage';
 
-import { fetchVenueById } from '@/api/catalog';
-import { useParams } from 'react-router-dom';
-import queryClient from '@/config/queryClient';
+import { fetchEvents, fetchVenueById } from '@/api/catalog';
 import { imageBaseUrl } from '@/utils/globals';
 import useDocumentTitle from '@/hooks/useDocumentTitle';
+import type { Event, Venue } from '@/types/catalog';
+import { arrowBackIcon } from "@/assets";
+import EventCard from '@/components/EventCard';
+
 
 function VenueDetailPage() {
 
@@ -21,13 +24,34 @@ function VenueDetailPage() {
     queryFn: () => fetchVenueById(id),
     initialData: () => {
       const venues = queryClient.getQueryData<Venue[]>(["venues"]);
-      return venues?.find((v) => v.venueId === id);
+      return venues?.find((ven) => ven.id === id);
     },
   });
 
-  const { data: venue, isLoading, isError, error } = venueQuery;
+  const eventsQuery = useQuery<Event[]>({
+    queryKey: ["events", id],
+    queryFn: () => fetchEvents()
+      .then(all => all.filter(e => e.venue.id === id)),
+    initialData: () => {
+      const events = queryClient.getQueryData<Event[]>(["events"]);
+      return events?.filter(e => e.venue.id === id);
+    },
+  });
+
+
+  const {
+    data: venue, isLoading: venueLoading,
+    isError: venueError, error: venueErrorObj,
+  } = venueQuery;
+
+  const {
+    data: events, isLoading: eventsLoading,
+    isError: eventsError, error: eventsErrorObj,
+  } = eventsQuery;
+
   console.log(venue);
-  console.log(error);
+  console.log(venueError);
+  console.log(events);
 
   useDocumentTitle(venue ? `${venue.name} | Ticket Booking` : "Ticket Booking");
 
@@ -35,30 +59,76 @@ function VenueDetailPage() {
   return (
     <>
       <section>
-        <p>Browse venues:</p>
+        {venueLoading && <p>Loading venues...</p>}
 
-        {isLoading && <p>Loading venues...</p>}
+        {venueError && <ApiErrorMessage error={venueErrorObj} />}
 
-        {isError && <ApiErrorMessage error={error} />}
+        {!venueLoading && !venueError && venue && (
+          <>
+            <div className="card border-0 bg-transparent mb-3" style={{ maxWidth: '800px' }}>
+              <div className="row g-4">
 
-        {!isLoading && !isError && venue && (
-          <div>
-            <h2>{venue.name}, {venue.venueId}</h2>
-            <p>Location: {venue.location}</p>
-            <p>Total Capacity: {venue.totalCapacity}</p>
-            {venue.imageUrl && (
-              <img
-                src={imageBaseUrl + venue.imageUrl}
-                alt={venue.name}
-                style={{ maxWidth: '300px', height: 'auto' }}
-              />
-            )}
-          </div>
+                {venue.imageUrl && (
+                  <div className="col-md-6">
+                    <img
+                      className="card-img"
+                      src={imageBaseUrl + venue.imageUrl}
+                      alt={venue.name}
+                      style={{ maxWidth: '400px', height: 'auto' }}
+                    />
+                  </div>
+                )}
+
+                <div className="col-md-6">
+                  <div className="card-body p-0">
+
+                    <div className='text-neutral-300'>
+                      <h2>{venue.name}, {venue.id}</h2>
+                      <p>{venue.location}</p>
+                      <p>Total Capacity: {venue.totalCapacity}</p>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </>
         )}
 
-        {!isLoading && !isError && !venue && (
+        {!venueLoading && !venueError && !venue && (
           <p>Venue not found.</p>
         )}
+
+
+        {eventsError && <ApiErrorMessage error={eventsErrorObj} />}
+
+        {!eventsLoading && !eventsError && events && (
+          <>
+            <div>
+              <h3 className='mt-5 mb-4 fs-5'>Upcoming Events at this venue:</h3>
+              {events && events.length > 0 ? (
+                <ul className='d-flex list-unstyled flex-wrap justify-content-center justify-content-md-between align-items-stretch gap-4'>
+                  {events.map((event) => (
+
+                    <EventCard
+                      key={event.id}
+                      event={event}
+                    />
+
+                  ))}
+                </ul>
+              ) : (
+                <p>No upcoming events at this venue.</p>
+              )}
+            </div>
+          </>
+        )}
+
+        <Link to={"/venues"} className='icon-link mt-5'>
+          <img src={arrowBackIcon} aria-hidden="true" />
+          Back to venues
+        </Link>
 
       </section>
     </>
