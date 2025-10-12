@@ -33,7 +33,7 @@ function TicketQuantitySelector({
           <img src={removeIcon} aria-hidden="true" />
         </button>
         <p
-          className="d-flex align-items-center justify-content-center border-start border-end border-1 "
+          className="d-flex align-items-center justify-content-center border-start border-end border-1 text-neutral-300"
           style={{ width: "28px", height: "28px" }}
         >
           {ticketCount}

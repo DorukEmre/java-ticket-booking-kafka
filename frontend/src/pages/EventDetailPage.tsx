@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
 import queryClient from '@/config/queryClient';
@@ -16,6 +16,8 @@ import type { CartItem } from '@/types/cart';
 import { useCart } from "@/hooks/useCart";
 import ActionButton from '@/components/ActionButton';
 import useDocumentTitle from '@/hooks/useDocumentTitle';
+
+import { arrowTopLeftIcon } from "@/assets";
 
 function EventDetailPage() {
 
@@ -65,44 +67,60 @@ function EventDetailPage() {
   return (
     <>
       <section>
-        <p>Browse events:</p>
-
         {isLoading && <p>Loading events...</p>}
 
         {isError && <ApiErrorMessage error={error} />}
 
         {!isLoading && !isError && event && (
-          <div>
-            <h2>{event.name}, {event.eventId}</h2>
-            <p>Location: {event.venue.location}</p>
-            <p>Total Capacity: {event.venue.totalCapacity}</p>
-            <p>Event Date: {new Date(event.eventDate).toLocaleString()}</p>
-            <p>Ticket Price: {event.ticketPrice.toFixed(2)}</p>
-            <p>Description: {event.description}</p>
-            {event.imageUrl && (
-              <img
-                src={imageBaseUrl + event.imageUrl}
-                alt={event.name}
-                style={{ maxWidth: '300px', height: 'auto' }}
-              />
-            )}
-            <div className='d-flex align-items-center gap-5 my-3'>
-              <TicketQuantitySelector
-                ticketCount={ticketCount}
-                setTicketCount={setTicketCount}
-              />
-              <div
-                role="button"
-                tabIndex={0}
-                onClick={saveItemToCart}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    saveItemToCart();
-                  }
-                }}
-              >
-                <ActionButton text="Add to Cart" />
+          // <div className="card border-0 bg-transparent">
+          <div className="card border-0 bg-transparent mb-3" style={{ maxWidth: '800px' }}>
+            <div className="row g-4">
+
+              {event.imageUrl && (
+                <div className="col-md-5">
+                  <img
+                    className="card-img"
+                    src={imageBaseUrl + event.imageUrl}
+                    alt={event.name}
+                    style={{ maxWidth: '400px', height: 'auto' }}
+                  />
+                </div>
+              )}
+
+              <div className="col-md-7">
+                <div className="card-body p-0">
+
+                  <div className='text-neutral-300'>
+                    <h2>{event.name}, {event.eventId}</h2>
+                    <p>Location: {event.venue.location}</p>
+                    <p>Total Capacity: {event.venue.totalCapacity}</p>
+                    <p>Event Date: {new Date(event.eventDate).toLocaleString()}</p>
+                    <p>Ticket Price: {event.ticketPrice.toFixed(2)}</p>
+                    <p>Description: {event.description}</p>
+                  </div>
+
+                  <div className='d-flex align-items-center gap-5 my-3 justify-content-end'>
+                    <TicketQuantitySelector
+                      ticketCount={ticketCount}
+                      setTicketCount={setTicketCount}
+                    />
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={saveItemToCart}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          saveItemToCart();
+                        }
+                      }}
+                    >
+                      <ActionButton text="Add to Cart" />
+                    </div>
+                  </div>
+
+                </div>
               </div>
+
             </div>
           </div>
         )}
@@ -110,6 +128,11 @@ function EventDetailPage() {
         {!isLoading && !isError && !event && (
           <p>Event not found.</p>
         )}
+
+        <Link to={"/events"} className='icon-link'>
+          <img src={arrowTopLeftIcon} aria-hidden="true" />
+          Back to events
+        </Link >
 
       </section>
     </>
