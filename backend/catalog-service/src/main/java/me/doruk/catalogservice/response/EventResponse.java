@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EventResponse {
-  private Long eventId;
+  private Long id;
   private String name;
   private int capacity;
   private Venue venue;

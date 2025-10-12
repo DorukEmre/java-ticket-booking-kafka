@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VenueResponse {
-  private Long venueId;
+  private Long id;
   private String name;
   private String location;
   private int totalCapacity;

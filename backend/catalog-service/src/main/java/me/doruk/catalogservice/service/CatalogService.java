@@ -46,7 +46,7 @@ public class CatalogService {
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Event not found"));
 
     return EventResponse.builder()
-        .eventId(event.getId())
+        .id(event.getId())
         .name(event.getName())
         .capacity(event.getRemainingCapacity())
         .venue(event.getVenue())
@@ -61,7 +61,7 @@ public class CatalogService {
     final List<Event> events = eventRepository.findAll();
 
     return events.stream().map(event -> EventResponse.builder()
-        .eventId(event.getId())
+        .id(event.getId())
         .name(event.getName())
         .capacity(event.getRemainingCapacity())
         .venue(event.getVenue())
@@ -78,7 +78,7 @@ public class CatalogService {
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Venue not found"));
 
     return VenueResponse.builder()
-        .venueId(venue.getId())
+        .id(venue.getId())
         .name(venue.getName())
         .location(venue.getLocation())
         .totalCapacity(venue.getTotalCapacity())
@@ -90,7 +90,7 @@ public class CatalogService {
     final List<Venue> venues = venueRepository.findAll();
 
     return venues.stream().map(venue -> VenueResponse.builder()
-        .venueId(venue.getId())
+        .id(venue.getId())
         .name(venue.getName())
         .location(venue.getLocation())
         .totalCapacity(venue.getTotalCapacity())
@@ -108,7 +108,7 @@ public class CatalogService {
     Venue savedVenue = venueRepository.save(venue);
 
     return VenueResponse.builder()
-        .venueId(savedVenue.getId())
+        .id(savedVenue.getId())
         .name(savedVenue.getName())
         .location(savedVenue.getLocation())
         .totalCapacity(savedVenue.getTotalCapacity())
@@ -142,7 +142,7 @@ public class CatalogService {
     Event savedEvent = eventRepository.save(event);
 
     return EventResponse.builder()
-        .eventId(savedEvent.getId())
+        .id(savedEvent.getId())
         .name(savedEvent.getName())
         .capacity(savedEvent.getRemainingCapacity())
         .venue(savedEvent.getVenue())
