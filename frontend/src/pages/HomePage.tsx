@@ -30,8 +30,8 @@ function HomePage() {
     <>
       <h1 className="visually-hidden">Home</h1>
 
-      <section className="">
-        <h2 className="section__title mb-4">
+      <section className="pb-5">
+        <h2 className="section__title mb-5">
           <Link to="/events">Upcoming events</Link>
         </h2>
 
@@ -50,7 +50,7 @@ function HomePage() {
       </section>
 
       <section className="mt-5">
-        <h2 className="section__title mb-4">
+        <h2 className="section__title mb-5">
           <Link to="/venues">Browse venues</Link>
         </h2>
 
