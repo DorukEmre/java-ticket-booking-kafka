@@ -11,6 +11,7 @@ import useDocumentTitle from '@/hooks/useDocumentTitle';
 import type { Event, Venue } from '@/types/catalog';
 import { arrowBackIcon } from "@/assets";
 import EventCard from '@/components/EventCard';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 
 function VenueDetailPage() {
@@ -59,7 +60,7 @@ function VenueDetailPage() {
   return (
     <>
       <section>
-        {venueLoading && <p>Loading venues...</p>}
+        {venueLoading && <LoadingSpinner />}
 
         {venueError && <ApiErrorMessage error={venueErrorObj} />}
 

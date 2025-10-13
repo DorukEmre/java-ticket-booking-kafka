@@ -7,6 +7,7 @@ import ApiErrorMessage from '@/components/ApiErrorMessage';
 
 import { fetchVenues } from '@/api/catalog';
 import useDocumentTitle from '@/hooks/useDocumentTitle';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 function VenuesPage() {
   useDocumentTitle("Venues | Ticket Booking");
@@ -27,7 +28,7 @@ function VenuesPage() {
       <section>
         <h1 className='mb-4'>Venues</h1>
 
-        {isLoading && <p>Loading venues...</p>}
+        {isLoading && <LoadingSpinner />}
 
         {isError && <ApiErrorMessage error={error} />}
 

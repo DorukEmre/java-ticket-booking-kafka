@@ -8,6 +8,7 @@ import { fetchEvents, fetchVenues } from '@/api/catalog';
 
 import type { Venue, Event } from '@/types/catalog';
 import ApiErrorMessage from "@/components/ApiErrorMessage";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 function HomePage() {
   // Fetch events
@@ -40,7 +41,7 @@ function HomePage() {
           <Link to="/events">Upcoming events</Link>
         </h2>
 
-        {eventsLoading && <p>Loading events...</p>}
+        {eventsLoading && <LoadingSpinner />}
 
         {eventsError && <ApiErrorMessage error={eventsErrorObj} />}
 
@@ -59,7 +60,7 @@ function HomePage() {
           <Link to="/venues">Browse venues</Link>
         </h2>
 
-        {venuesLoading && <p>Loading venues...</p>}
+        {venuesLoading && <LoadingSpinner />}
 
         {venuesError && <ApiErrorMessage error={venuesErrorObj} />}
 

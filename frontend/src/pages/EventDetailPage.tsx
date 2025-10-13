@@ -16,6 +16,7 @@ import useDocumentTitle from '@/hooks/useDocumentTitle';
 import type { Event } from '@/types/catalog';
 import type { CartItem } from '@/types/cart';
 import { arrowBackIcon } from "@/assets";
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 
 function EventDetailPage() {
@@ -66,7 +67,7 @@ function EventDetailPage() {
   return (
     <>
       <section>
-        {isLoading && <p>Loading events...</p>}
+        {isLoading && <LoadingSpinner />}
 
         {isError && <ApiErrorMessage error={error} />}
 
