@@ -11,6 +11,7 @@ import { CartStatus } from "@/utils/globals";
 import type { CartResponse } from "@/types/cart";
 import useDocumentTitle from "@/hooks/useDocumentTitle";
 import ActionButton from "@/components/ActionButton";
+import PriceSummary from "@/components/PriceSummary";
 
 function CartPage() {
   useDocumentTitle("Cart | Ticket Booking");
@@ -78,50 +79,46 @@ function CartPage() {
   };
 
   return (
-    <>
+    <div className="d-flex flex-column align-items-center">
       {(cart && cart.status != CartStatus.PENDING && cart.status != CartStatus.INVALID) ? (
 
         <OrderConfirmationStatus handleDeleteCart={handleDeleteCart} />
 
       ) : (
-        <div>
-          <div className="pb-3">
+        <div style={{ maxWidth: '640px' }}>
+          <div className="pb-3 d-flex flex-column">
             <h1 className='mb-4'>Cart</h1>
             {cart &&
               <button onClick={handleDeleteCart}
-                className="btn p-2 border-1 border-neutral-300 text-neutral-300 control">
+                className="btn p-2 border-1 border-neutral-300 text-neutral-300 control align-self-end">
                 Delete cart
               </button>}
           </div>
 
-          <div>
-            {cart && cart.items.length > 0 ? (
-              <div className="d-flex flex-column gap-2">
-                <ListUnavailableItems items={cart.items} />
-                <ListChangedPriceItems items={cart.items} />
-                <ListValidItems items={cart.items} />
-              </div>
-            ) : (
-              <p>Your cart is empty.</p>
-            )}
-          </div>
+          {cart && cart.items.length > 0 ? (
+            <div className="d-flex flex-column gap-2">
+              <ListUnavailableItems items={cart.items} />
+              <ListChangedPriceItems items={cart.items} />
+              <ListValidItems items={cart.items} />
+            </div>
+          ) : (
+            <p>Your cart is empty.</p>
+          )}
 
           {cart && cart.items.length > 0 && (
-            <div className="d-flex align-items-center gap-4 mt-4">
-              <div>
-                <p>Total Price: {totalPrice.toFixed(2)}</p>
-              </div>
+            <div className="d-flex flex-column align-items-end gap-4 mt-4">
 
-              <div>
-                <form onSubmit={handleCheckout}>
-                  <ActionButton text="Proceed to checkout" />
-                </form>
-              </div>
+              <PriceSummary totalPrice={totalPrice} />
+
+              <form onSubmit={handleCheckout}>
+                <ActionButton text="Proceed to checkout" />
+              </form>
+
             </div>
           )}
         </div>
       )}
-    </>
+    </div>
   )
 }
 

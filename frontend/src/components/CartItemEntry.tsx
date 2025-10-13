@@ -65,14 +65,14 @@ function CartItemEntry({ item }
             aria-label={`Remove tickets for event ${item.eventId}`}
             title="Remove from cart"
           >
-            <img src={deleteIcon} width="18" height="18" aria-hidden="true" />
+            <img src={deleteIcon} width="18" height="18" alt="" />
           </button>
         </li>
       )}
 
       {/* Valid */}
       {!item.priceChanged && !item.unavailable && (
-        <li className="row align-items-center g-3 mb-5" style={{ maxWidth: '800px' }}>
+        <li className="row align-items-center g-3 mb-4">
 
           <div className="col-sm-3">
             {event?.imageUrl && (
@@ -84,10 +84,10 @@ function CartItemEntry({ item }
             )}
           </div>
 
-          <div className="col-sm-7 d-flex flex-column justify-content-between">
+          <div className="col-sm-9 d-flex flex-column align-items-stretch">
 
-            <div className="d-flex justify-content-between align-items-center mb-2">
-              <Link to={`/events/${item.eventId}`} className="fs-5">
+            <div className="d-flex justify-content-between align-items-center mb-auto">
+              <Link to={`/events/${item.eventId}`} className="fs-5 mb-2">
                 {event?.name} (id: {item.eventId})
               </Link>
               <p className="">
@@ -102,7 +102,7 @@ function CartItemEntry({ item }
                 aria-label={`Remove tickets for event ${item.eventId}`}
                 title="Remove from cart"
               >
-                <img src={deleteIcon} width="18" height="18" aria-hidden="true" />
+                <img src={deleteIcon} width="18" height="18" alt="" />
               </button>
             </div>
 
