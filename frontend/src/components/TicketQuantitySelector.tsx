@@ -22,8 +22,7 @@ function TicketQuantitySelector({
 
   return (
     <>
-      <div className="d-flex align-items-center justify-content-center
-       border border-1 border-neutral-300 rounded-2 overflow-hidden">
+      <div className="d-flex align-items-center justify-content-center border border-1 border-neutral-300 rounded-2 overflow-hidden" style={{ width: "max-content" }}>
         <button type="button"
           style={{ width: "28px", height: "28px" }}
           onClick={decrement}
