@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
@@ -21,7 +21,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 
 function EventDetailPage() {
 
-  const { addOrUpdateItem } = useCart();
+  const { cart, addOrUpdateItem } = useCart();
 
   const [ticketCount, setTicketCount] = useState<number>(1);
 
@@ -43,6 +43,21 @@ function EventDetailPage() {
 
   useDocumentTitle(event ? `${event.name} | Ticket Booking` : "Ticket Booking");
 
+  // Displayed ticket count is synced with cart
+  useEffect(() => {
+
+    if (cart && cart.items) {
+
+      const existingItem = cart.items.find(item => item.eventId === id);
+
+      if (existingItem) {
+        setTicketCount(existingItem.ticketCount);
+      } else {
+        setTicketCount(1);
+      }
+    }
+
+  }, [cart, cart?.items]);
 
   async function saveItemToCart() {
     console.log("EventDetailPage > Add to cart clicked");
@@ -113,7 +128,11 @@ function EventDetailPage() {
                         }
                       }}
                     >
-                      <ActionButton text="Add to Cart" />
+                      {cart && cart.items && cart.items.find(item => item.eventId === id) ? (
+                        <ActionButton text="Update Cart" />
+                      ) : (
+                        <ActionButton text="Add to Cart" />
+                      )}
                     </div>
                   </div>
 
