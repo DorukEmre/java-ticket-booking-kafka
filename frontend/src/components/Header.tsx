@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 
 import HeaderButton from "@/components/HeaderButton"
+import HeaderCartButton from "@/components/HeaderCartButton"
 
 import { cartIcon } from "@/assets"
 
@@ -15,16 +16,16 @@ function Header() {
             Ticket Booking
           </Link>
 
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <button className="navbar-toggler me-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon"></span>
           </button>
 
           <div className="collapse navbar-collapse flex-grow-0" id="navbarNav">
-            <ul className="navbar-nav align-items-end gap-2">
+            <ul className="navbar-nav align-items-end gap-2 me-3">
               <HeaderButton path={"/events"} text={"Events"} />
               <HeaderButton path={"/venues"} text={"Venues"} />
               <HeaderButton path={"/orders"} text={"My orders"} />
-              <HeaderButton path={"/cart"} text={"Cart"} icon={cartIcon} />
+              <HeaderCartButton path={"/cart"} text={"Cart"} icon={cartIcon} />
             </ul>
           </div>
 
