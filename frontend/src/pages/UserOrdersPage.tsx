@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import type { OrderResponse } from "@/types/order";
 import { CartStatus } from "@/utils/globals";
-import { fetchOrdersByEmail } from "@/api/order";
+import { fetchOrderById, fetchOrdersByEmail } from "@/api/order";
 import ActionButton from "@/components/ActionButton";
 import useDocumentTitle from "@/hooks/useDocumentTitle";
 
@@ -13,8 +13,9 @@ function UserOrdersPage() {
   const [orders, setOrders] = useState<OrderResponse[] | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [email, setEmail] = useState<string>("");
+  const [orderId, setOrderId] = useState<string>("");
 
-  async function handleGetOrders(e: React.FormEvent<HTMLFormElement>) {
+  async function handleGetAllOrders(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (!email) {
@@ -28,43 +29,64 @@ function UserOrdersPage() {
       const response = await fetchOrdersByEmail(email!);
       console.log("Orders fetched:", response);
       setOrders(response);
+      setEmail("");
+      setOrderId("");
       setErrorMsg(null);
 
     } catch (error: unknown) {
-      console.error("Failed to fetch orders:", error);
-      if (error instanceof Error) {
-        setErrorMsg(error.message);
+      console.error("Failed to fetch order:", error);
+
+      if (typeof error === "object" && error !== null && "message" in error && typeof (error as any).message === "string") {
+        setErrorMsg((error as { message: string }).message);
+
       } else {
-        setErrorMsg(String(error) || "Failed to fetch orders");
+        setErrorMsg(String(error) || "Failed to fetch order");
       }
       setOrders(null);
+      setOrderId("");
 
     }
   }
 
+  async function handleGetOrderId(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
 
-  // type OrderItem = {
-  //   id: number;
-  //   eventId: number;
-  //   orderId: string;
-  //   ticketCount: number;
-  //   ticketPrice: number;
-  // };
+    if (!orderId) {
+      setErrorMsg("Please enter an order ID");
+      return;
+    }
 
-  // type OrderResponse = {
-  //   orderId: string;
-  //   totalPrice: number;
-  //   placedAt: string;
-  //   customerId: number;
-  //   status: string;
-  //   items: OrderItem[];
-  // }
+    console.log("Fetching order for ID:", orderId);
+
+    try {
+      const response = await fetchOrderById(orderId!);
+      console.log("Order fetched:", response);
+      setOrders([response]);
+      setEmail("");
+      setOrderId("");
+      setErrorMsg(null);
+
+    } catch (error: unknown) {
+      console.error("Failed to fetch order:", error);
+
+      if (typeof error === "object" && error !== null && "message" in error && typeof (error as any).message === "string") {
+        setErrorMsg((error as { message: string }).message);
+
+      } else {
+        setErrorMsg(String(error) || "Failed to fetch order");
+      }
+      setOrders(null);
+      setEmail("");
+
+    }
+  }
 
   return (
     <>
       <h1 className="mb-4">My Orders</h1>
+
       <div>
-        <form onSubmit={handleGetOrders} className="d-flex gap-2 align-items-center">
+        <form onSubmit={handleGetAllOrders} className="d-flex gap-2 align-items-center">
           <input
             type="email"
             id="email"
@@ -77,21 +99,36 @@ function UserOrdersPage() {
           <ActionButton text="Get My Orders" />
         </form>
       </div>
+
+      <div className="my-3">
+        <form onSubmit={handleGetOrderId} className="d-flex gap-2 align-items-center">
+          <input
+            type="text"
+            id="orderId"
+            onChange={(e) => setOrderId(e.target.value)}
+            required
+            value={orderId}
+            placeholder="Enter your order ID"
+          />
+          <ActionButton text="Retrieve Order" />
+        </form>
+      </div>
+
       {errorMsg && (
         <div className="alert alert-danger" role="alert">
           {errorMsg}
         </div>
       )}
+
       {orders && !errorMsg && (
         <div>
-          <h3 className="mt-4">My Orders</h3>
           {orders.length === 0 ? (
             <p>No orders found for this email.</p>
           ) : (
             <ul>
               {orders.map((order) => (
                 <li key={order.orderId} className="mb-3 p-3 border rounded">
-                  <p>Order ID:
+                  <p>Order ID:{""}
                     <Link to={`/orders/${order.orderId}`} className="text-decoration-none">
                       <span className="fw-bold">
                         {order.orderId}
