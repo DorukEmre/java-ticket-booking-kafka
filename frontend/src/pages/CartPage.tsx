@@ -79,7 +79,7 @@ function CartPage() {
   };
 
   return (
-    <div className="d-flex flex-column align-items-center">
+    <div className={`d-flex flex-column ${(cart?.items?.length ?? 0) > 0 ? "align-items-center" : ""}`}>
       {(cart && cart.status != CartStatus.PENDING && cart.status != CartStatus.INVALID) ? (
 
         <OrderConfirmationStatus handleDeleteCart={handleDeleteCart} />

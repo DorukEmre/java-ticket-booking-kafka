@@ -10,15 +10,16 @@ import type { Event } from "@/types/catalog";
 
 import { deleteIcon } from "@/assets"
 import TicketQuantitySelector from "./TicketQuantitySelector";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 
 function CartItemEntry({ item }
   : { item: CartItem; }) {
 
-  const { removeItem } = useCart();
+  const { removeItem, addOrUpdateItem } = useCart();
   const [ticketCount, setTicketCount] = useState<number>(item.ticketCount);
+  const isFirstRun = useRef(true);
 
   // Fetch event details for the cart item
   const eventQuery = useQuery<Event>({
@@ -42,6 +43,37 @@ function CartItemEntry({ item }
 
     }
   }
+
+  useEffect(() => {
+
+    // To skip on mount
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
+
+    // Save item on ticketCount change
+    async function saveItemToCart() {
+      console.log("EventDetailPage > Add to cart clicked");
+
+      try {
+        let updatedItem: CartItem = {
+          eventId: item.eventId,
+          ticketCount: ticketCount,
+          ticketPrice: item.ticketPrice
+        }
+        console.log("EventDetailPage > Saving cart item:", updatedItem);
+
+        await addOrUpdateItem(updatedItem);
+
+      } catch (error) {
+        console.error("EventDetailPage > Error saving cart:", error);
+        // TODO: Show error to user
+      }
+    }
+    saveItemToCart();
+
+  }, [ticketCount]);
 
   return (
     <>
