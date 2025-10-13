@@ -5,6 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { CartProvider } from '@/context/CartContext';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 import "@/css/custom.scss";
 import '@/css/reset.css'
 import '@/css/index.css'

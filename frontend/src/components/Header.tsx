@@ -5,21 +5,31 @@ import HeaderButton from "@/components/HeaderButton"
 import { cartIcon } from "@/assets"
 
 function Header() {
+
   return (
-    <header className="bg-back-200 p-3 d-flex justify-content-between align-items-center">
+    <header>
+      <nav className="navbar navbar-expand-md bg-back-200" data-bs-theme="dark">
+        <div className="container-fluid">
 
-      <Link to="/" className="text-decoration-none">
-        <div className="p-1">
-          <h1>Ticket Booking System</h1>
+          <Link className="navbar-brand text-neutral-300 p-3 text-decoration-none" to={"/"}>
+            Ticket Booking
+          </Link>
+
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+
+          <div className="collapse navbar-collapse flex-grow-0" id="navbarNav">
+            <ul className="navbar-nav align-items-end gap-2">
+              <HeaderButton path={"/events"} text={"Events"} />
+              <HeaderButton path={"/venues"} text={"Venues"} />
+              <HeaderButton path={"/orders"} text={"My orders"} />
+              <HeaderButton path={"/cart"} text={"Cart"} icon={cartIcon} />
+            </ul>
+          </div>
+
         </div>
-      </Link>
-
-      <div className="d-flex gap-3">
-        <HeaderButton path={"/events"} text={"Events"} />
-        <HeaderButton path={"/orders"} text={"My orders"} />
-        <HeaderButton path={"/cart"} text={"Cart"} icon={cartIcon} />
-      </div>
-
+      </nav>
     </header>
   )
 }

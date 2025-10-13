@@ -39,6 +39,8 @@ h6 {
   line-height: 1.2;
 }
 
+/* Header */
+
 .header-button {
   border: 1px solid transparent;
 }
@@ -47,6 +49,8 @@ h6 {
   border-color: var(--compl-300);
 }
 
+/* Control buttons */
+
 .control {
   background-color: var(--back-300);
 }
@@ -54,6 +58,8 @@ h6 {
 .control:hover {
   background-color: var(--back-100);
 }
+
+/* Layout */
 
 .section__title {
   position: relative;
