@@ -15,7 +15,7 @@ import { useCart } from "@/hooks/useCart";
 import useDocumentTitle from '@/hooks/useDocumentTitle';
 import type { Event } from '@/types/catalog';
 import type { CartItem } from '@/types/cart';
-import { arrowBackIcon } from "@/assets";
+import { addToCartIcon, arrowBackIcon } from "@/assets";
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 
@@ -129,9 +129,9 @@ function EventDetailPage() {
                       }}
                     >
                       {cart && cart.items && cart.items.find(item => item.eventId === id) ? (
-                        <ActionButton text="Update Cart" />
+                        <ActionButton text="Update Cart" icon={addToCartIcon} />
                       ) : (
-                        <ActionButton text="Add to Cart" />
+                        <ActionButton text="Add to Cart" icon={addToCartIcon} />
                       )}
                     </div>
                   </div>

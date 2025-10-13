@@ -7,11 +7,13 @@ function PaymentForm(
   {
     handlePayment,
     paymentRequest,
-    setPaymentRequest
+    setPaymentRequest,
+    isProcessing
   }: {
     handlePayment: FormEventHandler<HTMLFormElement>;
     paymentRequest: PaymentRequest;
     setPaymentRequest: Dispatch<SetStateAction<PaymentRequest>>;
+    isProcessing: boolean;
   }) {
 
   const customerNameRef = useRef<HTMLInputElement>(null);
@@ -56,7 +58,10 @@ function PaymentForm(
         />
       </div>
       <p>Payment details</p>
-      <ActionButton text="Pay now" />
+      <ActionButton
+        text="Pay now"
+        clickDisabled={isProcessing}
+      />
     </form>)
 }
 

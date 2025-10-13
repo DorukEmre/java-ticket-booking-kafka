@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import OrderConfirmationStatus from "@/components/OrderConfirmationStatus";
@@ -15,6 +15,9 @@ import PriceSummary from "@/components/PriceSummary";
 
 function CartPage() {
   useDocumentTitle("Cart | Ticket Booking");
+
+  const [isProcessing, setIsProcessing] = useState(false);
+
 
   const { cart, proceedToCheckout, deleteCart, totalPrice, refreshFromServer } = useCart();
   const navigate = useNavigate();
@@ -34,9 +37,8 @@ function CartPage() {
           }
 
         } catch (error) {
-
+          console.error("Failed to refresh cart from server:", error);
         }
-
       }
     }
     redirectToCheckout();
@@ -61,17 +63,18 @@ function CartPage() {
     console.log("Proceeding to checkout with cart:", cart);
 
     if (cart && cart.items.length > 0) {
+
+      setIsProcessing(true);
+
       try {
-        // let request: CheckoutRequest = {
-        //   items: cart ? cart.items.filter(item => !item.unavailable) : []
-        // };
 
         const response = await proceedToCheckout();
         console.log("handleCheckout > proceedToCheckout response:", response);
 
       } catch (error) {
         console.error("Checkout failed:", error);
-
+      } finally {
+        setIsProcessing(false);
       }
     } else {
       console.log("Cart is empty");
@@ -111,7 +114,10 @@ function CartPage() {
               <PriceSummary totalPrice={totalPrice} />
 
               <form onSubmit={handleCheckout}>
-                <ActionButton text="Proceed to checkout" />
+                <ActionButton
+                  text="Proceed to checkout"
+                  clickDisabled={isProcessing}
+                />
               </form>
 
             </div>

@@ -6,6 +6,7 @@ import { CartStatus } from "@/utils/globals";
 import { fetchOrderById, fetchOrdersByEmail } from "@/api/order";
 import ActionButton from "@/components/ActionButton";
 import useDocumentTitle from "@/hooks/useDocumentTitle";
+import { checkIcon } from "@/assets";
 
 function UserOrdersPage() {
   useDocumentTitle("My Orders | Ticket Booking");
@@ -14,6 +15,8 @@ function UserOrdersPage() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [email, setEmail] = useState<string>("");
   const [orderId, setOrderId] = useState<string>("");
+  const [isProcessing, setIsProcessing] = useState(false);
+
 
   async function handleGetAllOrders(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -22,8 +25,9 @@ function UserOrdersPage() {
       setErrorMsg("Please enter an email");
       return;
     }
-
     console.log("Fetching orders for email:", email);
+
+    setIsProcessing(true);
 
     try {
       const response = await fetchOrdersByEmail(email!);
@@ -45,6 +49,8 @@ function UserOrdersPage() {
       setOrders(null);
       setOrderId("");
 
+    } finally {
+      setIsProcessing(false);
     }
   }
 
@@ -57,6 +63,8 @@ function UserOrdersPage() {
     }
 
     console.log("Fetching order for ID:", orderId);
+
+    setIsProcessing(true);
 
     try {
       const response = await fetchOrderById(orderId!);
@@ -78,6 +86,8 @@ function UserOrdersPage() {
       setOrders(null);
       setEmail("");
 
+    } finally {
+      setIsProcessing(false);
     }
   }
 
@@ -86,7 +96,7 @@ function UserOrdersPage() {
       <h1 className="mb-4">My Orders</h1>
 
       <div>
-        <form onSubmit={handleGetAllOrders} className="d-flex gap-2 align-items-center">
+        <form onSubmit={handleGetAllOrders} className="d-flex flex-wrap gap-2 align-items-center">
           <input
             type="email"
             id="email"
@@ -96,12 +106,13 @@ function UserOrdersPage() {
             autoComplete="email"
             placeholder="Enter your email"
           />
-          <ActionButton text="Get My Orders" />
+          <ActionButton text="Get My Orders"
+            icon={checkIcon} animDisabled={!email} clickDisabled={isProcessing} />
         </form>
       </div>
 
-      <div className="my-3">
-        <form onSubmit={handleGetOrderId} className="d-flex gap-2 align-items-center">
+      <div className="my-4">
+        <form onSubmit={handleGetOrderId} className="d-flex flex-wrap gap-2 align-items-center">
           <input
             type="text"
             id="orderId"
@@ -110,7 +121,8 @@ function UserOrdersPage() {
             value={orderId}
             placeholder="Enter your order ID"
           />
-          <ActionButton text="Retrieve Order" />
+          <ActionButton text="Retrieve Order"
+            icon={checkIcon} animDisabled={!orderId} clickDisabled={isProcessing} />
         </form>
       </div>
 

@@ -45,6 +45,11 @@ function CheckoutPage() {
         console.log("Order details:", response);
         setOrder(response);
 
+        if (response?.status === "COMPLETED") {
+          console.log("Order already COMPLETED, redirecting");
+          navigate(`/orders/${orderId}`, { state: { fromCheckout: true } });
+        }
+
       } catch (error) {
         console.error("Failed to fetch order details:", error);
 
@@ -88,7 +93,6 @@ function CheckoutPage() {
 
       } catch (error) {
         console.error("Checkout failed:", error);
-
       }
     } else {
       console.log("Cart is empty");
@@ -139,6 +143,7 @@ function CheckoutPage() {
                   handlePayment={handlePayment}
                   paymentRequest={paymentRequest}
                   setPaymentRequest={setPaymentRequest}
+                  isProcessing={isProcessing}
                 />
               </div>
             )}
