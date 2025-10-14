@@ -3,8 +3,11 @@ SHELL	= /bin/sh
 NAME	= ticket-booking
 
 
-all: create_volumes_dirs
-	docker compose up --build
+dev:
+	docker compose -f docker-compose.dev.yml up --build
+
+prod: create_volumes_dirs
+	docker compose -f docker-compose.prod.yml up --build
 
 create_volumes_dirs: # creates volume directories if needed
 	mkdir -p ./frontend/dist
@@ -35,27 +38,14 @@ react:
 
 cart_service:
 	docker exec -it cart-service sh
+
 cart_service_redis_cli:
 	docker exec -it cart-service redis-cli -h redis -p 6379
 
 
-restart_catalog_service:
-	docker restart catalog-service
-
-restart_cart_service:
-	docker restart cart-service
-
-restart_order_service:
-	docker restart order-service
-
-restart_gatewayapi:
-	docker restart gatewayapi
-
-
-.PHONY: all down stop prune prune_system routine reset mysql react \
+.PHONY: dev prod down stop prune prune_system reset \
 	create_volumes_dirs \
-	restart_catalog_service restart_cart_service \
-	restart_order_service restart_gatewayapi \
+	mysql react \
 	cart-service cart-service-redis-cli
 
-.DEFAULT_GOAL := all
+.DEFAULT_GOAL := dev
