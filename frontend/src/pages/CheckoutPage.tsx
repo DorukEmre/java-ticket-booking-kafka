@@ -7,7 +7,6 @@ import ProcessingPayment from "@/components/ProcessingPayment";
 import { useCart } from "@/hooks/useCart";
 
 import type { OrderResponse, PaymentRequest } from "@/types/order";
-import { CartStatus } from "@/utils/globals";
 import useDocumentTitle from "@/hooks/useDocumentTitle";
 
 
@@ -17,6 +16,7 @@ function CheckoutPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const fromCartPage = location.state?.fromCartPage === true;
+  const fromOrderDetailsPage = location.state?.fromOrderDetailsPage === true;
 
   const { cart, deleteCart, totalPrice } = useCart();
 
@@ -33,7 +33,7 @@ function CheckoutPage() {
   }, [orderId]);
 
   useEffect(() => {
-    if (!fromCartPage) {
+    if (!fromCartPage && !fromOrderDetailsPage) {
       navigate("/");
       return;
     }
@@ -45,9 +45,13 @@ function CheckoutPage() {
         console.log("Order details:", response);
         setOrder(response);
 
-        if (response?.status === "COMPLETED") {
-          console.log("Order already COMPLETED, redirecting");
-          navigate(`/orders/${orderId}`, { state: { fromCheckout: true } });
+        // If order is not PENDING_PAYMENT, redirect to order details page
+        if (response?.status !== "PENDING_PAYMENT") {
+          console.log("Order not PENDING_PAYMENT, redirecting");
+          navigate(
+            `/orders/${orderId}`,
+            { state: { fromCheckout: true } }
+          );
         }
 
       } catch (error) {
@@ -119,13 +123,10 @@ function CheckoutPage() {
                   </button>}
               </div>
 
-              <div className="mx-auto d-flex flex-column gap-1">
+              <div className="d-flex flex-column gap-1 mx-auto">
                 <p>Order ID: <span className="fw-bold">{order.orderId}</span></p>
-                <p>Status: <span className={order.status === CartStatus.CONFIRMED ? "bg-success p-2" : "bg-danger p-2"}>{order.status}</span></p>
+                <p>Status: <span className="bg-danger p-2">{order.status}</span></p>
                 <p>Placed at: {new Date(order.placedAt).toLocaleString()}</p>
-                {order.status === "CONFIRMED" && (
-                  <p>Total Price: {order.totalPrice.toFixed(2)}</p>
-                )}
                 <ul>
                   <p>Items:</p>
                   {order.items.map((item) => (
@@ -133,9 +134,7 @@ function CheckoutPage() {
                       <p>
                         <span>{item.ticketCount} {item.ticketCount > 1 ? "tickets" : "ticket"} </span>
                         <span>for event {item.eventId} </span>
-                        {order.status === "CONFIRMED" && (
-                          <span>at {item.ticketPrice.toFixed(2)} each</span>
-                        )}
+                        <span>at {item.ticketPrice.toFixed(2)} each</span>
                       </p>
                     </li>
                   ))}

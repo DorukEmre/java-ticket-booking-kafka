@@ -1,10 +1,12 @@
-import { useCart } from "@/hooks/useCart";
-import type { CartResponse } from "@/types/cart";
-import { CartStatus } from "@/utils/globals";
+
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function OrderConfirmationStatus(
+import { useCart } from "@/hooks/useCart";
+import type { CartResponse } from "@/types/cart";
+import { CartStatus } from "@/utils/globals";
+
+function OrderPollingStatus(
   { handleDeleteCart }: { handleDeleteCart: () => Promise<void> }
 ) {
   const [orderId, setOrderId] = useState<string | null>(null);
@@ -36,7 +38,6 @@ function OrderConfirmationStatus(
 
   useEffect(() => {
     if (orderId && (cart?.status === CartStatus.CONFIRMED || cart?.status === CartStatus.FAILED)) {
-      // navigate(`/orders/${orderId}/confirmation`, { state: { fromCheckout: true } });
       navigate(`/checkout/${orderId}`, { state: { fromCartPage: true } });
     }
   }, [orderId]);
@@ -71,4 +72,4 @@ function OrderConfirmationStatus(
   );
 }
 
-export default OrderConfirmationStatus;
+export default OrderPollingStatus;

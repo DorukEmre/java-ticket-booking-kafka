@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import OrderConfirmationStatus from "@/components/OrderConfirmationStatus";
+import OrderPollingStatus from "@/components/OrderPollingStatus";
 import ListChangedPriceItems from "@/components/ListChangedPriceItems";
 import ListValidItems from "@/components/ListValidItems";
 import ListUnavailableItems from "@/components/ListUnavailableItems";
@@ -85,7 +85,7 @@ function CartPage() {
     <div className={`d-flex flex-column ${(cart?.items?.length ?? 0) > 0 ? "align-items-center" : ""}`}>
       {(cart && cart.status != CartStatus.PENDING && cart.status != CartStatus.INVALID) ? (
 
-        <OrderConfirmationStatus handleDeleteCart={handleDeleteCart} />
+        <OrderPollingStatus handleDeleteCart={handleDeleteCart} />
 
       ) : (
         <div style={{ maxWidth: '640px' }}>
