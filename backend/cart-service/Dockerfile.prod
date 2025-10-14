@@ -1,9 +1,8 @@
 FROM eclipse-temurin:21-jdk-alpine
 
-# Install Maven and redis-cli
-RUN apk add --no-cache maven redis
+RUN apk add --no-cache redis
 
-# Set working directory inside container
 WORKDIR /app
+COPY target/cart-service-1.0.0.jar app.jar
 
-# No need to copy code here; mount it as a volume for live development
+ENTRYPOINT ["java", "-jar", "app.jar"]

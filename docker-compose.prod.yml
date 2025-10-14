@@ -37,12 +37,7 @@ services:
       dockerfile: Dockerfile.prod
     image: catalog-service
     container_name: catalog-service
-    volumes:
-      - ./backend/catalog-service:/app
-      - m2-repo:/root/.m2
-    working_dir: /app
     expose: [8080]
-    command: ["mvn", "spring-boot:run"]
     depends_on:
       - mysql
     environment:
@@ -60,12 +55,7 @@ services:
       dockerfile: Dockerfile.prod
     image: cart-service
     container_name: cart-service
-    volumes:
-      - ./backend/cart-service:/app
-      - m2-repo:/root/.m2
-    working_dir: /app
     expose: [8081]
-    command: ["mvn", "spring-boot:run"]
     depends_on:
       - mysql
       - redis
@@ -84,12 +74,7 @@ services:
       dockerfile: Dockerfile.prod
     image: order-service
     container_name: order-service
-    volumes:
-      - ./backend/order-service:/app
-      - m2-repo:/root/.m2
-    working_dir: /app
     expose: [8082]
-    command: ["mvn", "spring-boot:run"]
     depends_on:
       - mysql
     environment:
@@ -107,13 +92,8 @@ services:
       dockerfile: Dockerfile.prod
     image: gatewayapi
     container_name: gatewayapi
-    volumes:
-      - ./backend/gatewayapi:/app
-      - m2-repo:/root/.m2
-    working_dir: /app
     ports:
       - 8000:8000
-    command: ["mvn", "spring-boot:run"]
     depends_on:
       - mysql
     environment:
