@@ -3,14 +3,24 @@ SHELL	= /bin/sh
 NAME	= ticket-booking
 
 
-dev:
+common_jar:
+	cd backend/ticketing-common-library && mvn clean install -DskipTests
+
+build_jar:
+	cd backend && mvn clean package -DskipTests
+
+dev: common_jar
 	docker compose -f docker-compose.dev.yml up --build
 
-prod: create_volumes_dirs
+prod: create_volumes_dirs build_jar
 	docker compose -f docker-compose.prod.yml up --build
 
 create_volumes_dirs: # creates volume directories if needed
 	mkdir -p ./frontend/dist
+
+
+clean:
+	cd backend && mvn clean
 
 down:
 	docker compose down -v
@@ -44,7 +54,7 @@ cart_service_redis_cli:
 
 
 .PHONY: dev prod down stop prune prune_system reset \
-	create_volumes_dirs \
+	create_volumes_dirs common_jar build_jar \
 	mysql react \
 	cart-service cart-service-redis-cli
 
