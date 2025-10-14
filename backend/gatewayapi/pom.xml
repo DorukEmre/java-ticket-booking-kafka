@@ -5,12 +5,12 @@
   <parent>
     <groupId>me.doruk</groupId>
     <artifactId>ticket-booking-backend</artifactId>
-    <version>1.0.0</version>
+    <version>0.9-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 	<groupId>me.doruk</groupId>
 	<artifactId>gatewayapi</artifactId>
-	<version>1.0.0</version>
+	<version>0.9-SNAPSHOT</version>
 	<name>gatewayapi</name>
 	<description>Microservices - Gateway API</description>
 	<url/>
@@ -42,7 +42,7 @@
     <dependency>
       <groupId>me.doruk</groupId>
       <artifactId>ticketing-common-library</artifactId>
-      <version>1.0.0</version>
+      <version>0.9-SNAPSHOT</version>
     </dependency>
 
 		<dependency>

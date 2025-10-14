@@ -6,10 +6,13 @@ NAME	= ticket-booking
 common_jar:
 	cd backend/ticketing-common-library && mvn clean install -DskipTests
 
+backend_install: ## install all backend modules to local repo
+	cd backend && mvn -U clean install -DskipTests
+
 build_jar:
 	cd backend && mvn clean package -DskipTests
 
-dev: common_jar
+dev: common_jar # or backend_install
 	docker compose -f docker-compose.dev.yml up --build
 
 prod: create_volumes_dirs build_jar
@@ -54,7 +57,7 @@ cart_service_redis_cli:
 
 
 .PHONY: dev prod down stop prune prune_system reset \
-	create_volumes_dirs common_jar build_jar \
+	create_volumes_dirs common_jar build_jar backend_install \
 	mysql react \
 	cart-service cart-service-redis-cli
 
