@@ -3,6 +3,7 @@ package me.doruk.catalogservice.exception;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,7 +22,9 @@ public class GlobalExceptionHandler {
     Map<String, Object> error = new HashMap<>();
     error.put("status", ex.getStatusCode().value());
     error.put("message", ex.getReason());
-    return new ResponseEntity<>(error, ex.getStatusCode());
+    return ResponseEntity.status(ex.getStatusCode())
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(error);
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
@@ -33,7 +36,9 @@ public class GlobalExceptionHandler {
         .map(v -> v.getMessage())
         .reduce((m1, m2) -> m1 + "; " + m2)
         .orElse("Validation error"));
-    return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(error);
   }
 
   @ExceptionHandler(DataIntegrityViolationException.class)
@@ -54,7 +59,9 @@ public class GlobalExceptionHandler {
     } else {
       error.put("message", "Data integrity violation.");
     }
-    return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(error);
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -70,7 +77,9 @@ public class GlobalExceptionHandler {
           .orElse("Validation error");
     }
     error.put("message", message);
-    return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(error);
   }
 
   @ExceptionHandler(Exception.class)
@@ -78,6 +87,8 @@ public class GlobalExceptionHandler {
     Map<String, Object> error = new HashMap<>();
     error.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
     error.put("message", ex.getMessage());
-    return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(error);
   }
 }
