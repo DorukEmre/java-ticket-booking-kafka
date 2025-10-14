@@ -32,12 +32,12 @@ services:
       
   catalog-service:
     build:
-      context: ./backend/catalog-service
+      context: ./backend
       dockerfile: Dockerfile.dev
     image: catalog-service
     container_name: catalog-service
     volumes:
-      - ./backend/catalog-service:/app
+      - ./backend:/app
       - m2-repo:/root/.m2
     working_dir: /app
     expose: [8080]
@@ -55,12 +55,12 @@ services:
 
   cart-service:
     build:
-      context: ./backend/cart-service
+      context: ./backend
       dockerfile: Dockerfile.dev
     image: cart-service
     container_name: cart-service
     volumes:
-      - ./backend/cart-service:/app
+      - ./backend:/app
       - m2-repo:/root/.m2
     working_dir: /app
     expose: [8081]
@@ -79,12 +79,12 @@ services:
 
   order-service:
     build:
-      context: ./backend/order-service
+      context: ./backend
       dockerfile: Dockerfile.dev
     image: order-service
     container_name: order-service
     volumes:
-      - ./backend/order-service:/app
+      - ./backend:/app
       - m2-repo:/root/.m2
     working_dir: /app
     expose: [8082]
@@ -102,12 +102,12 @@ services:
 
   gatewayapi:
     build:
-      context: ./backend/gatewayapi
+      context: ./backend
       dockerfile: Dockerfile.dev
     image: gatewayapi
     container_name: gatewayapi
     volumes:
-      - ./backend/gatewayapi:/app
+      - ./backend:/app
       - m2-repo:/root/.m2
     working_dir: /app
     ports:
