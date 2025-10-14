@@ -3,8 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { fetchOrderById } from "@/api/order";
 import type { OrderResponse } from "@/types/order";
-import { CartStatus } from "@/utils/globals";
 import useDocumentTitle from "@/hooks/useDocumentTitle";
+import OrderCard from "@/components/OrderCard";
 
 
 function OrderDetailsPage() {
@@ -31,6 +31,15 @@ function OrderDetailsPage() {
         console.log("Order details:", response);
         setOrder(response);
 
+        // If order is PENDING_PAYMENT, redirect to checkout page
+        if (response?.status === "PENDING_PAYMENT") {
+          console.log("Order is PENDING_PAYMENT, redirecting");
+          navigate(
+            `/checkout/${orderId}`,
+            { state: { fromOrderDetailsPage: true } }
+          );
+        }
+
       } catch (error: any) {
         console.error("Failed to fetch order details:", error);
         setErrorMsg(error.message ? error.message : "Failed to fetch order details");
@@ -52,28 +61,7 @@ function OrderDetailsPage() {
       )}
 
       {order && !errorMsg && (
-        <div>
-          <p>Order ID: <span className="fw-bold">{order.orderId}</span></p>
-          <p>Status: <span className={order.status === CartStatus.CONFIRMED ? "bg-success p-2" : "bg-danger p-2"}>{order.status}</span></p>
-          <p>Placed At: {new Date(order.placedAt).toLocaleString()}</p>
-          {order.status === "CONFIRMED" && (
-            <p>Total Price: {order.totalPrice.toFixed(2)}</p>
-          )}
-          <p>Items:</p>
-          <ul>
-            {order.items.map((item) => (
-              <li key={item.id}>
-                <p>
-                  <span>{item.ticketCount} {item.ticketCount > 1 ? "tickets" : "ticket"} </span>
-                  <span>for event {item.eventId} </span>
-                  {order.status === "CONFIRMED" && (
-                    <span>at {item.ticketPrice.toFixed(2)} each</span>
-                  )}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <OrderCard order={order} />
       )}
     </>
   )

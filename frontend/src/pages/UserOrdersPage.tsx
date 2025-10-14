@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 
 import type { OrderResponse } from "@/types/order";
-import { CartStatus } from "@/utils/globals";
 import { fetchOrderById, fetchOrdersByEmail } from "@/api/order";
 import ActionButton from "@/components/ActionButton";
 import useDocumentTitle from "@/hooks/useDocumentTitle";
 import { checkIcon } from "@/assets";
+import OrderCard from "@/components/OrderCard";
 
 function UserOrdersPage() {
   useDocumentTitle("My Orders | Ticket Booking");
@@ -139,30 +138,7 @@ function UserOrdersPage() {
           ) : (
             <ul>
               {orders.map((order) => (
-                <li key={order.orderId} className="mb-3 p-3 border rounded">
-                  <p>Order ID:{""}
-                    <Link to={`/orders/${order.orderId}`} className="text-decoration-none">
-                      <span className="fw-bold">
-                        {order.orderId}
-                      </span>
-                    </Link>
-                  </p>
-                  <p>Status: <span className={order.status === CartStatus.CONFIRMED ? "bg-success p-2" : "bg-danger p-2"}>{order.status}</span></p>
-                  {order.status === "CONFIRMED" && (
-                    <p>Total Price: {order.totalPrice.toFixed(2)}</p>
-                  )}
-                  <p>Placed At: {new Date(order.placedAt).toLocaleString()}</p>
-                  <div>
-                    <h5>Items:</h5>
-                    <ul>
-                      {order.items.map((item) => (
-                        <li key={item.id}>
-                          Event ID: {item.eventId}, Ticket Count: {item.ticketCount}, Ticket Price: {item.ticketPrice?.toFixed(2)}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </li>
+                <OrderCard order={order} isList key={order.orderId} />
               ))}
             </ul>
           )}
