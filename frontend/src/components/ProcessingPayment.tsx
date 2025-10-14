@@ -14,14 +14,19 @@ function ProcessingPayment({ orderId }: { orderId: string | undefined }) {
 
       navigate(`/orders/${orderId}/confirmation`, { state: { fromCheckout: true } });
 
-    }, 2000);
+    }, 2500);
 
     return () => clearTimeout(timer);
   }, []);
+
   return (
-    <div>
-      <img src={debitCard} alt="Processing Payment" style={{ width: '150px', marginBottom: '20px' }} />
-      <p>Processing payment, please wait...</p>
+    <div className="w-100 d-flex flex-column flex-grow gap-4 mx-auto" style={{ maxWidth: '480px' }}>
+      <img
+        src={debitCard}
+        alt="Processing Payment"
+        className="mx-auto"
+        style={{ width: '150px' }} />
+      <p className="text-center">Processing payment, please wait...</p>
     </div>
   )
 }

@@ -93,7 +93,7 @@ function CheckoutPage() {
 
         console.log("handlePayment > Payment successful, redirecting to confirmation page");
 
-        // redirect inside <ProcessingPayment />
+        // redirect handled by <ProcessingPayment />
 
       } catch (error) {
         console.error("Checkout failed:", error);
