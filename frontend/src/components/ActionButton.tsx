@@ -1,7 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 
-function ActionButton({ text, icon, animDisabled = false, clickDisabled = false }
-  : { text: string; icon?: string, animDisabled?: boolean, clickDisabled?: boolean }) {
+function ActionButton(
+  { text, className, icon, animDisabled = false, clickDisabled = false }
+    : {
+      text: string; className?: string;
+      icon?: string, animDisabled?: boolean, clickDisabled?: boolean
+    }) {
   const [showIcon, setShowIcon] = useState(false);
   const timeoutRef = useRef<number | null>(null);
 
@@ -36,7 +40,7 @@ function ActionButton({ text, icon, animDisabled = false, clickDisabled = false 
   return (
     <button
       type="submit"
-      className="px-4 py-2 text-compl-300 border-2 border-compl-300 control"
+      className={`px-4 py-2 text-compl-300 border-2 border-compl-300 control ${className ?? ""}`}
       style={{ width: "200px", height: "42px" }}
       onClick={handleClick}
       disabled={clickDisabled}

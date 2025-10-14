@@ -25,10 +25,10 @@ function PaymentForm(
   return (
     <form
       onSubmit={handlePayment}
-      className="d-flex mt-3 flex-column gap-2"
+      className="d-flex flex-column gap-2 mx-auto"
       style={{ maxWidth: "360px" }}
     >
-      <div className="d-flex align-items-center gap-2">
+      <div className="d-flex gap-2 align-items-center justify-content-between">
         <label htmlFor="customerName">Name</label>
         <input
           type="text"
@@ -43,7 +43,7 @@ function PaymentForm(
           autoComplete="name"
         />
       </div>
-      <div className="d-flex align-items-center gap-2">
+      <div className="d-flex gap-2 align-items-center justify-content-between">
         <label htmlFor="email">Email</label>
         <input
           type="email"
@@ -57,9 +57,10 @@ function PaymentForm(
           autoComplete="email"
         />
       </div>
-      <p>Payment details</p>
+      <p className="mb-2">Payment details</p>
       <ActionButton
         text="Pay now"
+        className="mx-auto"
         clickDisabled={isProcessing}
       />
     </form>)
