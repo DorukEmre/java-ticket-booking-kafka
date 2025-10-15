@@ -36,9 +36,6 @@ services:
       dockerfile: catalog-service/Dockerfile.dev
     image: catalog-service
     container_name: catalog-service
-    volumes:
-      - ./backend:/app
-      - ${HOME}/.m2:/root/.m2
     working_dir: /app/catalog-service
     expose: [8080]
     command: ["mvn", "spring-boot:run"]
@@ -47,9 +44,13 @@ services:
     environment:
       SERVER_PORT: "8080"
       # SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_CATALOG}
-      # SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      # SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: "kafka-broker:29092"
+    volumes:
+      - ./backend:/app
+      - ${HOME}/.m2:/root/.m2
+      - catalog-db:/app/catalog-service/data
     networks:
       - ticket-booking-network
 
@@ -59,9 +60,6 @@ services:
       dockerfile: cart-service/Dockerfile.dev
     image: cart-service
     container_name: cart-service
-    volumes:
-      - ./backend:/app
-      - ${HOME}/.m2:/root/.m2
     working_dir: /app/cart-service
     expose: [8081]
     command: ["mvn", "spring-boot:run"]
@@ -74,6 +72,9 @@ services:
       KAFKA_BOOTSTRAP_SERVERS: "kafka-broker:29092"
       REDIS_HOST: redis
       REDIS_PORT: 6379
+    volumes:
+      - ./backend:/app
+      - ${HOME}/.m2:/root/.m2
     networks:
       - ticket-booking-network
 
@@ -83,9 +84,6 @@ services:
       dockerfile: order-service/Dockerfile.dev
     image: order-service
     container_name: order-service
-    volumes:
-      - ./backend:/app
-      - ${HOME}/.m2:/root/.m2
     working_dir: /app/order-service
     expose: [8082]
     command: ["mvn", "spring-boot:run"]
@@ -94,9 +92,13 @@ services:
     environment:
       SERVER_PORT: "8082"
       # SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_ORDER}
-      # SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      # SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: "kafka-broker:29092"
+    volumes:
+      - ./backend:/app
+      - ${HOME}/.m2:/root/.m2
+      - order-db:/app/order-service/data
     networks:
       - ticket-booking-network
 
@@ -106,9 +108,6 @@ services:
       dockerfile: gatewayapi/Dockerfile.dev
     image: gatewayapi
     container_name: gatewayapi
-    volumes:
-      - ./backend:/app
-      - ${HOME}/.m2:/root/.m2
     working_dir: /app/gatewayapi
     ports:
       - 8000:8000
@@ -121,6 +120,9 @@ services:
       CATALOG_BASE_URL: "catalog-service:8080"
       CART_BASE_URL: "cart-service:8081"
       ORDER_BASE_URL: "order-service:8082"
+    volumes:
+      - ./backend:/app
+      - ${HOME}/.m2:/root/.m2
     networks:
       - ticket-booking-network
 
@@ -199,5 +201,7 @@ networks:
     driver: bridge
 
 volumes:
+  catalog-db:
+  order-db:
   # db-data:
   node_modules:
