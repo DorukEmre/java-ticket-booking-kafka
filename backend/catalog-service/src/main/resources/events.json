@@ -54,7 +54,7 @@
     "imageUrl": "events/chloe-boulos-9U4-ZI5Yckw-unsplash.jpg"
   },
   {
-    "name": "Event Unavailable for Testing Response",
+    "name": "Event always 'Unavailable' for testing",
     "totalCapacity": 15000,
     "venueIndex": 5,
     "ticketPrice": 105,
@@ -63,7 +63,7 @@
     "imageUrl": "events/bence-balla-schottner-b34NWlh8G_M-unsplash.jpg"
   },
   {
-    "name": "Dome Sessions",
+    "name": "Event's Ticket Price is always 'changed' for testing",
     "totalCapacity": 12000,
     "venueIndex": 4,
     "ticketPrice": 80,

@@ -6,8 +6,7 @@ function ListValidItems({ items }: { items: CartItem[] }) {
   return (
     <>
       {items.some(item => !item.priceChanged && !item.unavailable) && (
-        <div>
-          <p>Valid Items:</p>
+        <div className="p-3">
           <ul>
             {items
               .filter(item => !item.priceChanged && !item.unavailable)

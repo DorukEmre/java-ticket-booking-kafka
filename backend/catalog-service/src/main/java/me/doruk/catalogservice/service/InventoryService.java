@@ -76,6 +76,10 @@ public class InventoryService {
 
       // Check price change
       BigDecimal previousPrice = item.getTicketPrice() == null ? BigDecimal.ZERO : item.getTicketPrice();
+      if (item.getEventId() == 8) { // FOR TESTING
+        previousPrice = previousPrice.add(BigDecimal.valueOf(10));
+      }
+
       BigDecimal currentPrice = (event != null && event.getTicketPrice() != null) ? event.getTicketPrice()
           : BigDecimal.ZERO;
       boolean priceChanged = previousPrice.compareTo(currentPrice) != 0;
@@ -84,7 +88,7 @@ public class InventoryService {
       boolean unavailable = event != null && event.getRemainingCapacity() < item.getTicketCount();
 
       if (item.getEventId() == 7)
-        unavailable = true; // TEMPORARY FOR TESTING
+        unavailable = true; // FOR TESTING
 
       CartItem updated = CartItem.builder()
           .eventId(item.getEventId())

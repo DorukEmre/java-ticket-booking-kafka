@@ -164,9 +164,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
 
       let request: CheckoutRequest = {
-        items: cart ? cart.items.filter(item => !item.unavailable) : []
+        items: cart
+          ? cart.items
+            .filter(item => !item.unavailable)
+            .map(item => {
+              if (item.priceChanged) {
+                let newItem: CartItem = {
+                  eventId: item.eventId,
+                  ticketCount: item.ticketCount,
+                  ticketPrice: item.ticketPrice,
+                  priceChanged: false,
+                  previousPrice: item.ticketPrice,
+                  unavailable: false
+                };
+                return newItem;
+              }
+              return item;
+            })
+          : []
       };
 
+      console.log("proceedToCheckout > cart items after filtering:", request.items);
+      console.log("proceedToCheckout > Checkout prevCart?.status:", prevCart?.status);
       if (prevCart?.status === CartStatus.INVALID) {
         await deleteCart();
         try {
@@ -234,11 +253,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
       await apiDeleteCartItem(cid, item);
 
     } catch (error: any) {
-      console.error("removeItem > apiDeleteCartItem failed — rolling back", error);
       if (error?.status === 404 && error?.message?.includes("Item not found in cart")) {
         // item was not found on backend, so we can consider it deleted
         return;
       }
+
+      console.error("removeItem > apiDeleteCartItem failed — rolling back", error);
       if (prevCart) {
         setCartLocal(prevCart);
       } else {
@@ -298,7 +318,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       return 0;
 
     let total = cart.items
-      .filter(item => !item.priceChanged && !item.unavailable)
+      .filter(item => !item.unavailable)
       .reduce((sum, it) => {
         const price = Number(it.ticketPrice ?? 0);
         const qty = Number(it.ticketCount ?? 1);
