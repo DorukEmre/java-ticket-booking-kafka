@@ -1,3 +1,8 @@
+
+x-restart: &default-restart
+  # restart: unless-stopped
+  restart: no
+
 services:
   # mysql:
   #   image: mysql:8.4.6
@@ -32,11 +37,12 @@ services:
     #   - ./frontend/dist:/app/dist # for production (build directory)
 
   catalog-service:
+    <<: *default-restart
     build:
       context: ./backend/catalog-service
       dockerfile: Dockerfile.prod
     image: catalog-service
-    container_name: catalog-service
+    # container_name: catalog-service
     working_dir: /app
     expose: [8080]
     # depends_on:
@@ -53,11 +59,12 @@ services:
       - ticket-booking-network
 
   cart-service:
+    <<: *default-restart
     build:
       context: ./backend/cart-service
       dockerfile: Dockerfile.prod
     image: cart-service
-    container_name: cart-service
+    # container_name: cart-service
     working_dir: /app
     expose: [8081]
     depends_on:
@@ -73,11 +80,12 @@ services:
       - ticket-booking-network
 
   order-service:
+    <<: *default-restart
     build:
       context: ./backend/order-service
       dockerfile: Dockerfile.prod
     image: order-service
-    container_name: order-service
+    # container_name: order-service
     working_dir: /app
     expose: [8082]
     # depends_on:
@@ -94,11 +102,12 @@ services:
       - ticket-booking-network
 
   gatewayapi:
+    <<: *default-restart
     build:
       context: ./backend/gatewayapi
       dockerfile: Dockerfile.prod
     image: gatewayapi
-    container_name: gatewayapi
+    # container_name: gatewayapi
     working_dir: /app
     ports:
       - 8000:8000
@@ -114,9 +123,10 @@ services:
       - ticket-booking-network
 
   zookeeper:
+    <<: *default-restart
     image: confluentinc/cp-zookeeper:7.9.3
     hostname: zookeeper
-    container_name: zookeeper
+    # container_name: zookeeper
     expose: [2181]
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -126,8 +136,9 @@ services:
       - ticket-booking-network
 
   kafka-broker:
+    <<: *default-restart
     image: confluentinc/cp-kafka:7.9.3
-    container_name: kafka-broker
+    # container_name: kafka-broker
     hostname: kafka-broker
     expose: [29092]
     depends_on:
@@ -144,9 +155,10 @@ services:
       - ticket-booking-network
 
   kafka-schema-registry:
+    <<: *default-restart
     image: confluentinc/cp-schema-registry:7.9.3
     hostname: kafka-schema-registry
-    container_name: kafka-schema-registry
+    # container_name: kafka-schema-registry
     depends_on:
       - kafka-broker
     expose: [8081]
@@ -176,10 +188,10 @@ services:
     #   - ticket-booking-network
 
   redis:
+    <<: *default-restart
     image: redis:8.2.1-alpine
-    container_name: redis
-    ports:
-      - "6379:6379"
+    # container_name: redis
+    expose: [6379]
     networks:
       - ticket-booking-network
       
