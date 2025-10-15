@@ -31,7 +31,12 @@ function UserOrdersPage() {
     try {
       const response = await fetchOrdersByEmail(email!);
       console.log("Orders fetched:", response);
+
+      // Sort orders by most recent first
+      response.sort((a, b) => new Date(b.placedAt).getTime() - new Date(a.placedAt).getTime());
+
       setOrders(response);
+
       setEmail("");
       setOrderId("");
       setErrorMsg(null);
