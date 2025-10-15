@@ -30,6 +30,11 @@ down_dev:
 stop_dev:
 	docker compose -f docker-compose.dev.yml stop
 
+down_prod:
+	docker compose -f docker-compose.dev.yml down -v
+stop_prod:
+	docker compose -f docker-compose.prod.yml stop
+
 prune:
 	docker image prune
 prune_system:
@@ -56,7 +61,8 @@ cart_service_redis_cli:
 	docker exec -it cart-service redis-cli -h redis -p 6379
 
 
-.PHONY: dev prod down_dev stop_dev prune prune_system reset \
+.PHONY: dev prod down_dev stop_dev down_prod stop_prod \
+	prune prune_system reset \
 	create_volumes_dirs common_jar build_jar backend_install \
 	react \
 	cart-service cart-service-redis-cli
