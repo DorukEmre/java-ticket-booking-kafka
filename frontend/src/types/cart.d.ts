@@ -35,6 +35,7 @@ type CartContextType = {
   cart: Cart | null;
   setCartLocal: (c: Cart) => void;
   addOrUpdateItem: (item: CartItem) => Promise<void>;
+  deleteCartAndUpdateItem: (item: CartItem) => Promise<void>;
   removeItem: (item: CartItem) => Promise<void>;
   deleteCart: () => Promise<void>;
   refreshFromServer: () => Promise<CartResponse>;

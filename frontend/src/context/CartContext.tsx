@@ -103,6 +103,55 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function deleteCartAndUpdateItem(item: CartItem) {
+    const { cartId: cid, cartObj: prevCart } = await ensureCartId();
+    if (!cid)
+      throw new Error("No cartId available");
+
+    // Get current items and add or update the item
+    const currentItems = prevCart?.items ?? [];
+    let found = false;
+    const newItems = currentItems.map((i) => {
+      if (i.eventId === item.eventId) {
+        found = true;
+        return item;
+      }
+      return i;
+    });
+    if (!found)
+      newItems.push(item);
+
+    // delete local cart
+    localStorage.removeItem("cart");
+    console.log("deleteCart > delete cartId:", cid);
+
+    // delete backend cart
+    try {
+      await apiDeleteCart(cid);
+
+    } catch (error) {
+      console.error("Failed to delete cart from backend", error);
+      throw error; // rethrow to pass to user
+    }
+
+
+    // create new cart with updated item
+    try {
+      const res = await apiCreateCart();
+      const newCart: Cart = {
+        cartId: res.cartId,
+        items: newItems,
+        status: CartStatus.PENDING,
+      };
+      setCartLocal(newCart);
+
+    } catch (error) {
+      console.error("Failed to create cart", error);
+      throw new Error("Failed to create cart");
+    }
+
+  }
+
   async function proceedToCheckout() {
     let { cartId: cid, cartObj: prevCart } = await ensureCartId();
     if (!cid)
@@ -202,7 +251,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("cart");
     setCart(null);
 
-    console.log("deleteCart > delete carrId:", cid);
+    console.log("deleteCart > delete cartId:", cid);
 
     try {
       await apiDeleteCart(cid);
@@ -258,6 +307,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     cart,
     setCartLocal,
     addOrUpdateItem,
+    deleteCartAndUpdateItem,
     removeItem,
     deleteCart,
     refreshFromServer,

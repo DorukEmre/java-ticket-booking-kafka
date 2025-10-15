@@ -10,7 +10,7 @@ import ApiErrorMessage from '@/components/ApiErrorMessage';
 import ActionButton from '@/components/ActionButton';
 
 import { fetchEventById } from '@/api/catalog';
-import { imageBaseUrl } from '@/utils/globals';
+import { CartStatus, imageBaseUrl } from '@/utils/globals';
 import { useCart } from "@/hooks/useCart";
 import useDocumentTitle from '@/hooks/useDocumentTitle';
 import type { Event } from '@/types/catalog';
@@ -21,7 +21,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 
 function EventDetailPage() {
 
-  const { cart, addOrUpdateItem } = useCart();
+  const { cart, addOrUpdateItem, deleteCartAndUpdateItem } = useCart();
 
   const [ticketCount, setTicketCount] = useState<number>(1);
 
@@ -62,16 +62,21 @@ function EventDetailPage() {
   async function saveItemToCart() {
     console.log("EventDetailPage > Add to cart clicked");
 
+    let item: CartItem = {
+      eventId: id,
+      ticketCount: ticketCount,
+      ticketPrice: event ? event.ticketPrice : 0,
+    }
+    console.log("EventDetailPage > Saving cart item:", item);
+
     // Save item to local cart and backend
     try {
-      let item: CartItem = {
-        eventId: id,
-        ticketCount: ticketCount,
-        ticketPrice: event ? event.ticketPrice : 0,
-      }
-      console.log("EventDetailPage > Saving cart item:", item);
 
-      await addOrUpdateItem(item);
+      if (cart?.status == CartStatus.CONFIRMED) {
+        await deleteCartAndUpdateItem(item);
+      } else {
+        await addOrUpdateItem(item);
+      }
 
     } catch (error) {
       console.error("EventDetailPage > Error saving cart:", error);
