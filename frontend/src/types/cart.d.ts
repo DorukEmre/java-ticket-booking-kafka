@@ -38,6 +38,7 @@ type CartContextType = {
   deleteCartAndUpdateItem: (item: CartItem) => Promise<void>;
   removeItem: (item: CartItem) => Promise<void>;
   deleteCart: () => Promise<void>;
+  renewCart: () => Promise<void>;
   refreshFromServer: () => Promise<CartResponse>;
   proceedToCheckout: () => Promise<void>;
   totalPrice: number;

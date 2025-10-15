@@ -19,7 +19,7 @@ function CartPage() {
   const [isProcessing, setIsProcessing] = useState(false);
 
 
-  const { cart, proceedToCheckout, deleteCart, totalPrice, refreshFromServer } = useCart();
+  const { cart, proceedToCheckout, deleteCart, renewCart, totalPrice, refreshFromServer } = useCart();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,9 +41,22 @@ function CartPage() {
         }
       }
     }
-    redirectToCheckout();
 
-  }, []);
+    async function renewCartIfInvalid() {
+      if (cart && cart.status === CartStatus.INVALID) {
+        console.log("CartPage > Cart status INVALID, creating new cart");
+        try {
+          await renewCart();
+        } catch (error) {
+          console.error("Failed to delete invalid cart:", error);
+        }
+      }
+    }
+
+    redirectToCheckout();
+    renewCartIfInvalid();
+
+  }, [cart?.status]);
 
   async function handleDeleteCart() {
 
@@ -109,7 +122,7 @@ function CartPage() {
           )}
 
           {cart && cart.items.length > 0
-            && cart.items.some(item => !item.priceChanged && !item.unavailable)
+            && cart.items.some(item => !item.unavailable)
             && (
               <div className="d-flex flex-column align-items-end gap-4 mt-4">
 

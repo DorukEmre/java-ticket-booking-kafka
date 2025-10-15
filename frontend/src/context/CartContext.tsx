@@ -288,6 +288,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function renewCart() {
+    const { cartId: cid, cartObj: prevCart } = await ensureCartId();
+    if (!cid)
+      throw new Error("No cartId available");
+
+    try {
+      localStorage.removeItem("cart");
+      await apiDeleteCart(cid);
+
+      const res = await apiCreateCart();
+      const newCart: Cart = {
+        cartId: res.cartId,
+        items: prevCart?.items ?? [],
+        status: prevCart?.status ?? CartStatus.INVALID,
+      };
+      setCartLocal(newCart);
+
+    } catch (error) {
+      console.error("Failed to create cart", error);
+      throw new Error("Failed to create cart");
+    }
+  }
+
   async function refreshFromServer() {
     const { cartId: cid, cartObj: prevCart } = await ensureCartId();
     if (!cid)
@@ -336,6 +359,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     deleteCartAndUpdateItem,
     removeItem,
     deleteCart,
+    renewCart,
     refreshFromServer,
     proceedToCheckout,
     totalPrice,
