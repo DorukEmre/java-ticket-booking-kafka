@@ -12,9 +12,9 @@ import CheckoutPage from '@/pages/CheckoutPage';
 import OrderConfirmationPage from "@/pages/OrderConfirmationPage";
 import UserOrdersPage from '@/pages/UserOrdersPage';
 import OrderDetailsPage from '@/pages/OrderDetailsPage';
+import Page404 from "@/pages/Page404";
 
 // import AdminPage from '@/pages/AdminPage';
-// import NotFoundPage from '@/pages/NotFoundPage';
 
 function App() {
 
@@ -25,6 +25,7 @@ function App() {
 
       <main className="flex-fill p-5">
         <Routes>
+
           {/* Public Routes */}
           <Route path="/" element={<HomePage />} />
           <Route path="/venues" element={<VenuesPage />} />
@@ -45,7 +46,8 @@ function App() {
           {/* <Route path="/admin" element={<AdminPage />} /> */}
 
           {/* 404 / Fallback */}
-          {/* <Route path="*" element={<NotFoundPage />} /> */}
+          <Route path="*" element={<Page404 />} />
+
         </Routes>
       </main>
 
