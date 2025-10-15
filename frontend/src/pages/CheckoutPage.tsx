@@ -45,8 +45,16 @@ function CheckoutPage() {
         console.log("Order details:", response);
         setOrder(response);
 
+        // If order is INVALID, redirect to cart page
+        if (response?.status === "INVALID") {
+          console.log("Order INVALID, redirecting to cart");
+          navigate(
+            `/cart`,
+            { state: { fromCheckout: true } }
+          );
+        }
         // If order is not PENDING_PAYMENT, redirect to order details page
-        if (response?.status !== "PENDING_PAYMENT") {
+        else if (response?.status !== "PENDING_PAYMENT") {
           console.log("Order not PENDING_PAYMENT, redirecting");
           navigate(
             `/orders/${orderId}`,

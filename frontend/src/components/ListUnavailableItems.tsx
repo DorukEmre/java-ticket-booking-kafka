@@ -6,8 +6,8 @@ function ListUnavailableItems({ items }: { items: CartItem[] }) {
   return (
     <>
       {items.some(item => item.unavailable) && (
-        <div>
-          <p>Unavailable Items:</p>
+        <div className="alert alert-danger" role="alert">
+          <p>Items Unavailable:</p>
           <ul>
             {items
               .filter(item => item.unavailable)

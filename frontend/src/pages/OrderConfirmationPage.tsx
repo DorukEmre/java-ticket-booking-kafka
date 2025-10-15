@@ -39,7 +39,8 @@ function OrderConfirmationPage() {
         console.log("Order details:", response);
         setOrder(response);
 
-        await deleteCart(); // delete cart after successful order
+        console.log("Deleting cart after order confirmation");
+        await deleteCart(); // delete cart after successful order processing
 
       } catch (error) {
         console.error("Failed to fetch order details:", error);

@@ -88,7 +88,7 @@ public class InventoryReservationService {
             .build())
         .toList();
 
-    kafkaTemplate.send(Topics.ORDER_FAILED, OrderCreationResponse.builder()
+    kafkaTemplate.send(Topics.ORDER_INVALID, OrderCreationResponse.builder()
         .orderId(order.getId())
         .cartId(orderRequestLogRepository.findByOrderId(order.getId())
             .map(OrderRequestLog::getCartId)

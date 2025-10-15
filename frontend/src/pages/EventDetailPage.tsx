@@ -72,7 +72,9 @@ function EventDetailPage() {
     // Save item to local cart and backend
     try {
 
-      if (cart?.status == CartStatus.CONFIRMED) {
+      if (cart?.status == CartStatus.INVALID
+        || cart?.status == CartStatus.CONFIRMED
+      ) {
         await deleteCartAndUpdateItem(item);
       } else {
         await addOrUpdateItem(item);

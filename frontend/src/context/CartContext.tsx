@@ -111,13 +111,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
     // Get current items and add or update the item
     const currentItems = prevCart?.items ?? [];
     let found = false;
-    const newItems = currentItems.map((i) => {
-      if (i.eventId === item.eventId) {
-        found = true;
-        return item;
-      }
-      return i;
-    });
+    const newItems = currentItems
+      .filter(i => !i.unavailable)
+      .map((i) => {
+        if (i.eventId === item.eventId) {
+          found = true;
+          return item;
+        }
+        return i;
+      });
     if (!found)
       newItems.push(item);
 

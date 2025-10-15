@@ -4,16 +4,20 @@ import type { CartItem } from "@/types/cart";
 
 function ListValidItems({ items }: { items: CartItem[] }) {
   return (
-    <div>
-      <p>Valid Items:</p>
-      <ul>
-        {items
-          .filter(item => !item.priceChanged && !item.unavailable)
-          .map((item, index) => (
-            <CartItemEntry item={item} key={index} />
-          ))}
-      </ul>
-    </div>
+    <>
+      {items.some(item => !item.priceChanged && !item.unavailable) && (
+        <div>
+          <p>Valid Items:</p>
+          <ul>
+            {items
+              .filter(item => !item.priceChanged && !item.unavailable)
+              .map((item, index) => (
+                <CartItemEntry item={item} key={index} />
+              ))}
+          </ul>
+        </div>
+      )}
+    </>
   )
 
 }

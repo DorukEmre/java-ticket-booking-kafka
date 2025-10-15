@@ -108,20 +108,22 @@ function CartPage() {
             <p>Your cart is empty.</p>
           )}
 
-          {cart && cart.items.length > 0 && (
-            <div className="d-flex flex-column align-items-end gap-4 mt-4">
+          {cart && cart.items.length > 0
+            && cart.items.some(item => !item.priceChanged && !item.unavailable)
+            && (
+              <div className="d-flex flex-column align-items-end gap-4 mt-4">
 
-              <PriceSummary totalPrice={totalPrice} />
+                <PriceSummary totalPrice={totalPrice} />
 
-              <form onSubmit={handleCheckout}>
-                <ActionButton
-                  text="Proceed to checkout"
-                  clickDisabled={isProcessing}
-                />
-              </form>
+                <form onSubmit={handleCheckout}>
+                  <ActionButton
+                    text="Proceed to checkout"
+                    clickDisabled={isProcessing}
+                  />
+                </form>
 
-            </div>
-          )}
+              </div>
+            )}
         </div>
       )}
     </div>
