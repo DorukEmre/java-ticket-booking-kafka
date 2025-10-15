@@ -231,8 +231,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       await apiDeleteCartItem(cid, item);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("removeItem > apiDeleteCartItem failed — rolling back", error);
+      if (error?.status === 404 && error?.message?.includes("Item not found in cart")) {
+        // item was not found on backend, so we can consider it deleted
+        return;
+      }
       if (prevCart) {
         setCartLocal(prevCart);
       } else {
