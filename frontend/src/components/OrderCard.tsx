@@ -39,7 +39,7 @@ function OrderCard(
     return (
 
       <li key={order.orderId} className="mb-3 p-3 border rounded d-flex flex-column gap-1 ">
-        <p>Order ID:{""}
+        <p>Order ID:{" "}
           <Link to={`/orders/${order.orderId}`} className="text-decoration-none">
             <span className="fw-bold">
               {order.orderId}
