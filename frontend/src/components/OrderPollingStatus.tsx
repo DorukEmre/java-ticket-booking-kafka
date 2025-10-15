@@ -46,7 +46,7 @@ function OrderPollingStatus(
     <div>
       {cart?.status === CartStatus.IN_PROGRESS && (
         <>
-          <p>Your order {orderId} is <span className="bg-warning p-2">{cart?.status}</span></p>
+          <p>Your order {orderId} is <span className="p-2">{cart?.status}</span></p>
           <p>Your order is being processed. Please wait for confirmation.</p>
         </>
       )}
