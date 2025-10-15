@@ -1,0 +1,7 @@
+localhost {
+	reverse_proxy gatewayapi:8000
+	log {
+		output stdout
+		level WARN
+	}
+}
