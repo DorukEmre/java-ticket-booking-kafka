@@ -34,23 +34,23 @@ services:
   #   networks:
   #     - ticket-booking-network
 
-  react:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.prod
-      args:
-        VITE_API_BASE_URL: ${VITE_API_BASE_URL_PROD}
-    image: react
-    container_name: react
-    ports:
-      - "5173:5173"
-    environment:
-      - PUBLIC_URL=/
-      - VITE_API_BASE_URL=${VITE_API_BASE_URL_PROD}
-    networks:
-      - ticket-booking-network
-    # volumes:
-    #   - ./frontend/dist:/app/dist # for production (build directory)
+  # react:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile.prod
+  #     args:
+  #       VITE_API_BASE_URL: ${VITE_API_BASE_URL_PROD}
+  #   image: react
+  #   container_name: react
+  #   ports:
+  #     - "5173:5173"
+  #   environment:
+  #     - PUBLIC_URL=/
+  #     - VITE_API_BASE_URL=${VITE_API_BASE_URL_PROD}
+  #   networks:
+  #     - ticket-booking-network
+  #   # volumes:
+  #   #   - ./frontend/dist:/app/dist # for production (build directory)
 
   catalog-service:
     <<: *default-restart
