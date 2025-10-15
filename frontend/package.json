@@ -19,6 +19,7 @@
     "sass": "^1.93.2"
   },
   "devDependencies": {
+    "@types/bootstrap": "^5.2.10",
     "@types/node": "^24.6.0",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
