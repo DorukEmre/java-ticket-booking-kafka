@@ -1,11 +1,33 @@
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
+import { Collapse } from "bootstrap"
 
 import HeaderButton from "@/components/HeaderButton"
 import HeaderCartButton from "@/components/HeaderCartButton"
 
 import { cartIcon } from "@/assets"
+import { useEffect } from "react"
 
 function Header() {
+
+  const location = useLocation()
+
+  const handleClick = () => {
+    const navbar = document.getElementById('navbarNav');
+    if (!navbar) return;
+
+    if (navbar.classList.contains('show')) {
+      try {
+        const inst = Collapse.getOrCreateInstance(navbar);
+        inst.hide();
+      } catch (e) {
+        navbar.classList.remove('show');
+      }
+    }
+  }
+
+  useEffect(() => {
+    handleClick()
+  }, [location.pathname])
 
   return (
     <header>
@@ -22,10 +44,10 @@ function Header() {
 
           <div className="collapse navbar-collapse flex-grow-0" id="navbarNav">
             <ul className="navbar-nav align-items-end gap-2 me-3">
-              <HeaderButton path={"/events"} text={"Events"} />
-              <HeaderButton path={"/venues"} text={"Venues"} />
-              <HeaderButton path={"/orders"} text={"My orders"} />
-              <HeaderCartButton path={"/cart"} text={"Cart"} icon={cartIcon} />
+              <HeaderButton path={"/events"} text={"Events"} handleClick={handleClick} />
+              <HeaderButton path={"/venues"} text={"Venues"} handleClick={handleClick} />
+              <HeaderButton path={"/orders"} text={"My orders"} handleClick={handleClick} />
+              <HeaderCartButton path={"/cart"} text={"Cart"} icon={cartIcon} handleClick={handleClick} />
             </ul>
           </div>
 

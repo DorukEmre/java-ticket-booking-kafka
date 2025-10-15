@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 import { useCart } from "@/hooks/useCart";
 import { useEffect, useState } from "react";
 
-function HeaderCartButton({ path, text, icon }
-  : { path: string; text: string, icon?: string }) {
+function HeaderCartButton({ path, text, icon, handleClick }
+  : { path: string; text: string, icon?: string, handleClick: () => void }) {
 
   const { cart } = useCart();
   const [totalTicketCount, setTotalTicketCount] = useState(0);
 
   useEffect(() => {
-    // calculte total ticket count from cart
+    // calculate total ticket count from cart
 
     let count = 0;
 
@@ -23,12 +23,16 @@ function HeaderCartButton({ path, text, icon }
   }, [cart?.items]);
 
   return (
-    <li className="nav-item p-2 rounded header-button">
-      <Link to={path} className="nav-link text-neutral-300 text-decoration-none icon-link position-relative">
+    <li className="nav-item rounded header-button">
+      <Link
+        to={path}
+        className="nav-link p-3 text-neutral-300 text-decoration-none icon-link position-relative"
+        onClick={handleClick}
+      >
         {text}
         {icon && <img src={icon} alt="icon" aria-hidden="true" />}
         {(cart?.items?.length || 0) > 0 &&
-          <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          <span className="position-absolute top-0 end-0 badge rounded-pill bg-danger">
             {totalTicketCount}
             <span className="visually-hidden">unread messages</span>
           </span>
