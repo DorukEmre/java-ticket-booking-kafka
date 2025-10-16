@@ -1,24 +1,24 @@
 meta {
-  name: Add Item to Cart
+  name: Save Item to Cart
   type: http
-  seq: 3
+  seq: 2
 }
 
-post {
-  url: http://localhost:8000/cart/:cartId/items
+put {
+  url: {{BASE_URL}}/cart/:cartId/items
   body: json
   auth: inherit
 }
 
 params:path {
-  cartId: f65652af-3329-4a54-a37f-da0b9281c535
+  cartId: 3a687d2e-2f5d-436c-bcb3-d58b3c6f23a6
 }
 
 body:json {
   {
     "eventId": 2,
     "ticketCount": 10,
-    "ticketPrice": 30
+    "ticketPrice": 130
   }
 }
 

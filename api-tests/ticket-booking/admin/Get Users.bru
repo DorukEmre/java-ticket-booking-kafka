@@ -1,11 +1,11 @@
 meta {
   name: Get Users
   type: http
-  seq: 2
+  seq: 4
 }
 
 get {
-  url: http://localhost:8000/admin/users
+  url: {{BASE_URL}}/admin/users
   body: none
   auth: inherit
 }

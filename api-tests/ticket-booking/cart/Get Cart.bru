@@ -1,17 +1,17 @@
 meta {
-  name: Get Cart Status
+  name: Get Cart
   type: http
-  seq: 4
+  seq: 6
 }
 
 get {
-  url: http://localhost:8000/cart/:cartId/status
+  url: {{BASE_URL}}/cart/:cartId
   body: none
   auth: inherit
 }
 
 params:path {
-  cartId: 
+  cartId: 826db327-ae22-4e06-b127-e1dacc84c817
 }
 
 settings {

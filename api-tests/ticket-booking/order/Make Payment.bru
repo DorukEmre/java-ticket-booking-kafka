@@ -1,0 +1,26 @@
+meta {
+  name: Make Payment
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}/orders/:orderId/payment
+  body: json
+  auth: inherit
+}
+
+params:path {
+  orderId: 3fSV7Spf
+}
+
+body:json {
+  {
+    "customerName": "bob",
+    "email": "my@email.com"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

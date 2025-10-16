@@ -1,0 +1,26 @@
+meta {
+  name: Delete Item from Cart
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{BASE_URL}}/cart/:cartId/items
+  body: json
+  auth: inherit
+}
+
+params:path {
+  cartId: f6acdef6-8f03-448c-9cc8-491f5f89521c
+}
+
+body:json {
+  {
+    "eventId": 2,
+    "ticketCount": 10
+  }
+}
+
+settings {
+  encodeUrl: true
+}

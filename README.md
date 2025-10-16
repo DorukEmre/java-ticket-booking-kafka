@@ -78,7 +78,7 @@ Ticket purchase request flow through the system. Each service communicates via K
 - Update cart/order status
 
 6) Frontend Cart Update
-  - Poll `/cart/{cartId}/status` (or subscribe via WebSocket for real-time updates)
+  - Poll `/cart/{cartId}` (or subscribe via WebSocket for real-time updates)
   - If status = `PENDING_PAYMENT` → redirect to /orders/{orderId}
   - If status = `INVALID` → display checkout INVALID
 

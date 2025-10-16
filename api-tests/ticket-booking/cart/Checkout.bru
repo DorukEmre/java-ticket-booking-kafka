@@ -1,23 +1,28 @@
 meta {
   name: Checkout
   type: http
-  seq: 3
+  seq: 4
 }
 
 post {
-  url: http://localhost:8000/cart/:cartId/checkout
+  url: {{BASE_URL}}/cart/:cartId/checkout
   body: json
   auth: inherit
 }
 
 params:path {
-  cartId: 3ab29128-0f96-4870-9e91-3e6eeb7b3bdf
+  cartId: 826db327-ae22-4e06-b127-e1dacc84c817
 }
 
 body:json {
   {
-    "customerName": "bob",
-    "email": "my@email.com"
+    "items": [
+      {
+        "eventId": 2,
+        "ticketCount": 10,
+        "ticketPrice": 130
+      }
+    ]
   }
 }
 

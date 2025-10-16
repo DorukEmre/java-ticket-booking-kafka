@@ -1,11 +1,11 @@
 meta {
   name: Add user
   type: http
-  seq: 3
+  seq: 5
 }
 
 post {
-  url: http://localhost:8000/admin/users/new
+  url: {{BASE_URL}}/admin/users/new
   body: json
   auth: inherit
 }
