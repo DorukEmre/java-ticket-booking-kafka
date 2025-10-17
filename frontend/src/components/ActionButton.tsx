@@ -1,10 +1,15 @@
 import { useState, useRef, useEffect } from "react";
+import LoadingSpinner from "./LoadingSpinner";
 
 function ActionButton(
-  { text, className, icon, animDisabled = false, clickDisabled = false }
+  { text, className, icon, animDisabled = false, clickDisabled = false, spinner = false }
     : {
-      text: string; className?: string;
-      icon?: string, animDisabled?: boolean, clickDisabled?: boolean
+      text: string;
+      className?: string;
+      icon?: string,
+      animDisabled?: boolean,
+      clickDisabled?: boolean,
+      spinner?: boolean,
     }) {
   const [showIcon, setShowIcon] = useState(false);
   const timeoutRef = useRef<number | null>(null);
@@ -45,9 +50,13 @@ function ActionButton(
       onClick={handleClick}
       disabled={clickDisabled}
     >
-      {showIcon && icon ? (
+      {showIcon && icon && (
         <img src={icon} alt="" style={{ display: "inline-block" }} />
-      ) : (
+      )}
+      {!showIcon && spinner && (
+        <LoadingSpinner className="" size={24} />
+      )}
+      {!showIcon && !spinner && (
         text
       )}
     </button>

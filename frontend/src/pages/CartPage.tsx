@@ -132,6 +132,7 @@ function CartPage() {
                   <ActionButton
                     text="Proceed to checkout"
                     clickDisabled={isProcessing}
+                    spinner={isProcessing}
                   />
                 </form>
 
