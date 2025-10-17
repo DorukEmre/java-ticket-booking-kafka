@@ -28,13 +28,13 @@ function CheckoutPage() {
 
   useEffect(() => {
     if (!orderId) {
-      navigate("/");
+      navigate("/cart");
     }
   }, [orderId]);
 
   useEffect(() => {
     if (!fromCartPage && !fromOrderDetailsPage) {
-      navigate("/");
+      navigate("/cart");
       return;
     }
 
