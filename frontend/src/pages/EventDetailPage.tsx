@@ -120,7 +120,7 @@ function EventDetailPage() {
                     <p>Description: {event.description}</p>
                   </div>
 
-                  <div className='d-flex align-items-center gap-5 my-3 justify-content-end'>
+                  <div className='d-flex flex-wrap align-items-center gap-5 my-3 justify-content-end'>
                     <TicketQuantitySelector
                       ticketCount={ticketCount}
                       setTicketCount={setTicketCount}

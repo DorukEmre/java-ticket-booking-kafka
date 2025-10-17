@@ -127,7 +127,7 @@ function CheckoutPage() {
                 {cart &&
                   <button onClick={handleDeleteCart}
                     className="btn p-2 border-1 border-neutral-300 text-neutral-300 control align-self-end">
-                    Delete cart
+                    Cancel order
                   </button>}
               </div>
 
