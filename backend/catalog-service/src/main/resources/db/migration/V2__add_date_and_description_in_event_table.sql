@@ -1,7 +1,11 @@
-ALTER TABLE event ADD COLUMN event_date DATE;
-UPDATE event SET event_date = CURRENT_DATE WHERE event_date IS NULL;
+ALTER TABLE event
+  ADD COLUMN event_date DATE;
 
-ALTER TABLE event ALTER COLUMN event_date SET DEFAULT CURRENT_DATE;
-ALTER TABLE event ALTER COLUMN event_date SET NOT NULL;
+UPDATE event 
+  SET event_date = CURRENT_DATE WHERE event_date IS NULL;
 
-ALTER TABLE event ADD COLUMN description CLOB;
+ALTER TABLE event
+  MODIFY COLUMN event_date DATE NOT NULL;
+
+ALTER TABLE event
+  ADD COLUMN description TEXT;

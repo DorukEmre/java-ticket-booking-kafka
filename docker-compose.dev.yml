@@ -14,19 +14,19 @@ services:
     networks:
       - ticket-booking-network
 
-  # mysql:
-  #   image: mysql:8.4.6
-  #   container_name: mysql
-  #   restart: always
-  #   env_file:
-  #     - .env
-  #   ports:
-  #     - "3306:3306"
-  #   volumes:
-  #     - ./infrastructure/mysql/init-db-user.sh:/docker-entrypoint-initdb.d/init-db-user.sh
-  #     - db-data:/var/lib/mysql
-  #   networks:
-  #     - ticket-booking-network
+  mysql:
+    image: mysql:8.4.6
+    container_name: mysql
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - 3306:3306
+    volumes:
+      - ./infrastructure/mysql/init-db-user.sh:/docker-entrypoint-initdb.d/init-db-user.sh
+      - db-data:/var/lib/mysql
+    networks:
+      - ticket-booking-network
 
   react:
     build:
@@ -54,18 +54,17 @@ services:
     working_dir: /app/catalog-service
     expose: [8080]
     command: ["mvn", "spring-boot:run"]
-    # depends_on:
-    #   - mysql
+    depends_on:
+      - mysql
     environment:
       SERVER_PORT: "8080"
-      # SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_CATALOG}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_CATALOG}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: "kafka-broker:29092"
     volumes:
       - ./backend:/app
       - ${HOME}/.m2:/root/.m2
-      - catalog-db:/app/catalog-service/data
     networks:
       - ticket-booking-network
 
@@ -79,7 +78,6 @@ services:
     expose: [8081]
     command: ["mvn", "spring-boot:run"]
     depends_on:
-      # - mysql
       - redis
     environment:
       SERVER_PORT: "8081"
@@ -102,18 +100,17 @@ services:
     working_dir: /app/order-service
     expose: [8082]
     command: ["mvn", "spring-boot:run"]
-    # depends_on:
-    #   - mysql
+    depends_on:
+      - mysql
     environment:
       SERVER_PORT: "8082"
-      # SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_ORDER}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_ORDER}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: "kafka-broker:29092"
     volumes:
       - ./backend:/app
       - ${HOME}/.m2:/root/.m2
-      - order-db:/app/order-service/data
     networks:
       - ticket-booking-network
 
@@ -126,8 +123,6 @@ services:
     working_dir: /app/gatewayapi
     expose: [8000]
     command: ["mvn", "spring-boot:run"]
-    # depends_on:
-    #   - mysql
     environment:
       SERVER_PORT: "8000"
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
@@ -214,9 +209,7 @@ networks:
     driver: bridge
 
 volumes:
-  catalog-db:
-  order-db:
-  # db-data:
-  node_modules:
   caddy_data:
   caddy_config:
+  db-data:
+  node_modules:
