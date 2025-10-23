@@ -1,0 +1,61 @@
+SHELL	= /bin/sh
+
+NAME	= ticket-booking
+
+
+build_frontend:
+	rm -rf frontend/dist
+	mkdir -p frontend/dist
+	cd frontend && npm install && \
+	VITE_API_BASE_URL=https://api.ticket-booking.dorukemre.dev npm run build
+
+build_jars:
+	cd backend && mvn clean package -DskipTests
+
+prod: build_frontend build_jars
+	docker compose -f docker-compose.prod.yml up --build
+
+prod_detached: build_frontend build_jars
+	docker compose -f docker-compose.prod.yml up -d --build
+
+
+
+clean:
+	cd backend && sudo mvn clean
+
+down:
+	docker compose -f docker-compose.prod.yml down
+stop:
+	docker compose -f docker-compose.prod.yml stop
+
+
+reset:
+	docker stop $$(docker ps -qa); \
+	docker rm $$(docker ps -qa); \
+	docker rmi -f $$(docker images -qa); \
+	docker volume rm $$(docker volume ls -q); \
+	docker network rm $$(docker network ls -q) 2>/dev/null
+
+
+# mysql:
+# 	docker exec -it mysql sh \
+# 		-c "mysql -uroot -p\"\$$MYSQL_ROOT_PASSWORD\" -D\$$MYSQL_DATABASE"
+
+react:
+	docker exec -it react sh 
+
+cart_service:
+	docker exec -it cart-service sh
+
+cart_service_redis_cli:
+	docker exec -it cart-service redis-cli -h redis -p 6379
+
+
+.PHONY: prod prod_detached \
+  down stop \
+	clean reset \
+	build_frontend build_jars \
+	react \
+	cart-service cart-service-redis-cli
+
+.DEFAULT_GOAL := prod_detached

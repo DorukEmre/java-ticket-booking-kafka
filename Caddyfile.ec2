@@ -1,0 +1,57 @@
+ticket-booking.dorukemre.dev {
+	encode gzip
+	root * /usr/share/caddy/react
+
+	# SPA fallback: serve index.html for client-side routes that don't match a file
+	try_files {path} /index.html
+
+	file_server
+
+	log {
+		output file /data/caddy/frontend_access.log
+		format json
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+	}
+}
+
+api.ticket-booking.dorukemre.dev {
+	encode gzip
+
+	header {
+		# HSTS (1 year, include subdomains, preload)
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "geolocation=(), microphone=(), camera=()"
+		Cache-Control "no-store"
+	}
+
+	log {
+		output file /data/caddy/access.log {
+			roll_size 5mb
+			roll_keep 5
+			roll_keep_for 720h
+		}
+		format json
+	}
+
+	reverse_proxy gatewayapi:8000 {
+		# Optional timeouts
+		transport http {
+			read_timeout 30s
+			write_timeout 30s
+		}
+
+		# Optional health check endpoint
+		health_uri /actuator/health
+		health_interval 10s
+		health_timeout 3s
+	}
+
+}
