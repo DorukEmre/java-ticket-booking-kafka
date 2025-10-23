@@ -10,7 +10,7 @@
     "deploy": "npm run build && serve -s dist -l 5173"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.90.2",
+    "@tanstack/react-query": "^5.90.5",
     "axios": "^1.12.2",
     "bootstrap": "^5.3.8",
     "react": "^19.2.0",
@@ -20,12 +20,12 @@
   },
   "devDependencies": {
     "@types/bootstrap": "^5.2.10",
-    "@types/node": "^24.6.0",
+    "@types/node": "^24.9.1",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^5.0.4",
     "globals": "^16.4.0",
     "typescript": "~5.9.3",
-    "vite": "^7.1.7"
+    "vite": "^7.1.10"
   }
 }
