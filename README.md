@@ -1,4 +1,4 @@
-A full-stack ticket booking application using React (frontend), Spring Boot and Java (backend), and MySQL (database). 
+A full-stack ticket booking application using React + TypeScript (frontend), Spring Boot and Java (backend), and MySQL (database). 
 
 The system uses a microservices architecture, where each service runs in its own Docker container.
 
