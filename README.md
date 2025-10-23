@@ -1,48 +1,54 @@
 A full-stack ticket booking application using React (frontend), Spring Boot and Java (backend), and MySQL (database). 
-The system follows a microservices architecture, with services communicating via Kafka queues and REST APIs.
-All components run in Docker containers.
 
-## Services
+The system uses a microservices architecture, where each service runs in its own Docker container.
 
-Microservices architecture for a ticket booking system:
-  - Frontend: React app
-  - Backend services: Catalog, Cart, Order
-  - API Gateway: gatewayapi
-  - Database: MySQL
-  - Messaging: Kafka + Zookeeper + Schema Registry + Kafka UI
+Frontend and backend communicate via REST APIs through a **Gateway API**.
+Microservices communicate via **Kafka events** and internal **REST calls**.
 
-# React + Java + MySQL in Docker Boilerplate
 
-Boilerplate to set up a full-stack application using React for the frontend, Java projects for the backend, and MySQL for the database, all within Docker containers. 
+## Architecture
 
-## Database
+**Microservices:**
 
-MySQL in Docker container
+* **gatewayapi:** Routes frontend and external API traffic
+* **catalog-service:** Manages events/venues catalog (MySQL)
+* **cart-service:** Handles user carts (Redis)
+* **order-service:** Processes orders/payments (MySQL)
 
-### Tables
+**Infrastructure services:**
 
-## Frontend
+* **MySQL:** Data persistence
+* **Redis:** In-memory cart cache
+* **Kafka + Zookeeper + Schema Registry:** Event-driven communication backbone
+* **Caddy:** Serves frontend + reverse-proxies backend
 
-Demo set up to make a get and a post request to catalog backend
+All services are connected via a shared Docker network.
 
-## Backend
 
-The backend consists of Java-based microservices (e.g., CatalogService) running in separate Docker containers and orchestrated using Docker Compose. Each service exposes RESTful APIs for the frontend to interact with. The backend services connect to the MySQL database for data persistence and retrieval.
+## Backend Directory Structure
 
-- Each backend service has its own Dockerfile and configuration.
-- Services communicate with the database using JDBC or ORM frameworks.
-- API endpoints are designed for CRUD operations and business logic.
+Multi-module Maven project using a library of shared DTOs
 
-## Role of each microservice
-- gateway-api → entry point (routing, throttling)
-- cart-service → temporary state, fast (Redis)
-- order-service → orchestrator, creates orders (Order, Customer)
-- catalog-service → source of truth for availability and price (Event, Venue)
+```
+backend/
+├── pom.xml                      # Parent POM (packaging=pom)
+├── ticketing-common-library/    # Shared DTOs
+│       └── pom.xml
+└── gatewayapi/                  # API gateway for frontend & routing
+│       └── pom.xml
+├── catalog-service/             # Event catalog microservice
+│       └── pom.xml
+├── cart-service/                # Shopping cart microservice
+│       └── pom.xml
+└── order-service/               # Order and payment microservice
+        └── pom.xml
+```
+
 
 ## Architecture & Data Flow
 
 - Client keeps a local cartId in localStorage with cartId and a local copy of items for instant UI.
-- Server exposes idempotent APIs: createCart, getCart(cartId), saveCartItem(cartId, item), deleteCartItem(cartId, item), checkout(cartId).
+- Server exposes APIs: createCart, getCart(cartId), saveCartItem(cartId, item), deleteCartItem(cartId, item), checkout(cartId).
 - On saveCartItem, createCart on server if needed and persist cartId locally.
 - Server stores cart in Redis for fast reads.
 
@@ -50,10 +56,11 @@ The backend consists of Java-based microservices (e.g., CatalogService) running 
 - Items not reserved on saveCartItem, only at checkout
 - Abandoned cart TTL: server expires carts after some time.
 
+
 ## Purchase Flow
 Ticket purchase request flow through the system. Each service communicates via Kafka events to ensure reliable and decoupled processing.
 
-1) Frontend → Cart Service (HTTP)
+1) Frontend (`/cart`) → Cart Service (HTTP - `POST cart checkout`)
     
    → emit `OrderCreationRequested`
 
@@ -78,9 +85,11 @@ Ticket purchase request flow through the system. Each service communicates via K
 - Update cart/order status
 
 6) Frontend Cart Update
-  - Poll `/cart/{cartId}` (or subscribe via WebSocket for real-time updates)
-  - If status = `PENDING_PAYMENT` → redirect to /orders/{orderId}
-  - If status = `INVALID` → display checkout INVALID
+  - Poll `/cart/{cartId}`
+  - If status = `PENDING_PAYMENT` → redirect to `/checkout/{orderId}` for payment
+  - If status = `INVALID` → redirect to `/cart` and point out invalid items
+
+See [FRONTEND.md](documentation/FRONTEND.md) for full frontend details.
 
 
 ## Microservice Structure
@@ -103,7 +112,7 @@ Ticket purchase request flow through the system. Each service communicates via K
 - **lombok**: For reducing boilerplate code in Java classes.
 - **spring-boot-starter-test**: For testing support.
 
-## Spring Boot Actuator
+## Spring Boot Actuator (in dev mode)
 
 - `http://localhost:8000/actuator/gateway/routes` — View all routes currently configured in the API Gateway, including their IDs, predicates, and target URIs.
 
@@ -116,3 +125,24 @@ management.endpoint.gateway.access=unrestricted
 
 ## API Tests (Bruno)
 The `api-tests` folder contains Bruno (API client) collections for testing the REST APIs of all backend services.
+
+
+## Hosting on AWS EC2
+
+- add frontend url to CORS_ALLOWED_ORIGINS
+- build frontend with backend api url as VITE_API_BASE_URL
+- ensure security group of EC2 instance allows HTTP (port 80) and/or HTTPS (port 443) traffic
+- Caddyfile configuration: replace `localhost` with the public DNS or public IP of the EC2 instance
+
+### Inbound rules
+
+Anyone can reach EC2 via ports 80 and 443.
+Restrict SSH to my IP + key-based auth.
+ICMP for ping/traceroute for diagnostics.
+
+| Type  | Protocol | Port | Source    | Purpose                         |
+| ----- | -------- | ---- | --------- | ------------------------------- |
+| HTTP  | TCP      | 80   | 0.0.0.0/0 | Public HTTP (redirect to HTTPS) |
+| HTTPS | TCP      | 443  | 0.0.0.0/0 | Public HTTPS (production)       |
+| SSH   | TCP      | 22   | my.ip/32  | Admin access only               |
+| ICMP  | All      | -    | my.ip/32  | Optional diagnostics            |
