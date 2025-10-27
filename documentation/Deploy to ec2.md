@@ -80,3 +80,34 @@ ec2-50-16-82-229.compute-1.amazonaws.com {
     }
 }
 ```
+
+## Add swap file (virtual memory)
+
+```
+ubuntu:~$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:           1.9Gi       1.4Gi       217Mi       3.2Mi       460Mi       478Mi
+Swap:             0B          0B          0B
+
+ubuntu:~$ sudo fallocate -l 4G /swapfile
+
+ubuntu:~$ sudo chmod 600 /swapfile
+
+ubuntu:~$ sudo mkswap /swapfile
+Setting up swapspace version 1, size = 4 GiB (4294963200 bytes)
+no label, UUID=...
+
+ubuntu:~$ sudo swapon /swapfile
+
+ubuntu:~$ echo '/swapfile swap swap defaults 0 0' | sudo tee -a /etc/fstab
+/swapfile swap swap defaults 0 0
+
+ubuntu:~$ free -h
+               total        used        free      shared  buff/cache   available
+Mem:           1.9Gi       1.4Gi       209Mi       3.2Mi       463Mi       473Mi
+Swap:          4.0Gi          0B       4.0Gi
+
+ubuntu:~$ sudo swapon --show
+NAME      TYPE SIZE USED PRIO
+/swapfile file   4G   0B   -2
+```
