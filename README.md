@@ -5,24 +5,29 @@ The system uses a microservices architecture, where each service runs in its own
 Frontend and backend communicate via REST APIs through a **Gateway API**.
 Microservices communicate via **Kafka events** and internal **REST calls**.
 
+## Application Architecture
 
-## Architecture
+#### Key components:
 
-**Microservices:**
+- **Frontend**: Built with **React** + **TypeScript**
+- **Backend**: Microservices powered by **Spring Boot** and **Java**
+- **Database**: **MySQL** for persistent data storage
 
-* **gatewayapi:** Routes frontend and external API traffic
-* **catalog-service:** Manages events/venues catalog (MySQL)
-* **cart-service:** Handles user carts (Redis)
-* **order-service:** Processes orders/payments (MySQL)
+#### Microservices breakdown:
 
-**Infrastructure services:**
+* **gatewayapi:** Routes frontend and external API traffic to appropriate services
+* **catalog-service:** Manages the catalog of events and venues stored in **MySQL**
+* **cart-service:** Handles user carts using **Redis** for in-memory caching
+* **order-service:** Processes orders and payments, interfacing with **MySQL**
+
+#### Infrastructure services:
 
 * **MySQL:** Data persistence
-* **Redis:** In-memory cart cache
+* **Redis:** Acts as an in-memory cache for cart data
 * **Kafka + Zookeeper + Schema Registry:** Event-driven communication backbone
 * **Caddy:** Serves frontend + reverse-proxies backend
 
-All services are connected via a shared Docker network.
+All services are connected via a shared Docker network. Deployed using Docker Compose.
 
 
 ## Backend Directory Structure
