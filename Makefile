@@ -2,6 +2,19 @@ SHELL	= /bin/sh
 
 NAME	= ticket-booking
 
+# Parse .env file and fail if not found
+-include .env
+
+ifeq ($(wildcard .env),)
+$(error .env file is required)
+endif
+
+
+build_frontend:
+	rm -rf frontend/dist
+	mkdir -p frontend/dist
+	cd frontend && npm install && \
+	VITE_API_BASE_URL="$(VITE_API_BASE_URL_LOCAL)" npm run build
 
 # Produce common-library artifact and install into local repo
 common_jar:
@@ -10,13 +23,6 @@ common_jar:
 # Produce backend jar artifacts
 build_jars:
 	cd backend && mvn clean package -DskipTests
-
-build_frontend:
-	rm -rf frontend/dist
-	mkdir -p frontend/dist
-	cd frontend && npm install && \
-	VITE_API_BASE_URL=https://localhost:443 npm run build
-
 
 dev: common_jar
 	docker compose -f docker-compose.dev.yml up --build
