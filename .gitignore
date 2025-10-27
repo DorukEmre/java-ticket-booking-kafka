@@ -39,5 +39,6 @@ build/
 .env
 
 *.pem
+
 backend/catalog-service/data/catalogdb.mv.db
 backend/order-service/data/orderdb.mv.db
