@@ -40,12 +40,11 @@ jobs:
         run: |
           set -euo pipefail
           CMD="GIT_SSH_COMMAND='ssh \
-              -i /home/ubuntu/.ssh/id_rsa_deploy_java_ticket_booking_kafka \
+              -F /home/ubuntu/.ssh/config \
               -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new' \
-            bash -lc 'export HOME=/home/ubuntu; git config --global \
-              --add safe.directory /home/ubuntu/java-ticket-booking-kafka && \
-            cd /home/ubuntu/java-ticket-booking-kafka && \
-            make deploy_frontend'"
+            sudo -u ubuntu bash -lc 'export HOME=/home/ubuntu; \
+              cd /home/ubuntu/java-ticket-booking-kafka && \
+              make deploy_frontend'"
 
           echo "Sending SSM command to instances: $INSTANCE_IDS"
           CMD_ID=$(aws ssm send-command \
@@ -81,12 +80,11 @@ jobs:
         run: |
           set -euo pipefail
           CMD="GIT_SSH_COMMAND='ssh \
-              -i /home/ubuntu/.ssh/id_rsa_deploy_java_ticket_booking_kafka \
+              -F /home/ubuntu/.ssh/config \
               -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new' \
-            bash -lc 'export HOME=/home/ubuntu; git config --global \
-              --add safe.directory /home/ubuntu/java-ticket-booking-kafka && \
-            cd /home/ubuntu/java-ticket-booking-kafka && \
-            make deploy_backend'"
+            sudo -u ubuntu bash -lc 'export HOME=/home/ubuntu; \
+              cd /home/ubuntu/java-ticket-booking-kafka && \
+              make deploy_backend'"
 
           echo "Sending SSM command to instances: $INSTANCE_IDS"
           CMD_ID=$(aws ssm send-command \
@@ -122,12 +120,11 @@ jobs:
         run: |
           set -euo pipefail
           CMD="GIT_SSH_COMMAND='ssh \
-              -i /home/ubuntu/.ssh/id_rsa_deploy_java_ticket_booking_kafka \
+              -F /home/ubuntu/.ssh/config \
               -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new' \
-            bash -lc 'export HOME=/home/ubuntu; git config --global \
-              --add safe.directory /home/ubuntu/java-ticket-booking-kafka && \
-            cd /home/ubuntu/java-ticket-booking-kafka && \
-            make update_repo'"
+            sudo -u ubuntu bash -lc 'export HOME=/home/ubuntu; \
+              cd /home/ubuntu/java-ticket-booking-kafka && \
+              make update_repo'"
 
           echo "Sending SSM command to instances: $INSTANCE_IDS"
           CMD_ID=$(aws ssm send-command \
