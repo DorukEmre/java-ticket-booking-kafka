@@ -1,0 +1,139 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  detect-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read  
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed paths
+        id: paths
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+            backend:
+              - 'backend/**'
+
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubDeployOIDC
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy frontend
+        if: steps.paths.outputs.frontend == 'true'
+        env:
+          INSTANCE_IDS: ${{ secrets.SSM_INSTANCE_IDS }}
+        run: |
+          set -euo pipefail
+          CMD="GIT_SSH_COMMAND='ssh -i /home/ubuntu/.ssh/id_ed25519_deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new' bash -lc 'export HOME=/home/ubuntu; git config --global --add safe.directory /home/ubuntu/java-ticket-booking-kafka && cd /home/ubuntu/java-ticket-booking-kafka && make deploy_frontend'"
+
+          echo "Sending SSM command to instances: $INSTANCE_IDS"
+          CMD_ID=$(aws ssm send-command \
+            --instance-ids $INSTANCE_IDS \
+            --document-name "AWS-RunShellScript" \
+            --comment "Deploy frontend via GitHub Actions" \
+            --parameters "commands=[\"$CMD\"]" \
+            --output text --query "Command.CommandId")
+          echo "CommandId: $CMD_ID"
+
+          for INST in $INSTANCE_IDS; do
+            echo "Waiting for invocation on $INST ..."
+            while true; do
+              STATUS=$(aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INST" --query 'Status' --output text 2>/dev/null || echo "Pending")
+              if [ "$STATUS" = "Success" ]; then
+                echo "SUCCESS on $INST"
+                aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INST" --output text || true
+                break
+              fi
+              if [ "$STATUS" = "Failed" ] || [ "$STATUS" = "Cancelled" ] || [ "$STATUS" = "TimedOut" ]; then
+                echo "Command failed on $INST with status $STATUS"
+                aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INST" --output text || true
+                exit 1
+              fi
+              sleep 3
+            done
+          done
+
+      - name: Deploy backend
+        if: steps.paths.outputs.backend == 'true'
+        env:
+          INSTANCE_IDS: ${{ secrets.SSM_INSTANCE_IDS }}
+        run: |
+          set -euo pipefail
+          CMD="GIT_SSH_COMMAND='ssh -i /home/ubuntu/.ssh/id_ed25519_deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new' bash -lc 'export HOME=/home/ubuntu; git config --global --add safe.directory /home/ubuntu/java-ticket-booking-kafka && cd /home/ubuntu/java-ticket-booking-kafka && make deploy_backend'"
+
+          echo "Sending SSM command to instances: $INSTANCE_IDS"
+          CMD_ID=$(aws ssm send-command \
+            --instance-ids $INSTANCE_IDS \
+            --document-name "AWS-RunShellScript" \
+            --comment "Deploy backend via GitHub Actions" \ 
+            --parameters "commands=[\"$CMD\"]" \
+            --output text --query "Command.CommandId")
+          echo "CommandId: $CMD_ID"
+
+          for INST in $INSTANCE_IDS; do
+            echo "Waiting for invocation on $INST ..."
+            while true; do
+              STATUS=$(aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INST" --query 'Status' --output text 2>/dev/null || echo "Pending")
+              if [ "$STATUS" = "Success" ]; then
+                echo "SUCCESS on $INST"
+                aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INST" --output text || true
+                break
+              fi
+              if [ "$STATUS" = "Failed" ] || [ "$STATUS" = "Cancelled" ] || [ "$STATUS" = "TimedOut" ]; then
+                echo "Command failed on $INST with status $STATUS"
+                aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INST" --output text || true
+                exit 1
+              fi
+              sleep 3
+            done
+          done
+
+      - name: Update repository (no frontend/backend changes)
+        if: ${{ steps.paths.outputs.frontend == 'false' && steps.paths.outputs.backend == 'false' }}
+        env:
+          INSTANCE_IDS: ${{ secrets.SSM_INSTANCE_IDS }}
+        run: |
+          set -euo pipefail
+          CMD="GIT_SSH_COMMAND='ssh -i /home/ubuntu/.ssh/id_ed25519_deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new' bash -lc 'export HOME=/home/ubuntu; git config --global --add safe.directory /home/ubuntu/java-ticket-booking-kafka && cd /home/ubuntu/java-ticket-booking-kafka && make update_repo'"
+
+          echo "Sending SSM command to instances: $INSTANCE_IDS"
+          CMD_ID=$(aws ssm send-command \
+            --instance-ids $INSTANCE_IDS \
+            --document-name "AWS-RunShellScript" \
+            --comment "Update repo via GitHub Actions" \
+            --parameters "commands=[\"$CMD\"]" \
+            --output text --query "Command.CommandId")
+          echo "CommandId: $CMD_ID"
+
+          for INST in $INSTANCE_IDS; do
+            echo "Waiting for invocation on $INST ..."
+            while true; do
+              STATUS=$(aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INST" --query 'Status' --output text 2>/dev/null || echo "Pending")
+              if [ "$STATUS" = "Success" ]; then
+                echo "SUCCESS on $INST"
+                aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INST" --output text || true
+                break
+              fi
+              if [ "$STATUS" = "Failed" ] || [ "$STATUS" = "Cancelled" ] || [ "$STATUS" = "TimedOut" ]; then
+                echo "Command failed on $INST with status $STATUS"
+                aws ssm get-command-invocation --command-id "$CMD_ID" --instance-id "$INST" --output text || true
+                exit 1
+              fi
+              sleep 3
+            done
+          done
