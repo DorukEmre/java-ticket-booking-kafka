@@ -9,12 +9,11 @@ A **Caddy web server** serves a static React application and reverse proxies API
 
 **Cloud deployment** to **AWS EC2**.
 
-**CI/CD** with **GitHub Actions**. Pushes to `main` trigger the deployment workflow [.github/workflows/deploy.yml](.github/workflows/deploy.yml), which uses OIDC to assume an AWS role and runs remote commands on EC2 via AWS SSM to update the repo and trigger local build/deploy steps (see `Makefile`). See `documentation/CI-CD.md` for operational details and required secrets.
-
+**CI/CD** pipeline via **GitHub Actions**: deployment workflow runs when code is pushed to main.
 
 ## Application Architecture
 
-![Architecture diagram](architecture.jpg)
+![Architecture diagram](documentation/architecture.jpg)
 
 #### Key components:
 
