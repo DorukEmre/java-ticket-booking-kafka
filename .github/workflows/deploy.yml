@@ -39,7 +39,13 @@ jobs:
           INSTANCE_IDS: ${{ secrets.SSM_INSTANCE_IDS }}
         run: |
           set -euo pipefail
-          CMD="GIT_SSH_COMMAND='ssh -i /home/ubuntu/.ssh/id_ed25519_deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new' bash -lc 'export HOME=/home/ubuntu; git config --global --add safe.directory /home/ubuntu/java-ticket-booking-kafka && cd /home/ubuntu/java-ticket-booking-kafka && make deploy_frontend'"
+          CMD="GIT_SSH_COMMAND='ssh \
+              -i /home/ubuntu/.ssh/id_rsa_deploy_java_ticket_booking_kafka \
+              -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new' \
+            bash -lc 'export HOME=/home/ubuntu; git config --global \
+              --add safe.directory /home/ubuntu/java-ticket-booking-kafka && \
+            cd /home/ubuntu/java-ticket-booking-kafka && \
+            make deploy_frontend'"
 
           echo "Sending SSM command to instances: $INSTANCE_IDS"
           CMD_ID=$(aws ssm send-command \
@@ -74,7 +80,13 @@ jobs:
           INSTANCE_IDS: ${{ secrets.SSM_INSTANCE_IDS }}
         run: |
           set -euo pipefail
-          CMD="GIT_SSH_COMMAND='ssh -i /home/ubuntu/.ssh/id_ed25519_deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new' bash -lc 'export HOME=/home/ubuntu; git config --global --add safe.directory /home/ubuntu/java-ticket-booking-kafka && cd /home/ubuntu/java-ticket-booking-kafka && make deploy_backend'"
+          CMD="GIT_SSH_COMMAND='ssh \
+              -i /home/ubuntu/.ssh/id_rsa_deploy_java_ticket_booking_kafka \
+              -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new' \
+            bash -lc 'export HOME=/home/ubuntu; git config --global \
+              --add safe.directory /home/ubuntu/java-ticket-booking-kafka && \
+            cd /home/ubuntu/java-ticket-booking-kafka && \
+            make deploy_backend'"
 
           echo "Sending SSM command to instances: $INSTANCE_IDS"
           CMD_ID=$(aws ssm send-command \
@@ -109,7 +121,13 @@ jobs:
           INSTANCE_IDS: ${{ secrets.SSM_INSTANCE_IDS }}
         run: |
           set -euo pipefail
-          CMD="GIT_SSH_COMMAND='ssh -i /home/ubuntu/.ssh/id_ed25519_deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new' bash -lc 'export HOME=/home/ubuntu; git config --global --add safe.directory /home/ubuntu/java-ticket-booking-kafka && cd /home/ubuntu/java-ticket-booking-kafka && make update_repo'"
+          CMD="GIT_SSH_COMMAND='ssh \
+              -i /home/ubuntu/.ssh/id_rsa_deploy_java_ticket_booking_kafka \
+              -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new' \
+            bash -lc 'export HOME=/home/ubuntu; git config --global \
+              --add safe.directory /home/ubuntu/java-ticket-booking-kafka && \
+            cd /home/ubuntu/java-ticket-booking-kafka && \
+            make update_repo'"
 
           echo "Sending SSM command to instances: $INSTANCE_IDS"
           CMD_ID=$(aws ssm send-command \
