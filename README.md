@@ -1,11 +1,20 @@
 A full-stack ticket booking application using React + TypeScript (frontend), Spring Boot and Java (backend), and MySQL (database). 
 
-The system uses a microservices architecture, where each service runs in its own Docker container.
+The system uses a microservices architecture, where each service runs in its own **Docker container**.
 
 Frontend and backend communicate via REST APIs through a **Gateway API**.
 Microservices communicate via **Kafka events** and internal **REST calls**.
 
+A **Caddy web server** serves a static React application and reverse proxies API requests to the Gateway API service.
+
+**Cloud deployment** to **AWS EC2**.
+
+**CI/CD** with **GitHub Actions**. Pushes to `main` trigger the deployment workflow [.github/workflows/deploy.yml](.github/workflows/deploy.yml), which uses OIDC to assume an AWS role and runs remote commands on EC2 via AWS SSM to update the repo and trigger local build/deploy steps (see `Makefile`). See `documentation/CI-CD.md` for operational details and required secrets.
+
+
 ## Application Architecture
+
+![Architecture diagram](architecture.jpg)
 
 #### Key components:
 
@@ -114,8 +123,10 @@ See [FRONTEND.md](documentation/FRONTEND.md) for full frontend details.
 - **spring-boot-starter-data-jpa**: For ORM and database access.
 - **mysql-connector-j**: MySQL database driver.
 - **flyway-core** and **flyway-mysql**: For database migrations.
-- **lombok**: For reducing boilerplate code in Java classes.
-- **spring-boot-starter-test**: For testing support.
+- **lombok**: Generates boilerplate via annotations.
+- **spring-kafka**: Spring Kafka integration for event-driven messaging.
+- **spring-boot-starter-data-redis**: Redis support.
+- **jakarta.validation-api** and **hibernate-validator**: Bean Validation API and implementation.
 
 ## Spring Boot Actuator (in dev mode)
 
@@ -151,3 +162,21 @@ ICMP for ping/traceroute for diagnostics.
 | HTTPS | TCP      | 443  | 0.0.0.0/0 | Public HTTPS (production)       |
 | SSH   | TCP      | 22   | my.ip/32  | Admin access only               |
 | ICMP  | All      | -    | my.ip/32  | Optional diagnostics            |
+
+## CI / CD
+
+- CI/CD is implemented with GitHub Actions. 
+- Pushes to `main` trigger the deployment workflow.
+- The workflow:
+  - Detects frontend/backend changes 
+  - Configures AWS credentials via AWS OIDC to assume an AWS role 
+  - Runs remote commands on EC2 via AWS SSM to update the repo and trigger local build/deploy steps.
+  - Make targets invoked on the instance are defined in [Makefile](Makefile):
+    - `update_repo`: Pulls latest changes from origin/main.
+    - `deploy_frontend`: Updates repo and rebuilds static frontend.
+    - `deploy_backend`: Updates repo, and rebuilds and restarts backend services.
+
+Required GitHub secrets:
+- AWS_ACCOUNT_ID
+- AWS_REGION
+- SSM_INSTANCE_IDS
