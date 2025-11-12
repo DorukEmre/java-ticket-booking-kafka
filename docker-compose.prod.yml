@@ -1,7 +1,7 @@
 
 x-restart: &default-restart
-  # restart: unless-stopped
-  restart: no
+  restart: unless-stopped
+  # restart: no
 
 services:
 
