@@ -30,7 +30,7 @@ jobs:
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v3
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubDeployOIDC
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/GitHubRepo-DorukEmre-java-ticket-booking-kafka-deploy-role
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Deploy frontend

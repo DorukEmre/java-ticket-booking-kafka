@@ -38,7 +38,7 @@ aws configure get region
 
 ## AWS Console, create IAM role for GitHub Actions using OIDC
 
-- new IAM role: `GitHubDeployOIDC` Web Identity
+- new IAM role: `GitHubRepo-<OWNER>-<REPO>-deploy-role` Web Identity
   - Identity provider: `token.actions.githubusercontent.com`
   - Audience: `sts.amazonaws.com`
 
