@@ -1,5 +1,5 @@
 ```
-ssh -i "booking-keypair.pem" ubuntu@ec2-50-16-82-229.compute-1.amazonaws.com
+ssh -i "~/.ssh/booking-keypair.pem" ubuntu@ec2-50-16-82-229.compute-1.amazonaws.com
 ```
 
 
