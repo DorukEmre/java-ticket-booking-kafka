@@ -43,8 +43,7 @@ jobs:
               -F /home/ubuntu/.ssh/config \
               -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new' \
             sudo -u ubuntu bash -lc 'export HOME=/home/ubuntu; \
-              cd /home/ubuntu/java-ticket-booking-kafka && \
-              make deploy_frontend'"
+              cd /home/ubuntu/java-ticket-booking-kafka && make update_repo'"
 
           echo "Sending SSM command to instances: $INSTANCE_IDS"
           CMD_ID=$(aws ssm send-command \
@@ -83,8 +82,7 @@ jobs:
               -F /home/ubuntu/.ssh/config \
               -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new' \
             sudo -u ubuntu bash -lc 'export HOME=/home/ubuntu; \
-              cd /home/ubuntu/java-ticket-booking-kafka && \
-              make deploy_backend'"
+              cd /home/ubuntu/java-ticket-booking-kafka && make update_repo'"
 
           echo "Sending SSM command to instances: $INSTANCE_IDS"
           CMD_ID=$(aws ssm send-command \
