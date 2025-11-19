@@ -41,11 +41,11 @@ clean_frontend:
 
 build_frontend_local: clean_frontend
 	cd frontend && npm ci && \
-	VITE_API_BASE_URL="$(VITE_API_BASE_URL_LOCAL)" npm run build
+	VITE_API_BASE_URL="$(API_SERVER_URL_LOCAL)" npm run build
 
 build_frontend_prod: clean_frontend
 	cd frontend && npm ci && \
-	VITE_API_BASE_URL="$(VITE_API_BASE_URL_PROD)" npm run build
+	VITE_API_BASE_URL="$(API_SERVER_URL_PROD)" npm run build
 
 # Build environments
 

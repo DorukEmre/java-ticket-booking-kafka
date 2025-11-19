@@ -3,3 +3,15 @@ services:
   caddy:
     volumes:
       - ./Caddyfile.localprod:/etc/caddy/Caddyfile:ro
+  
+  catalog-service:
+    environment:
+      API_SERVER_URL: ${API_SERVER_URL_LOCAL}
+
+  cart-service:
+    environment:
+      API_SERVER_URL: ${API_SERVER_URL_LOCAL}
+
+  order-service:
+    environment:
+      API_SERVER_URL: ${API_SERVER_URL_LOCAL}
