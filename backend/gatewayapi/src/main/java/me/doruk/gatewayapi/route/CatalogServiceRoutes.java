@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 
+import reactor.core.publisher.Mono;
+
 @Configuration
 public class CatalogServiceRoutes {
 
@@ -77,6 +79,22 @@ public class CatalogServiceRoutes {
             .filters(f -> f.rewritePath("/admin/events/new", "/api/v1/catalog/add-event"))
             .uri(uri))
 
+        // documentation route
+
+        .route("catalog-service-api-docs", r -> r
+            .path("/docs/catalog")
+            .and().method(HttpMethod.GET)
+            .filters(f -> f
+                .rewritePath("/docs/catalog", "/v3/api-docs")
+                .modifyResponseBody(String.class, String.class, (exchange, body) -> {
+                  if (body == null)
+                    return Mono.empty();
+                  String modified = body.replace("/api/v1/catalog", "");
+                  return Mono.just(modified);
+                }))
+            .uri(uri))
+
         .build();
   }
+
 }

@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 
+import reactor.core.publisher.Mono;
+
 @Configuration
 public class OrderServiceRoutes {
 
@@ -19,6 +21,8 @@ public class OrderServiceRoutes {
     String uri = "http://" + baseUrl;
 
     return builder.routes()
+
+        // public routes
 
         .route("order-by-id", r -> r
             .path("/orders/{orderId}")
@@ -45,6 +49,7 @@ public class OrderServiceRoutes {
             .uri(uri))
 
         // admin routes
+
         .route("orders", r -> r
             .path("/admin/orders")
             .and().method(HttpMethod.GET)
@@ -61,6 +66,21 @@ public class OrderServiceRoutes {
             .path("/admin/users/new")
             .and().method(HttpMethod.POST)
             .filters(f -> f.rewritePath("/admin/users/new", "/api/v1/users/new"))
+            .uri(uri))
+
+        // documentation route
+
+        .route("order-service-api-docs", r -> r
+            .path("/docs/order")
+            .and().method(HttpMethod.GET)
+            .filters(f -> f
+                .rewritePath("/docs/order", "/v3/api-docs")
+                .modifyResponseBody(String.class, String.class, (exchange, body) -> {
+                  if (body == null)
+                    return Mono.empty();
+                  String modified = body.replace("/api/v1", "");
+                  return Mono.just(modified);
+                }))
             .uri(uri))
 
         .build();

@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 
+import reactor.core.publisher.Mono;
+
 @Configuration
 public class CartServiceRoutes {
 
@@ -19,6 +21,8 @@ public class CartServiceRoutes {
     String uri = "http://" + baseUrl;
 
     return builder.routes()
+
+        // public routes
 
         .route("create-cart", r -> r
             .path("/cart")
@@ -54,6 +58,21 @@ public class CartServiceRoutes {
             .path("/cart/{cartId}/checkout")
             .and().method(HttpMethod.POST)
             .filters(f -> f.prefixPath("/api/v1"))
+            .uri(uri))
+
+        // documentation route
+
+        .route("cart-service-api-docs", r -> r
+            .path("/docs/cart")
+            .and().method(HttpMethod.GET)
+            .filters(f -> f
+                .rewritePath("/docs/cart", "/v3/api-docs")
+                .modifyResponseBody(String.class, String.class, (exchange, body) -> {
+                  if (body == null)
+                    return Mono.empty();
+                  String modified = body.replace("/api/v1", "");
+                  return Mono.just(modified);
+                }))
             .uri(uri))
 
         .build();
