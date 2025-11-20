@@ -131,14 +131,20 @@ See [FRONTEND.md](documentation/FRONTEND.md) for full frontend details.
 
 - `http://localhost:8000/actuator/gateway/routes` — View all routes currently configured in the API Gateway, including their IDs, predicates, and target URIs.
 
-**Note:**  
-Enabled and exposed in the gatewayapi’s `application.properties` using:
-```
-management.endpoints.web.exposure.include=*
-management.endpoint.gateway.access=unrestricted
-```
 
-## API Tests (Bruno)
+## API Endpoints
+
+### API Documentation (Swagger / OpenAPI)
+
+The public endpoints are exposed via the Gateway API using Swagger UI and the OpenAPI JSON. 
+
+- Public API Swagger UI: **http://{API_URL}/swagger-ui.html**
+- OpenAPI JSON: **http://{API_URL}/v3/api-docs**
+
+Internal microservices APIs are not expose through the gateway for public documentation. 
+
+### API Tests (Bruno)
+
 The `api-tests` folder contains Bruno (API client) collections for testing the REST APIs of all backend services.
 
 
@@ -179,3 +185,57 @@ Required GitHub secrets:
 - AWS_ACCOUNT_ID
 - AWS_REGION
 - SSM_INSTANCE_IDS
+
+## How to Run
+
+### Dev Mode
+
+Run the application using docker-compose.dev.yml with:
+
+``` bash
+make dev
+```
+
+#### Frontend
+
+- React app runs in a Docker container
+- The ./frontend directory is mounted to /app in the container, allowing live code updates
+- Served using the Vite development server
+- Accessible on port 5173: http://localhost:5173
+
+#### Backend
+
+- Builds the common library
+- Each microservice runs in a Docker container using Maven: `mvn spring-boot:run`
+- Accessible at: https://localhost:443
+
+### Prod Mode
+
+Run the application using docker-compose.prod.yml with:
+
+``` bash
+make prod
+
+make prod_detached # for detached background
+```
+
+#### Frontend
+
+- React app is built statically and served by Caddy
+- https://ticket-booking.dorukemre.dev/
+
+#### Backend
+
+- Builds Java artifacts for all services
+- Each microservice Dockerfile runs the service using `java -jar app.jar`
+- https://api.ticket-booking.dorukemre.dev/
+
+### Local Prod Mode
+
+To simulate production locally, run the application using both docker-compose.prod.yml and docker-compose.localprod.yml with:
+
+``` bash
+make local_prod
+```
+
+`docker-compose.localprod.yml` overrides `docker-compose.prod.yml` to use `Caddyfile.localprod` to serve frontend at http://localhost:80 and backend at https://localhost:443
