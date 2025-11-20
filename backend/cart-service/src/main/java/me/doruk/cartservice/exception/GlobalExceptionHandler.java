@@ -2,29 +2,38 @@ package me.doruk.cartservice.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashMap;
-import java.util.Map;
+import me.doruk.ticketingcommonlibrary.model.ApiErrorResponse;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(ResponseStatusException.class)
-  public ResponseEntity<Map<String, Object>> handleResponseStatusException(ResponseStatusException ex) {
-    Map<String, Object> error = new HashMap<>();
-    error.put("status", ex.getStatusCode().value());
-    error.put("message", ex.getReason());
-    return new ResponseEntity<>(error, ex.getStatusCode());
+  public ResponseEntity<ApiErrorResponse> handleResponseStatusException(ResponseStatusException ex) {
+
+    ApiErrorResponse error = new ApiErrorResponse(
+        ex.getStatusCode().value(),
+        ex.getReason());
+
+    return ResponseEntity.status(ex.getStatusCode())
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(error);
   }
 
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
-    Map<String, Object> error = new HashMap<>();
-    error.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-    error.put("message", ex.getMessage());
-    return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+  public ResponseEntity<ApiErrorResponse> handleGenericException(Exception ex) {
+
+    ApiErrorResponse error = new ApiErrorResponse(
+        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+        ex.getMessage());
+
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(error);
   }
+
 }

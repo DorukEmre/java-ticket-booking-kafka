@@ -3,6 +3,7 @@ package me.doruk.orderservice.exception;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,36 +11,43 @@ import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.ConstraintViolationException;
 
-import java.util.HashMap;
-import java.util.Map;
+import me.doruk.ticketingcommonlibrary.model.ApiErrorResponse;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
   @ExceptionHandler(ResponseStatusException.class)
-  public ResponseEntity<Map<String, Object>> handleResponseStatusException(ResponseStatusException ex) {
-    Map<String, Object> error = new HashMap<>();
-    error.put("status", ex.getStatusCode().value());
-    error.put("message", ex.getReason());
-    return new ResponseEntity<>(error, ex.getStatusCode());
+  public ResponseEntity<ApiErrorResponse> handleResponseStatusException(ResponseStatusException ex) {
+
+    ApiErrorResponse error = new ApiErrorResponse(
+        ex.getStatusCode().value(),
+        ex.getReason());
+
+    return ResponseEntity.status(ex.getStatusCode())
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(error);
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<Map<String, Object>> handleConstraintViolationException(ConstraintViolationException ex) {
-    Map<String, Object> error = new HashMap<>();
-    error.put("status", HttpStatus.BAD_REQUEST.value());
-    error.put("message", ex.getConstraintViolations()
+  public ResponseEntity<ApiErrorResponse> handleConstraintViolationException(ConstraintViolationException ex) {
+
+    String message = ex.getConstraintViolations()
         .stream()
         .map(v -> v.getMessage())
         .reduce((m1, m2) -> m1 + "; " + m2)
-        .orElse("Validation error"));
-    return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        .orElse("Validation error");
+
+    ApiErrorResponse error = new ApiErrorResponse(
+        HttpStatus.BAD_REQUEST.value(),
+        message);
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(error);
   }
 
   @ExceptionHandler(DataIntegrityViolationException.class)
-  public ResponseEntity<Map<String, Object>> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-    Map<String, Object> error = new HashMap<>();
-    error.put("status", HttpStatus.BAD_REQUEST.value());
+  public ResponseEntity<ApiErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
 
     String message = null;
     Throwable root = ex.getRootCause();
@@ -50,17 +58,22 @@ public class GlobalExceptionHandler {
     }
 
     if (message != null && message.contains("Duplicate entry") && message.contains("customer.email")) {
-      error.put("message", "Email address already exists.");
+      message = "Email address already exists.";
     } else {
-      error.put("message", "Data integrity violation.");
+      message = "Data integrity violation.";
     }
-    return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+
+    ApiErrorResponse error = new ApiErrorResponse(
+        HttpStatus.BAD_REQUEST.value(),
+        message);
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(error);
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Map<String, Object>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-    Map<String, Object> error = new HashMap<>();
-    error.put("status", HttpStatus.BAD_REQUEST.value());
+  public ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
     String message = "Validation error";
     if (ex.getBindingResult() != null) {
       message = ex.getBindingResult().getFieldErrors()
@@ -69,15 +82,26 @@ public class GlobalExceptionHandler {
           .reduce((m1, m2) -> m1 + "; " + m2)
           .orElse("Validation error");
     }
-    error.put("message", message);
-    return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+
+    ApiErrorResponse error = new ApiErrorResponse(
+        HttpStatus.BAD_REQUEST.value(),
+        message);
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(error);
   }
 
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
-    Map<String, Object> error = new HashMap<>();
-    error.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-    error.put("message", ex.getMessage());
-    return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+  public ResponseEntity<ApiErrorResponse> handleGenericException(Exception ex) {
+
+    ApiErrorResponse error = new ApiErrorResponse(
+        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+        ex.getMessage());
+
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(error);
   }
+
 }
