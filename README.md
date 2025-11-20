@@ -136,10 +136,11 @@ See [FRONTEND.md](documentation/FRONTEND.md) for full frontend details.
 
 ### API Documentation (Swagger / OpenAPI)
 
-The public endpoints are exposed via the Gateway API using Swagger UI and the OpenAPI JSON. 
+The public endpoints are exposed via the Gateway API using Swagger UI. 
 
-- Public API Swagger UI: **http://{API_URL}/swagger-ui.html**
-- OpenAPI JSON: **http://{API_URL}/v3/api-docs**
+- Public API Swagger UI:
+  - dev: **https://localhost/swagger-ui.html**
+  - prod: **https://api.ticket-booking.dorukemre.dev/swagger-ui.html**
 
 Internal microservices APIs are not expose through the gateway for public documentation. 
 
