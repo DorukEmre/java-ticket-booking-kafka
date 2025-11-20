@@ -40,7 +40,7 @@ public class EventService {
         .build();
   }
 
-  public List<EventResponse> GetAllEvents() {
+  public List<EventResponse> getAllEvents() {
     final List<Event> events = eventRepository.findAll();
 
     return events.stream().map(event -> EventResponse.builder()
