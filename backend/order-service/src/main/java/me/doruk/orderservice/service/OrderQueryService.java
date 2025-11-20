@@ -26,7 +26,7 @@ public class OrderQueryService {
   private final OrderRepository orderRepository;
   private final OrderItemRepository orderItemRepository;
 
-  public ResponseEntity<?> getOrderById(final String orderId) {
+  public ResponseEntity<OrderResponse> getOrderById(final String orderId) {
     final Order order = orderRepository.findById(orderId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
 
@@ -42,7 +42,7 @@ public class OrderQueryService {
     return ResponseEntity.ok(reponse);
   }
 
-  public ResponseEntity<?> listOrdersByUserId(final Long customerId) {
+  public ResponseEntity<List<OrderResponse>> listOrdersByUserId(final Long customerId) {
     customerRepository.findById(customerId)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
@@ -61,7 +61,7 @@ public class OrderQueryService {
     return ResponseEntity.ok(orderResponses);
   }
 
-  public ResponseEntity<?> listOrdersByEmail(final String email) {
+  public ResponseEntity<List<OrderResponse>> listOrdersByEmail(final String email) {
     Customer customer = customerRepository.findByEmail(email)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 

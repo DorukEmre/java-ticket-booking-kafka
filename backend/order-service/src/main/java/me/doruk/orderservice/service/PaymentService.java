@@ -22,7 +22,7 @@ public class PaymentService {
   private final CustomerRepository customerRepository;
   private final OrderRepository orderRepository;
 
-  public ResponseEntity<?> processPayment(final String orderId, final PaymentRequest request) {
+  public ResponseEntity<Void> processPayment(final String orderId, final PaymentRequest request) {
 
     // Check order is PENDING_PAYMENT
     Order order = orderRepository.findById(orderId)
