@@ -15,12 +15,17 @@ endif
 update_repo:
 	git pull origin main
 
-deploy_frontend: update_repo build_frontend_prod
-	docker compose -f docker-compose.prod.yml restart caddy
+restart_caddy_prod:
+	docker compose --project-name ticketbooking_prod \
+	  -f docker-compose.prod.yml restart ticket-caddy
+
+deploy_frontend: update_repo build_frontend_prod restart_caddy_prod
 
 deploy_backend: update_repo
-	docker compose -f docker-compose.prod.yml build
-	docker compose -f docker-compose.prod.yml up -d
+	docker compose --project-name ticketbooking_prod \
+	  -f docker-compose.prod.yml build
+	docker compose --project-name ticketbooking_prod \
+	  -f docker-compose.prod.yml up -d
 	docker image prune -f
 
 
@@ -43,6 +48,10 @@ build_frontend_local: clean_frontend
 	cd frontend && npm ci && \
 	VITE_API_BASE_URL="$(API_SERVER_URL_LOCAL)" npm run build
 
+build_frontend_localprod: clean_frontend
+	cd frontend && npm ci && \
+	VITE_API_BASE_URL="$(API_SERVER_URL_LOCALPROD)" npm run build
+
 build_frontend_prod: clean_frontend
 	cd frontend && npm ci && \
 	VITE_API_BASE_URL="$(API_SERVER_URL_PROD)" npm run build
@@ -50,16 +59,20 @@ build_frontend_prod: clean_frontend
 # Build environments
 
 dev: common_jar
-	docker compose -f docker-compose.dev.yml up --build
+	docker compose --project-name ticketbooking_dev \
+	  -f docker-compose.dev.yml up --build
 
 prod: build_frontend_prod build_jars
-	docker compose -f docker-compose.prod.yml up --build
+	docker compose --project-name ticketbooking_prod \
+	  -f docker-compose.prod.yml up --build
 
 prod_detached: build_frontend_prod build_jars
-	docker compose -f docker-compose.prod.yml up -d --build
+	docker compose --project-name ticketbooking_prod \
+	  -f docker-compose.prod.yml up -d --build
 
-local_prod: build_frontend_local build_jars
-	docker compose -f docker-compose.prod.yml -f docker-compose.localprod.yml up --build
+local_prod: build_frontend_localprod build_jars
+	docker compose --project-name ticketbooking_localprod \
+	  -f docker-compose.prod.yml -f docker-compose.localprod.yml up --build
 
 # Maintenance tasks
 
@@ -67,19 +80,25 @@ clean: clean_frontend
 	cd backend && sudo mvn clean
 
 down_dev:
-	docker compose -f docker-compose.dev.yml down
+	docker compose --project-name ticketbooking_dev \
+	  -f docker-compose.dev.yml down
 stop_dev:
-	docker compose -f docker-compose.dev.yml stop
+	docker compose --project-name ticketbooking_dev \
+	  -f docker-compose.dev.yml stop
 
 down_prod:
-	docker compose -f docker-compose.prod.yml down
+	docker compose --project-name ticketbooking_prod \
+	  -f docker-compose.prod.yml down
 stop_prod:
-	docker compose -f docker-compose.prod.yml stop
+	docker compose --project-name ticketbooking_prod \
+	  -f docker-compose.prod.yml stop
 
 down_prod_local:
-	docker compose -f docker-compose.prod.yml -f docker-compose.localprod.yml down
+	docker compose --project-name ticketbooking_localprod \
+	  -f docker-compose.prod.yml -f docker-compose.localprod.yml down
 stop_prod_local:
-	docker compose -f docker-compose.prod.yml -f docker-compose.localprod.yml stop
+	docker compose --project-name ticketbooking_localprod \
+	  -f docker-compose.prod.yml -f docker-compose.localprod.yml stop
 
 
 reset:
@@ -107,7 +126,7 @@ cart_service_redis_cli:
 .PHONY: _no_default dev prod prod_detached local_prod \
 	down_dev stop_dev down_prod stop_prod down_prod_local stop_prod_local \
 	common_jar build_jars \
-	clean_frontend build_frontend_local build_frontend_prod \
+	clean_frontend build_frontend_local build_frontend_prod restart_caddy_prod \
 	clean reset \
 	mysql react \
 	cart-service cart-service-redis-cli \
