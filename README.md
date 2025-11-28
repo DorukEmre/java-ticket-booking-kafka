@@ -151,10 +151,50 @@ The `api-tests` folder contains Bruno (API client) collections for testing the R
 
 ## Hosting on AWS EC2
 
-- add frontend url to CORS_ALLOWED_ORIGINS
-- build frontend with backend api url as VITE_API_BASE_URL
-- ensure security group of EC2 instance allows HTTP (port 80) and/or HTTPS (port 443) traffic
-- Caddyfile configuration: replace `localhost` with the public DNS or public IP of the EC2 instance
+- Add frontend url to CORS_ALLOWED_ORIGINS in `.env` file
+- Build frontend with backend api url as VITE_API_BASE_URL, see `Makefile`
+- Ensure security group of EC2 instance allows HTTP (port 80) and/or HTTPS (port 443) traffic
+- Update site Caddyfile (Caddyfile.prod) to use the EC2 public DNS or IP instead of `localhost`.
+
+### Central proxy Caddy
+
+The AWS EC2 instance is running a central proxy Caddy that binds ports 80/443 and handles all TLS certificates and HTTPS termination. It routes traffic over an internal Docker network (`proxy-network`) based on domain names to site-specific Caddy containers.
+
+The site’s Caddy container is connected to two networks:
+- Its private app network (`ticket-booking-network`)
+- The shared external proxy network (`proxy-network`)
+(In docker-compose, `proxy-network` is declared as external)
+
+Each site Caddy serves static frontends and proxies API requests to its own backend containers. Backends are never exposed directly to the proxy or the internet. , They remain isolated on their internal networks.
+
+      Internet HTTPS (443)
+        ↓
+      [ proxy-caddy ]  ---> ports 80/443 on EC2, handles certificates + SSL
+        ↓ shared network (proxy-network), Internal HTTP (port 80)
+      -----------------------------------
+        ↓                            ↓
+      ticket-caddy:80      other-website:80
+        ↓                            ↓
+      ticket-booking-network       other-network
+
+Example central proxy Caddyfile:
+```
+ticket-booking.dorukemre.dev {
+    reverse_proxy ticket-caddy:80
+}
+
+api.ticket-booking.dorukemre.dev {
+    reverse_proxy ticket-caddy:80
+}
+
+www.other-website.com {
+    reverse_proxy other-caddy:80
+}
+
+api.other-website.com {
+    reverse_proxy other-caddy:80
+}
+```
 
 ### Inbound rules
 
@@ -239,4 +279,4 @@ To simulate production locally, run the application using both docker-compose.pr
 make local_prod
 ```
 
-`docker-compose.localprod.yml` overrides `docker-compose.prod.yml` to use `Caddyfile.localprod` to serve frontend at http://localhost:80 and backend at https://localhost:443
+`docker-compose.localprod.yml` overrides `docker-compose.prod.yml` to use `Caddyfile.localprod` to serve frontend at https://localhost:5443 and backend at https://localhost:8443

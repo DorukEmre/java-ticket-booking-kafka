@@ -1,6 +1,6 @@
 services:
 
-  caddy:
+  ticket-caddy:
     image: caddy:2.10.2-alpine
     ports:
       - "80:80"
@@ -16,7 +16,6 @@ services:
 
   mysql:
     image: mysql:8.4.6
-    container_name: mysql
     restart: always
     env_file:
       - .env
@@ -33,8 +32,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.dev
     image: react
-    container_name: react
-    ports: # for development
+    ports:
       - 5173:5173
     environment:
       - PUBLIC_URL=/
@@ -50,7 +48,6 @@ services:
       context: ./backend
       dockerfile: catalog-service/Dockerfile.dev
     image: catalog-service
-    container_name: catalog-service
     working_dir: /app/catalog-service
     expose: [8080]
     command: ["mvn", "spring-boot:run"]
@@ -74,7 +71,6 @@ services:
       context: ./backend
       dockerfile: cart-service/Dockerfile.dev
     image: cart-service
-    container_name: cart-service
     working_dir: /app/cart-service
     expose: [8081]
     command: ["mvn", "spring-boot:run"]
@@ -98,7 +94,6 @@ services:
       context: ./backend
       dockerfile: order-service/Dockerfile.dev
     image: order-service
-    container_name: order-service
     working_dir: /app/order-service
     expose: [8082]
     command: ["mvn", "spring-boot:run"]
@@ -122,7 +117,6 @@ services:
       context: ./backend
       dockerfile: gatewayapi/Dockerfile.dev
     image: gatewayapi
-    container_name: gatewayapi
     working_dir: /app/gatewayapi
     expose: [8000]
     command: ["mvn", "-Pdev", "spring-boot:run"]
@@ -141,7 +135,6 @@ services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.9.3
     hostname: zookeeper
-    container_name: zookeeper
     expose: [2181]
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -152,7 +145,6 @@ services:
 
   kafka-broker:
     image: confluentinc/cp-kafka:7.9.3
-    container_name: kafka-broker
     hostname: kafka-broker
     expose: [29092]
     depends_on:
@@ -171,7 +163,6 @@ services:
   kafka-schema-registry:
     image: confluentinc/cp-schema-registry:7.9.3
     hostname: kafka-schema-registry
-    container_name: kafka-schema-registry
     depends_on:
       - kafka-broker
     expose: [8081]
@@ -184,7 +175,6 @@ services:
       - ticket-booking-network
 
   # kafka-ui:
-  #   container_name: kafka-ui
   #   image: provectuslabs/kafka-ui:latest
   #   ports:
   #     - "8084:8080"
@@ -202,7 +192,6 @@ services:
 
   redis:
     image: redis:8.2.1-alpine
-    container_name: redis
     expose: [6379]
     networks:
       - ticket-booking-network

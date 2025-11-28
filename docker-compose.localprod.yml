@@ -1,6 +1,9 @@
 
 services:
-  caddy:
+  ticket-caddy:
+    ports:
+      - "5443:5443"
+      - "8443:8443"
     volumes:
       - ./Caddyfile.localprod:/etc/caddy/Caddyfile:ro
   

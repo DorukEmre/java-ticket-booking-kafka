@@ -1,4 +1,4 @@
-localhost:80 {
+localhost:5443 {
 	root * /usr/share/caddy/react
 	
   try_files {path} /index.html
@@ -11,13 +11,11 @@ localhost:80 {
 	}
 }
 
-localhost:443 {
+localhost:8443 {
 	reverse_proxy gatewayapi:8000
 
-  header Access-Control-Allow-Origin "http://localhost"
   header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
   header Access-Control-Allow-Headers "Authorization, Content-Type"
-  header Access-Control-Allow-Credentials "true"
 
   @options {
       method OPTIONS
