@@ -20,7 +20,7 @@ function VenueList({ venues }: { venues: Venue[] }) {
   }
 
   return (
-    <ul className="d-flex list-unstyled flex-wrap justify-content-center justify-content-md-between align-items-stretch gap-4">
+    <ul className="d-flex list-unstyled flex-wrap justify-content-center justify-content-sm-around align-items-stretch gap-4">
       {venues.map(venue => (
         <VenueCard
           key={venue.id}

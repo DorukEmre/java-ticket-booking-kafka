@@ -109,7 +109,7 @@ function VenueDetailPage() {
             <div>
               <h2 className='mt-5 mb-4 fs-5'>Upcoming Events at this venue:</h2>
               {events && events.length > 0 ? (
-                <ul className='d-flex list-unstyled flex-wrap justify-content-center justify-content-md-between align-items-stretch gap-4'>
+                <ul className='d-flex list-unstyled flex-wrap justify-content-start align-items-stretch gap-4'>
                   {events.map((event) => (
 
                     <EventCard
