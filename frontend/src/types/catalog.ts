@@ -17,4 +17,4 @@ type Event = {
   imageUrl: string;
 }
 
-export { Venue, Event };
+export type { Venue, Event };

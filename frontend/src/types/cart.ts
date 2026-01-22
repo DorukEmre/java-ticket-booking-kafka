@@ -46,7 +46,7 @@ type CartContextType = {
 
 type CartStatusType = typeof CartStatus[keyof typeof CartStatus];
 
-export {
+export type {
   Cart, CartItem, CartResponse, CartIdResponse,
   CheckoutRequest, CartStatusType, CartContextType
 };

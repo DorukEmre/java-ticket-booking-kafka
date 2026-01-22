@@ -33,4 +33,4 @@ type PaymentRequest = {
   email: string;
 }
 
-export { Customer, Order, OrderItem, OrderResponse, PaymentRequest };
+export type { Customer, Order, OrderItem, OrderResponse, PaymentRequest };

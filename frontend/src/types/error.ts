@@ -3,4 +3,4 @@ type ApiErrorResponse = {
   status: number;
 };
 
-export { ApiErrorResponse };
+export type { ApiErrorResponse };
