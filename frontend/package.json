@@ -10,22 +10,22 @@
     "deploy": "npm run build && serve -s dist -l 5173"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.90.7",
+    "@tanstack/react-query": "^5.90.19",
     "axios": "^1.13.2",
     "bootstrap": "^5.3.8",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "react-router-dom": "^7.9.5",
-    "sass": "^1.93.3"
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-router-dom": "^7.12.0",
+    "sass": "^1.97.3"
   },
   "devDependencies": {
     "@types/bootstrap": "^5.2.10",
-    "@types/node": "^24.10.0",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
-    "@vitejs/plugin-react": "^5.1.0",
-    "globals": "^16.5.0",
+    "@types/node": "^25.0.10",
+    "@types/react": "^19.2.9",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.2",
+    "globals": "^17.1.0",
     "typescript": "~5.9.3",
-    "vite": "^7.2.2"
+    "vite": "^7.3.1"
   }
 }
