@@ -59,6 +59,14 @@ h6 {
   background-color: var(--back-100);
 }
 
+.github-link {
+  text-decoration: underline;
+}
+
+.github-link:hover {
+  color: var(--compl-300);
+}
+
 /* Layout */
 
 .section__title {
@@ -69,11 +77,11 @@ h6 {
 .section__title::before {
   display: block;
   width: 5px;
-  height: 1.25rem;
+  height: 1.5rem;
   content: "";
   position: absolute;
   left: 0px;
-  top: 6px;
+  top: 4px;
   background: var(--compl-300);
 }
 
