@@ -21,7 +21,7 @@ restart_caddy_prod:
 
 deploy_frontend: update_repo build_frontend_prod restart_caddy_prod
 
-deploy_backend: update_repo
+deploy_backend: update_repo build_jars
 	docker compose --project-name ticketbooking_prod \
 	  -f docker-compose.prod.yml build
 	docker compose --project-name ticketbooking_prod \
