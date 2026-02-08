@@ -30,4 +30,25 @@ $custom-colors: (
 
 $theme-colors: map-merge($theme-colors, $custom-colors);
 
+.spacer-left-md {
+  position: relative;
+}
+
+.spacer-left-md::before {
+  display: none;
+  width: 1px;
+  height: 3rem;
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 0.25rem;
+  background: var(--bs-body-color);
+}
+
+@media (min-width: 768px) {
+  .spacer-left-md::before {
+    display: block;
+  }
+}
+
 @import "bootstrap";
