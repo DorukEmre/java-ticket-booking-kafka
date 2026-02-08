@@ -13,6 +13,7 @@ import OrderConfirmationPage from "@/pages/OrderConfirmationPage";
 import UserOrdersPage from '@/pages/UserOrdersPage';
 import OrderDetailsPage from '@/pages/OrderDetailsPage';
 import Page404 from "@/pages/Page404";
+import AboutPage from "@/pages/AboutPage";
 
 // import AdminPage from '@/pages/AdminPage';
 
@@ -23,7 +24,7 @@ function App() {
     <div className="d-flex flex-column min-vh-100 bg-back-300 text-neutral-300">
       <Header />
 
-      <main className="flex-fill p-5">
+      <main className="flex-fill py-5 px-3 px-md-5">
         <Routes>
 
           {/* Public Routes */}
@@ -42,6 +43,8 @@ function App() {
 
           <Route path="/orders" element={<UserOrdersPage />} />
           <Route path="/orders/:orderId" element={<OrderDetailsPage />} />
+
+          <Route path="/about" element={<AboutPage />} />
 
           {/* Admin Route */}
           {/* <Route path="/admin" element={<AdminPage />} /> */}
