@@ -142,14 +142,11 @@ function AboutPage() {
               aria-label="View on GitHub"
               title="View on GitHub"
               className="github-link"
-              style={{ textDecoration: "underline" }}
             >
               this project on GitHub
             </a>.
           </p>
         </div>
-
-
 
       </section>
     </div>
