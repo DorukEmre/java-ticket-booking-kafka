@@ -1,10 +1,11 @@
+import { useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 
 import HeaderButton from "@/components/HeaderButton"
 import HeaderCartButton from "@/components/HeaderCartButton"
 
-import { cartIcon } from "@/assets"
-import { useEffect, useState } from "react"
+import { cartIcon, iconGithub } from "@/assets"
+
 
 function Header() {
 
@@ -62,6 +63,21 @@ function Header() {
                   <HeaderButton path={"/venues"} text={"Venues"} handleClick={closeNavbar} />
                   <HeaderButton path={"/orders"} text={"My orders"} handleClick={closeNavbar} />
                   <HeaderCartButton path={"/cart"} text={"Cart"} icon={cartIcon} handleClick={closeNavbar} />
+
+                  <HeaderButton path={"/about"} text={"About"} handleClick={closeNavbar} className="spacer-left-md" />
+
+                  <li className="nav-item rounded header-button">
+                    <a href="https://github.com/dorukEmre/java-ticket-booking-kafka"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="d-inline-flex flex-column justify-content-center align-items-center text-body py-md-0 px-2 gap-1"
+                      aria-label="View on GitHub"
+                      title="View on GitHub"
+                    >
+                      <img src={iconGithub} height="28" alt="" />
+                      <small>Github</small>
+                    </a>
+                  </li>
                 </ul>
               </div>
             </>
@@ -69,7 +85,7 @@ function Header() {
 
         </div>
       </nav>
-    </header>
+    </header >
   )
 }
 

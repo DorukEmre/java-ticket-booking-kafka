@@ -21,6 +21,8 @@ import checkIcon
 
 import debitCard from "@/assets/debit_card.png"
 
+import iconGithub from "@/assets/github.svg"
+
 export {
   addIcon,
   deleteIcon,
@@ -31,5 +33,6 @@ export {
   arrowBackIcon,
   arrowLeftIcon,
   addToCartIcon,
-  checkIcon
+  checkIcon,
+  iconGithub
 };
