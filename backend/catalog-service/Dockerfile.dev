@@ -1,9 +1,17 @@
-FROM eclipse-temurin:21-jdk-alpine
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine
 
-# Install Maven
-RUN apk add --no-cache maven
-
-# Set working directory inside container
 WORKDIR /app
 
-# Working directory mounted as a volume for live development
+# Copy only csproj first for restore caching
+COPY catalog-service/*.csproj ./catalog-service/
+RUN dotnet restore ./catalog-service/catalog-service.csproj
+
+# Copy rest of source
+COPY catalog-service ./catalog-service
+
+WORKDIR /app/catalog-service
+
+ENV ASPNETCORE_URLS=http://+:8080
+EXPOSE 8080
+
+# CMD ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:8080"]

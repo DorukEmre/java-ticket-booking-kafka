@@ -48,21 +48,21 @@ services:
       context: ./backend
       dockerfile: catalog-service/Dockerfile.dev
     image: catalog-service
-    working_dir: /app/catalog-service
+    # working_dir: /app/catalog-service
     expose: [8080]
-    command: ["mvn", "spring-boot:run"]
+    command: ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:8080"]
     depends_on:
       - mysql
     environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__CatalogDb: ${MYSQL_CONNECTION_STRING_CATALOG}
       SERVER_PORT: "8080"
       API_SERVER_URL: ${API_SERVER_URL_LOCAL}
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_CATALOG}
-      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
-      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
       KAFKA_BOOTSTRAP_SERVERS: "kafka-broker:29092"
     volumes:
-      - ./backend:/app
-      - ${HOME}/.m2:/root/.m2
+      - ./backend/catalog-service:/app/catalog-service
+      # - ./backend:/app
+      # - ${HOME}/.m2:/root/.m2
     networks:
       - ticket-booking-network
 
