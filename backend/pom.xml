@@ -10,7 +10,7 @@
 
   <modules>
     <module>ticketing-common-library</module>
-    <module>catalog-service</module>
+    <!-- <module>catalog-service</module> -->
     <module>cart-service</module>
     <module>order-service</module>
     <module>gatewayapi</module>
