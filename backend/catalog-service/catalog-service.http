@@ -1,0 +1,14 @@
+@catalog_service_HostAddress = {{API_SERVER_URL}}
+@catalog_service_BasePath = {{catalog_service_HostAddress}}/api/v1/catalog
+
+# GET /events
+GET {{catalog_service_BasePath}}/events
+Accept: application/json
+
+###
+
+# GET /venues
+GET {{catalog_service_BasePath}}/venues
+Accept: application/json
+
+###
