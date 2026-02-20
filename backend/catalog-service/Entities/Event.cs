@@ -2,74 +2,73 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CatalogService.Entities
+namespace CatalogService.Entities;
+
+[Table("event")]
+public class Event
 {
-    [Table("event")]
-    public class Event
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [Column("id")]
+    public long Id { get; set; }
+
+    [Column("name")]
+    [Required(ErrorMessage = "Event name must not be blank")]
+    [StringLength(255, ErrorMessage = "Event name must not exceed 255 characters")]
+    public string? Name { get; set; }
+
+    [Column("total_capacity")]
+    [Range(1, int.MaxValue, ErrorMessage = "Total capacity must be a positive number")]
+    public int TotalCapacity { get; set; }
+
+    [Column("remaining_capacity")]
+    [Range(0, int.MaxValue, ErrorMessage = "Remaining capacity must be zero or a positive number")]
+    public int RemainingCapacity { get; set; }
+
+    [Column("venue_id")]
+    [ForeignKey("Venue")]
+    [Required(ErrorMessage = "Venue must not be null")]
+    public Venue? Venue { get; set; }
+    
+    [Column("ticket_price")]
+    [Required(ErrorMessage = "Ticket price must not be null")]
+    [Range(0.0, double.MaxValue, ErrorMessage = "Ticket price must be at least 0.0")]
+    public decimal TicketPrice { get; set; }
+
+    [Column("event_date")]
+    [Required(ErrorMessage = "Event date must not be null")]
+    public DateTime EventDate { get; set; }
+
+    [Column("description")]
+    [StringLength(1000, ErrorMessage = "Description must not exceed 1000 characters")]
+    public string? Description { get; set; }
+
+    [Column("image_url")]
+    [StringLength(512, ErrorMessage = "Image URL must not exceed 512 characters")]
+    public string? ImageUrl { get; set; }
+
+    public Event() { }
+
+    public Event(long id, string name, int totalCapacity, int remainingCapacity, Venue venue, decimal ticketPrice, DateTime eventDate, string description, string imageUrl)
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Column("id")]
-        public long Id { get; set; }
+        Id = id;
+        Name = name;
+        TotalCapacity = totalCapacity;
+        RemainingCapacity = remainingCapacity;
+        Venue = venue;
+        TicketPrice = ticketPrice;
+        EventDate = eventDate;
+        Description = description;
+        ImageUrl = imageUrl;
 
-        [Column("name")]
-        [Required(ErrorMessage = "Event name must not be blank")]
-        [StringLength(255, ErrorMessage = "Event name must not exceed 255 characters")]
-        public string? Name { get; set; }
+        PrePersist();
+    }
 
-        [Column("total_capacity")]
-        [Range(1, int.MaxValue, ErrorMessage = "Total capacity must be a positive number")]
-        public int TotalCapacity { get; set; }
-
-        [Column("remaining_capacity")]
-        [Range(0, int.MaxValue, ErrorMessage = "Remaining capacity must be zero or a positive number")]
-        public int RemainingCapacity { get; set; }
-
-        [Column("venue_id")]
-        [ForeignKey("Venue")]
-        [Required(ErrorMessage = "Venue must not be null")]
-        public Venue? Venue { get; set; }
-        
-        [Column("ticket_price")]
-        [Required(ErrorMessage = "Ticket price must not be null")]
-        [Range(0.0, double.MaxValue, ErrorMessage = "Ticket price must be at least 0.0")]
-        public decimal TicketPrice { get; set; }
-
-        [Column("event_date")]
-        [Required(ErrorMessage = "Event date must not be null")]
-        public DateTime EventDate { get; set; }
-
-        [Column("description")]
-        [StringLength(1000, ErrorMessage = "Description must not exceed 1000 characters")]
-        public string? Description { get; set; }
-
-        [Column("image_url")]
-        [StringLength(512, ErrorMessage = "Image URL must not exceed 512 characters")]
-        public string? ImageUrl { get; set; }
-
-        public Event() { }
-
-        public Event(long id, string name, int totalCapacity, int remainingCapacity, Venue venue, decimal ticketPrice, DateTime eventDate, string description, string imageUrl)
+    private void PrePersist()
+    {
+        if (RemainingCapacity == 0)
         {
-            Id = id;
-            Name = name;
-            TotalCapacity = totalCapacity;
-            RemainingCapacity = remainingCapacity;
-            Venue = venue;
-            TicketPrice = ticketPrice;
-            EventDate = eventDate;
-            Description = description;
-            ImageUrl = imageUrl;
-
-            PrePersist();
-        }
-
-        private void PrePersist()
-        {
-            if (RemainingCapacity == 0)
-            {
-                RemainingCapacity = TotalCapacity;
-            }
+            RemainingCapacity = TotalCapacity;
         }
     }
 }
