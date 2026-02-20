@@ -36,9 +36,23 @@ build/
 ### VS Code ###
 .vscode/
 
-.env
+# Build results
+[Dd]ebug/
+[Rr]elease/
+bin/
+obj/
 
+# NuGet Packages
+packages/
+*.nupkg
+*.snupkg
+
+
+.env
 *.pem
 
 backend/catalog-service/data/catalogdb.mv.db
 backend/order-service/data/orderdb.mv.db
+backend/catalog-service-java/
+
+TODO.md
