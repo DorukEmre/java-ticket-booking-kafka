@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 // using Microsoft.OpenApi.Models;
 using CatalogService.Services;
+using CatalogService.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,14 +16,14 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // Database Context Configuration
-// builder.Services.AddDbContext<CatalogDbContext>(options =>
-//     options.UseMySql(
-//         builder.Configuration.GetConnectionString("CatalogDb"),
-//         ServerVersion.AutoDetect(
-//             builder.Configuration.GetConnectionString("CatalogDb")
-//         )
-//     )
-// );
+builder.Services.AddDbContext<CatalogDbContext>(options =>
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("CatalogDb"),
+        ServerVersion.AutoDetect(
+            builder.Configuration.GetConnectionString("CatalogDb")
+        )
+    )
+);
 
 
 // Register services
