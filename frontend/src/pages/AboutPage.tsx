@@ -1,6 +1,6 @@
 import {
   architectureDiagram,
-  iconAmazon, iconBootstrap, iconCaddy, iconDocker, iconGithub, iconJava,
+  iconAmazon, iconBootstrap, iconCaddy, iconDocker, iconDotnet, iconGithub, iconJava,
   iconKafka, iconReact, iconSpringBoot, iconTypescript,
 } from "@/assets"
 
@@ -58,7 +58,7 @@ function AboutPage() {
                 Backend
               </h3>
               <ul className="list-group list-group-flush flex-grow-1">
-                <li className="list-group-item">Microservices-based Java Spring Boot backend</li>
+                <li className="list-group-item">Mixed Java Spring Boot and .NET microservices</li>
                 <li className="list-group-item">All services containerised with Docker</li>
               </ul>
               <div className="card-body flex-grow-0">
@@ -68,6 +68,9 @@ function AboutPage() {
                   </div>
                   <div className="d-flex justify-content-center align-items-center col">
                     <img src={iconSpringBoot} alt="Spring Boot" height="36" />
+                  </div>
+                  <div className="d-flex justify-content-center align-items-center col">
+                    <img src={iconDotnet} alt="Dotnet" height="36" />
                   </div>
                   <div className="d-flex justify-content-center align-items-center col">
                     <img src={iconDocker} alt="Docker" height="36" />
