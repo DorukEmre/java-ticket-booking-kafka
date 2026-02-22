@@ -34,6 +34,7 @@ builder.Services.AddDbContext<CatalogDbContext>(options =>
 // Register services
 builder.Services.AddScoped<EventService>();
 builder.Services.AddScoped<VenueService>();
+builder.Services.AddScoped<InventoryService>();
 builder.Services.AddScoped<PopulateDatabase>();
 
 // Configure logging
