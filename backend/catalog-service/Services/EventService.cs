@@ -1,17 +1,34 @@
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using CatalogService.Responses;
+using CatalogService.Data;
 
-namespace CatalogService.Services
+namespace CatalogService.Services;
+
+public class EventService
 {
-    public class EventService
+    private readonly CatalogDbContext _context;
+
+    public EventService(CatalogDbContext context)
     {
-        public List<EventResponse> GetAllEvents()
-        {
-            return new List<EventResponse>
+        _context = context;
+    }
+
+    public async Task<List<EventResponse>> GetAllEvents()
+    {
+        return await _context.Events
+            .Include(e => e.Venue)
+            .AsNoTracking()
+            .Select(e => new EventResponse
             {
-                new EventResponse { Id = 1, Name = "Event 1", EventDate = DateTime.Now },
-                new EventResponse { Id = 2, Name = "Event 2", EventDate = DateTime.Now.AddDays(1) }
-            };
-        }
+                Id = e.Id,
+                Name = e.Name,
+                Capacity = e.RemainingCapacity,
+                Venue = e.Venue,                  // switch to VenueResponse
+                TicketPrice = e.TicketPrice,
+                EventDate = e.EventDate,
+                Description = e.Description,
+                ImageUrl = e.ImageUrl
+            })
+            .ToListAsync();
     }
 }

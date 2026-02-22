@@ -1,17 +1,30 @@
-using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using CatalogService.Responses;
+using CatalogService.Data;
 
-namespace CatalogService.Services
-{
-    public class VenueService
+namespace CatalogService.Services;
+
+public class VenueService
+{    
+    private readonly CatalogDbContext _context;
+
+    public VenueService(CatalogDbContext context)
     {
-        public List<VenueResponse> GetAllVenues()
-        {
-            return new List<VenueResponse>
+        _context = context;
+    }
+
+    public async Task<List<VenueResponse>> GetAllVenues()
+    {
+        return await _context.Venues
+            .AsNoTracking()
+            .Select(e => new VenueResponse
             {
-                new VenueResponse { Id = 1, Name = "Venue 1", Location = "Paris" },
-                new VenueResponse { Id = 2, Name = "Venue 2", Location = "Madrid" }
-            };
-        }
+                Id = e.Id,
+                Name = e.Name,
+                Location = e.Location,
+                TotalCapacity = e.TotalCapacity,
+                ImageUrl = e.ImageUrl
+            })
+            .ToListAsync();
     }
 }
