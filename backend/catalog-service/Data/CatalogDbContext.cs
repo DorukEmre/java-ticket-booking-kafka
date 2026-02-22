@@ -1,21 +1,24 @@
 using Microsoft.EntityFrameworkCore;
+using CatalogService.Entities;
 
 namespace CatalogService.Data;
 
 public class CatalogDbContext : DbContext
 {
     public CatalogDbContext(DbContextOptions<CatalogDbContext> options)
-        : base(options) { }
+        : base(options)
+    {
+    }
 
-    public DbSet<Event> Events => Set<Event>();
-    public DbSet<Venue> Venues => Set<Venue>();
+    public DbSet<Event> Events { get; set; }
+    public DbSet<Venue> Venues { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Venue>()
-            .HasMany(v => v.Events)
+            .HasMany<Event>("Events")
             .WithOne(e => e.Venue)
-            .HasForeignKey(e => e.VenueId)
+            .HasForeignKey("VenueId")
             .OnDelete(DeleteBehavior.Restrict);
     }
 }
