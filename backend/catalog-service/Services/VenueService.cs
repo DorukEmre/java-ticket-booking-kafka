@@ -17,14 +17,13 @@ public class VenueService
     {
         return await _context.Venues
             .AsNoTracking()
-            .Select(e => new VenueResponse
-            {
-                Id = e.Id,
-                Name = e.Name,
-                Location = e.Location,
-                TotalCapacity = e.TotalCapacity,
-                ImageUrl = e.ImageUrl
-            })
+            .Select(v => new VenueResponse(
+                v.Id,
+                v.Name,
+                v.Location,
+                v.TotalCapacity,
+                v.ImageUrl
+            ))
             .ToListAsync();
     }
 }

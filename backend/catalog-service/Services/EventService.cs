@@ -19,16 +19,16 @@ public class EventService
             .Include(e => e.Venue)
             .AsNoTracking()
             .Select(e => new EventResponse
-            {
-                Id = e.Id,
-                Name = e.Name,
-                Capacity = e.RemainingCapacity,
-                Venue = e.Venue,                  // switch to VenueResponse
-                TicketPrice = e.TicketPrice,
-                EventDate = e.EventDate,
-                Description = e.Description,
-                ImageUrl = e.ImageUrl
-            })
+            (
+                e.Id,
+                e.Name,
+                e.RemainingCapacity,
+                e.Venue,
+                e.TicketPrice,
+                e.EventDate,
+                e.Description,
+                e.ImageUrl
+            ))
             .ToListAsync();
     }
 }
