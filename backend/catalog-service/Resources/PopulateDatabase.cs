@@ -46,17 +46,19 @@ public class PopulateDatabase
                 var venueIndex = element.GetProperty("venueIndex").GetInt32();
                 var venue = venuesList[venueIndex];
 
-                events.Add(new Event
-                {
-                    Name = element.GetProperty("name").GetString()!,
-                    TotalCapacity = element.GetProperty("totalCapacity").GetInt32(),
-                    RemainingCapacity = element.GetProperty("totalCapacity").GetInt32(),
-                    Venue = venue,
-                    TicketPrice = element.GetProperty("ticketPrice").GetDecimal(),
-                    Description = element.GetProperty("description").GetString(),
-                    EventDate = element.GetProperty("eventDate").GetDateTime(),
-                    ImageUrl = element.GetProperty("imageUrl").GetString()
-                });
+                var evt = new Event(
+                    id: 0,
+                    name: element.GetProperty("name").GetString()!,
+                    totalCapacity: element.GetProperty("totalCapacity").GetInt32(),
+                    remainingCapacity: element.GetProperty("totalCapacity").GetInt32(),
+                    ticketPrice: element.GetProperty("ticketPrice").GetDecimal(),
+                    eventDate: element.GetProperty("eventDate").GetDateTime(),
+                    description: element.GetProperty("description").GetString()!,
+                    imageUrl: element.GetProperty("imageUrl").GetString()!
+                );
+                evt.AssignVenue(venue);
+                events.Add(evt);
+
             }
 
             await _context.Events.AddRangeAsync(events);
