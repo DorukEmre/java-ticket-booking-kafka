@@ -50,6 +50,7 @@ packages/
 
 .env
 *.pem
+backend/catalog-service/appsettings.Development.json
 
 backend/catalog-service/data/catalogdb.mv.db
 backend/order-service/data/orderdb.mv.db
