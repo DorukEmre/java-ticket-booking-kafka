@@ -15,7 +15,7 @@ public class Event
     [Column("name")]
     [Required(ErrorMessage = "Event name must not be blank")]
     [StringLength(255, ErrorMessage = "Event name must not exceed 255 characters")]
-    public string? Name { get; set; }
+    public string Name { get; set; } = null!;
 
     [Column("total_capacity")]
     [Range(1, int.MaxValue, ErrorMessage = "Total capacity must be a positive number")]
@@ -42,27 +42,31 @@ public class Event
 
     [Column("description")]
     [StringLength(1000, ErrorMessage = "Description must not exceed 1000 characters")]
-    public string? Description { get; set; }
+    public string Description { get; set; } = null!;
 
     [Column("image_url")]
     [StringLength(512, ErrorMessage = "Image URL must not exceed 512 characters")]
-    public string? ImageUrl { get; set; }
+    public string ImageUrl { get; set; } = null!;
 
-    public Event() { }
+    private Event() { }
 
-    public Event(long id, string name, int totalCapacity, int remainingCapacity, Venue venue, decimal ticketPrice, DateTime eventDate, string description, string imageUrl)
+    public Event(long id, string name, int totalCapacity, int remainingCapacity, decimal ticketPrice, DateTime eventDate, string description, string imageUrl)
     {
         Id = id;
         Name = name;
         TotalCapacity = totalCapacity;
         RemainingCapacity = remainingCapacity;
-        Venue = venue;
         TicketPrice = ticketPrice;
         EventDate = eventDate;
         Description = description;
         ImageUrl = imageUrl;
 
         PrePersist();
+    }
+
+    public void AssignVenue(Venue venue)
+    {
+        Venue = venue;
     }
 
     private void PrePersist()

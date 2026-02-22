@@ -14,12 +14,12 @@ public class Venue
     [Column("name")]
     [Required(ErrorMessage = "Name must not be blank")]
     [StringLength(255, ErrorMessage = "Name must not exceed 255 characters")]
-    public string? Name { get; set; } // Nullable
+    public string Name { get; set; }
 
     [Column("location")]
     [Required(ErrorMessage = "Location must not be blank")]
     [StringLength(255, ErrorMessage = "Location must not exceed 255 characters")]
-    public string? Location { get; set; }
+    public string Location { get; set; }
 
     [Column("total_capacity")]
     [Range(1, int.MaxValue, ErrorMessage = "Total capacity must be at least 1")]
@@ -27,11 +27,9 @@ public class Venue
 
     [Column("image_url")]
     [StringLength(512, ErrorMessage = "Image URL must not exceed 512 characters")]
-    public string? ImageUrl { get; set; }
+    public string ImageUrl { get; set; }
 
     public ICollection<Event> Events { get; set; } = new List<Event>();
-
-    public Venue() { }
 
     public Venue(long id, string name, string location, int totalCapacity, string imageUrl)
     {
