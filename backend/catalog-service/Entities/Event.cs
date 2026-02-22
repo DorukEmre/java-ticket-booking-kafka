@@ -26,9 +26,10 @@ public class Event
     public int RemainingCapacity { get; set; }
 
     [Column("venue_id")]
-    [ForeignKey("Venue")]
-    [Required(ErrorMessage = "Venue must not be null")]
-    public Venue? Venue { get; set; }
+    public long VenueId { get; set; }
+
+    [ForeignKey(nameof(VenueId))]
+    public Venue Venue { get; set; } = null!;
     
     [Column("ticket_price")]
     [Required(ErrorMessage = "Ticket price must not be null")]

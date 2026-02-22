@@ -29,6 +29,8 @@ public class Venue
     [StringLength(512, ErrorMessage = "Image URL must not exceed 512 characters")]
     public string? ImageUrl { get; set; }
 
+    public ICollection<Event> Events { get; set; } = new List<Event>();
+
     public Venue() { }
 
     public Venue(long id, string name, string location, int totalCapacity, string imageUrl)
