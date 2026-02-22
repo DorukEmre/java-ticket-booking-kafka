@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+// using Swashbuckle.AspNetCore.Annotations;
 using CatalogService.Entities;
 using CatalogService.Responses;
 using CatalogService.Services;
@@ -21,24 +21,22 @@ namespace CatalogService.Controllers
         }
 
         [HttpGet("events")]
-        [SwaggerOperation(Summary = "List all events", Description = "Lists all available events.")]
-        [SwaggerResponse(200, "Events retrieved successfully", typeof(List<EventResponse>))]
-        public ActionResult<List<EventResponse>> GetAllEvents()
-        {
+        // [SwaggerOperation(Summary = "List all events", Description = "Lists all available events.")]
+        // [SwaggerResponse(200, "Events retrieved successfully", typeof(List<EventResponse>))]
+        public async Task<ActionResult<List<EventResponse>>> GetAllEvents() {
             Console.WriteLine("GET /api/v1/catalog/events called");
 
-            var events = _eventService.GetAllEvents();
+            var events = await _eventService.GetAllEvents();
             return Ok(events);
         }
 
         [HttpGet("venues")]
-        [SwaggerOperation(Summary = "List all venues", Description = "Lists all available venues.")]
-        [SwaggerResponse(200, "Venues retrieved successfully", typeof(List<VenueResponse>))]
-        public ActionResult<List<VenueResponse>> GetAllVenues()
-        {
+        // [SwaggerOperation(Summary = "List all venues", Description = "Lists all available venues.")]
+        // [SwaggerResponse(200, "Venues retrieved successfully", typeof(List<VenueResponse>))]
+        public async Task<ActionResult<List<VenueResponse>>> GetAllVenues() {
             Console.WriteLine("GET /api/v1/catalog/venues called");
 
-            var venues = _venueService.GetAllVenues();
+            var venues = await _venueService.GetAllVenues();
             return Ok(venues);
         }
     }
