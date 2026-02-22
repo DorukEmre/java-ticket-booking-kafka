@@ -1,4 +1,4 @@
-A full-stack ticket booking application using React + TypeScript (frontend), Spring Boot and Java (backend), and MySQL (database). 
+A full-stack ticket booking application using **React** + **TypeScript** frontend, mixed **Java Spring Boot** and **.NET** backend, and **MySQL** database. 
 
 The system uses a microservices architecture, where each service runs in its own **Docker container**.
 
@@ -13,12 +13,12 @@ A **Caddy web server** serves a static React application and reverse proxies API
 
 ## Application Architecture
 
-![Architecture diagram](documentation/architecture.jpg)
+![Architecture diagram](documentation/architecture_ticket-booking.jpg)
 
 #### Key components:
 
 - **Frontend**: Built with **React** + **TypeScript**
-- **Backend**: Microservices powered by **Spring Boot** and **Java**
+- **Backend**: Mixed **Java Spring Boot** and **.NET** microservices
 - **Database**: **MySQL** for persistent data storage
 
 #### Microservices breakdown:
@@ -49,12 +49,12 @@ backend/
 │       └── pom.xml
 └── gatewayapi/                  # API gateway for frontend & routing
 │       └── pom.xml
-├── catalog-service/             # Event catalog microservice
-│       └── pom.xml
 ├── cart-service/                # Shopping cart microservice
 │       └── pom.xml
 └── order-service/               # Order and payment microservice
-        └── pom.xml
+│       └── pom.xml
+└── catalog-service/             # Event catalog microservice (not part of the Maven project)
+        └── catalog-service.csproj
 ```
 
 
@@ -70,66 +70,9 @@ backend/
 - Abandoned cart TTL: server expires carts after some time.
 
 
-## Purchase Flow
-Ticket purchase request flow through the system. Each service communicates via Kafka events to ensure reliable and decoupled processing.
-
-1) Frontend (`/cart`) → Cart Service (HTTP - `POST cart checkout`)
-    
-   → emit `OrderCreationRequested`
-
-2) Order Service consumes
-- Check cart not already processed
-- Save Order(`VALIDATING`)
-
-  → emit `ReserveInventory`
-
-3) Catalog Service consumes
-- Checks availability and updates stock
-
-  → emit `InventoryReservationResponse`
-
-4) Order Service consumes
-- If success: update Order(`PENDING_PAYMENT`)  
-- If invalid: update Order(`INVALID`) 
-- If fail: update Order(`FAILED`)  
-  → emit `OrderCreationResponse`
-
-5) Cart Service consumes
-- Update cart/order status
-
-6) Frontend Cart Update
-  - Poll `/cart/{cartId}`
-  - If status = `PENDING_PAYMENT` → redirect to `/checkout/{orderId}` for payment
-  - If status = `INVALID` → redirect to `/cart` and point out invalid items
-
-See [FRONTEND.md](documentation/FRONTEND.md) for full frontend details.
-
-
-## Microservice Structure
-
-- **Controller**: Handles incoming HTTP requests, maps them to service methods, and returns responses. Defines API endpoints.
-- **Entity**: Represents a table in the database. Each entity is a Java class annotated for ORM (e.g., JPA/Hibernate).
-  - **JPA (Java Persistence API)**: A specification for managing relational data in Java applications. It defines how Java objects are mapped to database tables.
-  - **ORM (Object-Relational Mapping)**: A technique that lets you interact with a database using objects instead of SQL queries. Frameworks like Hibernate implement ORM and JPA.
-- **Repository**: Provides CRUD operations for entities. Interfaces typically extend JPARepository or similar.
-- **Service**: Contains business logic and interacts with repositories. Called by controllers to process requests.
-- **Response**: Defines the structure of data sent back to the frontend, often as DTOs (Data Transfer Objects) for API responses.
-- **JDBC (Java Database Connectivity)**: A standard Java API for connecting and executing queries with relational databases using SQL. JDBC provides low-level access to the database and is often used directly or by ORM frameworks.
-
-#### Java Project Dependencies
-
-- **spring-boot-starter-web**: For building RESTful web applications.
-- **spring-boot-starter-data-jpa**: For ORM and database access.
-- **mysql-connector-j**: MySQL database driver.
-- **flyway-core** and **flyway-mysql**: For database migrations.
-- **lombok**: Generates boilerplate via annotations.
-- **spring-kafka**: Spring Kafka integration for event-driven messaging.
-- **spring-boot-starter-data-redis**: Redis support.
-- **jakarta.validation-api** and **hibernate-validator**: Bean Validation API and implementation.
-
 ## Spring Boot Actuator (in dev mode)
 
-- `http://localhost:8000/actuator/gateway/routes` — View all routes currently configured in the API Gateway, including their IDs, predicates, and target URIs.
+- `http://localhost/actuator/gateway/routes` — View all routes currently configured in the API Gateway, including their IDs, predicates, and target URIs.
 
 
 ## API Endpoints
@@ -142,7 +85,7 @@ The public endpoints are exposed via the Gateway API using Swagger UI.
   - dev: **https://localhost/swagger-ui.html**
   - prod: **https://api.ticket-booking.dorukemre.dev/swagger-ui.html**
 
-Internal microservices APIs are not expose through the gateway for public documentation. 
+Internal microservices APIs are not expose for public documentation through the gateway. 
 
 ### API Tests (Bruno)
 
