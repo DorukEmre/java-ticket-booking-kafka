@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Velvet Hall",
+    "location": "Paris",
+    "totalCapacity": 50000,
+    "imageUrl": "default-venue.jpg"
+  },
+  {
+    "name": "Starlight Venue",
+    "location": "Madrid",
+    "totalCapacity": 8000,
+    "imageUrl": "default-venue.jpg"
+  },
+  {
+    "name": "The Beacon",
+    "location": "London",
+    "totalCapacity": 20000,
+    "imageUrl": "default-venue.jpg"
+  },
+  {
+    "name": "Sunset Arena",
+    "location": "Berlin",
+    "totalCapacity": 15000,
+    "imageUrl": "default-venue.jpg"
+  },
+  {
+    "name": "Echo Dome",
+    "location": "Rome",
+    "totalCapacity": 12000,
+    "imageUrl": "default-venue.jpg"
+  },
+  {
+    "name": "Harmony Pavilion",
+    "location": "Amsterdam",
+    "totalCapacity": 9000,
+    "imageUrl": "default-venue.jpg"
+  },
+  {
+    "name": "Crystal Palace",
+    "location": "Vienna",
+    "totalCapacity": 22000,
+    "imageUrl": "default-venue.jpg"
+  },
+  {
+    "name": "Galaxy Center",
+    "location": "Prague",
+    "totalCapacity": 17000,
+    "imageUrl": "default-venue.jpg"
+  },
+  {
+    "name": "Nova Hall",
+    "location": "Budapest",
+    "totalCapacity": 14000,
+    "imageUrl": "default-venue.jpg"
+  },
+  {
+    "name": "Opal Theater",
+    "location": "Brussels",
+    "totalCapacity": 11000,
+    "imageUrl": "default-venue.jpg"
+  }
+]
