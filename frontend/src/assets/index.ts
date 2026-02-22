@@ -21,12 +21,13 @@ import checkIcon
 
 import debitCard from "@/assets/debit_card.png"
 
-import architectureDiagram from "@/assets/architecture.jpg"
+import architectureDiagram from "@/assets/architecture_ticket-booking.jpg"
 
 import iconAmazon from "@/assets/logos/aws.svg";
 import iconBootstrap from "@/assets/logos/bootstrap.svg";
 import iconCaddy from "@/assets/logos/caddyserver.png";
 import iconDocker from "@/assets/logos/docker.svg";
+import iconDotnet from "@/assets/logos/dotnet.png";
 import iconGithub from "@/assets/logos/github.svg";
 import iconJava from "@/assets/logos/java.svg";
 import iconKafka from "@/assets/logos/kafka_white.png";
@@ -47,6 +48,6 @@ export {
   addToCartIcon,
   checkIcon,
   architectureDiagram,
-  iconAmazon, iconBootstrap, iconCaddy, iconDocker, iconGithub, iconJava,
-  iconKafka, iconReact, iconSpringBoot, iconTypescript,
+  iconAmazon, iconBootstrap, iconCaddy, iconDocker, iconDotnet, iconGithub,
+  iconJava, iconKafka, iconReact, iconSpringBoot, iconTypescript,
 };
