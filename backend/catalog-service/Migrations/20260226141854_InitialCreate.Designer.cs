@@ -3,7 +3,6 @@ using System;
 using CatalogService.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -12,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace catalog_service.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    [Migration("20260222115546_InitialCreate")]
+    [Migration("20260226141854_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,10 +19,8 @@ namespace catalog_service.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.24")
+                .HasAnnotation("ProductVersion", "10.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
-
-            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
             modelBuilder.Entity("CatalogService.Entities.Event", b =>
                 {
@@ -32,9 +29,8 @@ namespace catalog_service.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
-
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("varchar(1000)")
                         .HasColumnName("description");
@@ -44,6 +40,7 @@ namespace catalog_service.Migrations
                         .HasColumnName("event_date");
 
                     b.Property<string>("ImageUrl")
+                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("varchar(512)")
                         .HasColumnName("image_url");
@@ -59,7 +56,7 @@ namespace catalog_service.Migrations
                         .HasColumnName("remaining_capacity");
 
                     b.Property<decimal>("TicketPrice")
-                        .HasColumnType("decimal(65,30)")
+                        .HasColumnType("decimal(18,2)")
                         .HasColumnName("ticket_price");
 
                     b.Property<int>("TotalCapacity")
@@ -84,9 +81,8 @@ namespace catalog_service.Migrations
                         .HasColumnType("bigint")
                         .HasColumnName("id");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
-
                     b.Property<string>("ImageUrl")
+                        .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("varchar(512)")
                         .HasColumnName("image_url");

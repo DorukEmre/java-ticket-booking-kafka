@@ -24,9 +24,8 @@ var connectionString
 
 // Database Context Configuration
 builder.Services.AddDbContext<CatalogDbContext>(options =>
-    options.UseMySql(
-        connectionString,
-        ServerVersion.AutoDetect(connectionString)
+    options.UseMySQL(
+        connectionString
     )
 );
 
