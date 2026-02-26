@@ -82,8 +82,8 @@ public class EventService
             remainingCapacity: request.TotalCapacity,
             ticketPrice: request.TicketPrice,
             eventDate: request.EventDate,
-            description: request.Description,
-            imageUrl: string.IsNullOrEmpty(request.ImageUrl) 
+            description: request.Description ?? "",
+            imageUrl: string.IsNullOrEmpty(request.ImageUrl)
               ? "default-event.jpg" : request.ImageUrl
         );
         evt.AssignVenue(venue);
