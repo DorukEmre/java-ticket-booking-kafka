@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using CatalogService.Services;
 using CatalogService.Data; // for CatalogDbContext
 using CatalogService.Resources; // for PopulateDatabase on startup
+using CatalogService.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,10 +32,13 @@ builder.Services.AddDbContext<CatalogDbContext>(options =>
 
 
 // Register services
+builder.Services.AddScoped<PopulateDatabase>();
 builder.Services.AddScoped<EventService>();
 builder.Services.AddScoped<VenueService>();
 builder.Services.AddScoped<InventoryService>();
-builder.Services.AddScoped<PopulateDatabase>();
+builder.Services.AddSingleton<InventoryReservationService>();
+builder.Services.AddSingleton<InventoryReleaseService>();
+builder.Services.AddHostedService<EventConsumer>();
 
 // Configure logging
 builder.Logging.ClearProviders();
