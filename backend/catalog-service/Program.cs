@@ -26,15 +26,7 @@ var connectionString
 builder.Services.AddDbContext<CatalogDbContext>(options =>
     options.UseMySql(
         connectionString,
-        ServerVersion.AutoDetect(connectionString),
-        mySqlOptions =>
-        {
-            mySqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 3,
-            maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorNumbersToAdd: null);
-            mySqlOptions.MigrationsAssembly("CatalogService");
-        }
+        ServerVersion.AutoDetect(connectionString)
     )
 );
 
@@ -61,7 +53,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         db.Database.Migrate();
-        app.Logger.LogInformation("Database migrated successfully");
+        app.Logger.LogInformation("Database migration command executed successfully.");
     }
     catch (Exception ex)
     {
