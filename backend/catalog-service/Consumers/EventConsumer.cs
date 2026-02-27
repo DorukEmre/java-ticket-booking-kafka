@@ -67,13 +67,19 @@ namespace CatalogService.Consumers
                     switch (cr.Topic)
                     {
                         case Topics.RESERVE_INVENTORY:
-                            var reservationMsg = JsonSerializer.Deserialize<InventoryReservationRequested>(cr.Message.Value);
+                            var reservationMsg = JsonSerializer.Deserialize<InventoryReservationRequested>(
+                                cr.Message.Value,
+                                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                            );
                             if (reservationMsg != null)
                                 _reservationService.HandleAsync(reservationMsg).GetAwaiter().GetResult();
                             break;
 
                         case Topics.RELEASE_INVENTORY:
-                            var releaseMsg = JsonSerializer.Deserialize<InventoryReleaseRequested>(cr.Message.Value);
+                            var releaseMsg = JsonSerializer.Deserialize<InventoryReleaseRequested>(
+                                cr.Message.Value,
+                                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                            );
                             if (releaseMsg != null)
                                 _releaseService.HandleAsync(releaseMsg).GetAwaiter().GetResult();
                             break;
