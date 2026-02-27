@@ -7,6 +7,7 @@ using CatalogService.Services;
 using CatalogService.Data; // for CatalogDbContext
 using CatalogService.Resources; // for PopulateDatabase on startup
 using CatalogService.Consumers;
+using CatalogService.Producers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,7 @@ builder.Services.AddScoped<InventoryService>();
 builder.Services.AddSingleton<InventoryReservationService>();
 builder.Services.AddSingleton<InventoryReleaseService>();
 builder.Services.AddHostedService<EventConsumer>();
+builder.Services.AddSingleton<EventProducer>();
 
 // Configure logging
 builder.Logging.ClearProviders();
