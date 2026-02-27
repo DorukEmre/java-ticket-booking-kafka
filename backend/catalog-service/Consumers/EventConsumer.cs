@@ -17,7 +17,7 @@ namespace CatalogService.Consumers
 
         private readonly ConsumerConfig _config = new()
         {
-            BootstrapServers = "kafka-broker:29092",
+            BootstrapServers = Environment.GetEnvironmentVariable("KAFKA_BOOTSTRAP_SERVERS"),
             GroupId = "catalog-service",
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
