@@ -160,6 +160,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
       KAFKA_LOG4J_LOGGERS: 'kafka=WARN,kafka.controller=WARN,kafka.log.LogCleaner=WARN,state.change.logger=WARN,kafka.producer.async.DefaultEventHandler=WARN,o.a.kafka.common.utils.AppInfoParser=WARN'
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     networks:
       - ticket-booking-network
 
@@ -176,22 +177,6 @@ services:
       SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: WARN
     networks:
       - ticket-booking-network
-
-  # kafka-ui:
-  #   image: provectuslabs/kafka-ui:latest
-  #   ports:
-  #     - "8084:8080"
-  #   depends_on:
-  #     - kafka-broker
-  #   environment:
-  #     KAFKA_CLUSTERS_NAME: local
-  #     KAFKA_CLUSTERS_BOOTSTRAPSERVERS: kafka-broker:29092
-  #     DYNAMIC_CONFIG_ENABLED: 'true'
-  #     LOG_LEVEL: WARN
-  #     LOGGING_LEVEL_ROOT: WARN
-  #     SPRING_LOG_LEVEL: WARN
-  #   networks:
-  #     - ticket-booking-network
 
   redis:
     image: redis:8.2.1-alpine
