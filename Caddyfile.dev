@@ -1,6 +1,6 @@
 localhost {
   tls internal
-	reverse_proxy gatewayapi:8000
+	reverse_proxy ticket-gatewayapi-dev:8000
 	log {
 		output stdout
 		level WARN

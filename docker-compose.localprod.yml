@@ -7,14 +7,14 @@ services:
     volumes:
       - ./Caddyfile.localprod:/etc/caddy/Caddyfile:ro
   
-  catalog-service:
+  ticket-catalog-service:
     environment:
       API_SERVER_URL: ${API_SERVER_URL_LOCAL}
 
-  cart-service:
+  ticket-cart-service:
     environment:
       API_SERVER_URL: ${API_SERVER_URL_LOCAL}
 
-  order-service:
+  ticket-order-service:
     environment:
       API_SERVER_URL: ${API_SERVER_URL_LOCAL}

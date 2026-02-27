@@ -1,12 +1,12 @@
 services:
 
-  ticket-caddy:
+  ticket-caddy-dev:
     image: caddy:2.10.2-alpine
     ports:
       - "80:80"
       - "443:443"
     depends_on:
-      - gatewayapi
+      - ticket-gatewayapi-dev
     volumes:
       - ./Caddyfile.dev:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
@@ -14,7 +14,7 @@ services:
     networks:
       - ticket-booking-network
 
-  mysql:
+  ticket-mysql-dev:
     image: mysql:8.4.6
     ports:
       - 3306:3306
@@ -28,11 +28,11 @@ services:
     networks:
       - ticket-booking-network
 
-  react:
+  ticket-react-dev:
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
-    image: react
+    image: ticket-react-dev
     ports:
       - 5173:5173
     environment:
@@ -43,25 +43,46 @@ services:
     volumes:
       - node_modules:/app/node_modules # to avoid overwriting node_modules
       - ./frontend:/app
+  
+  ticket-gatewayapi-dev:
+    build:
+      context: ./backend
+      dockerfile: gatewayapi/Dockerfile.dev
+    image: ticket-gatewayapi-dev
+    working_dir: /app/gatewayapi
+    expose: [8000]
+    command: ["mvn", "-Pdev", "spring-boot:run"]
+    environment:
+      SERVER_PORT: "8000"
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+      CATALOG_BASE_URL: "ticket-catalog-service-dev:8080"
+      CART_BASE_URL: "ticket-cart-service-dev:8081"
+      ORDER_BASE_URL: "ticket-order-service-dev:8082"
+    volumes:
+      - ./backend:/app
+      - ${HOME}/.m2:/root/.m2
+    networks:
+      - ticket-booking-network
       
-  catalog-service:
+  ticket-catalog-service-dev:
     build:
       context: ./backend
       dockerfile: catalog-service/Dockerfile.dev
-    image: catalog-service
+    image: ticket-catalog-service-dev
     # working_dir: /app/catalog-service
     expose: [8080]
     command: ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:8080"]
     # command: ["sh", "-c", "tail -f /dev/null"]
     depends_on:
-      - mysql
+      - ticket-mysql-dev
+      - ticket-kafka-broker-dev
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       DOTNET_WATCH_SUPPRESS_LAUNCH_BROWSER: "true"
-      ConnectionStrings__CatalogDb: ${MYSQL_CONNECTION_STRING_CATALOG}
+      ConnectionStrings__CatalogDb: ${MYSQL_CONNECTION_STRING_CATALOG_DEV}
       SERVER_PORT: "8080"
       API_SERVER_URL: ${API_SERVER_URL_LOCAL}
-      KAFKA_BOOTSTRAP_SERVERS: "kafka-broker:29092"
+      KAFKA_BOOTSTRAP_SERVERS: "ticket-kafka-broker-dev:29092"
     volumes:
       - ./backend/catalog-service:/app/catalog-service
       # - ./backend:/app
@@ -69,22 +90,22 @@ services:
     networks:
       - ticket-booking-network
 
-  cart-service:
+  ticket-cart-service-dev:
     build:
       context: ./backend
       dockerfile: cart-service/Dockerfile.dev
-    image: cart-service
+    image: ticket-cart-service-dev
     working_dir: /app/cart-service
     expose: [8081]
     command: ["mvn", "spring-boot:run"]
     depends_on:
-      - redis
+      - ticket-redis-dev
     environment:
       SERVER_PORT: "8081"
       API_SERVER_URL: ${API_SERVER_URL_LOCAL}
-      CATALOG_BASE_URL: "catalog-service:8080"
-      KAFKA_BOOTSTRAP_SERVERS: "kafka-broker:29092"
-      REDIS_HOST: redis
+      CATALOG_BASE_URL: "ticket-catalog-service-dev:8080"
+      KAFKA_BOOTSTRAP_SERVERS: "ticket-kafka-broker-dev:29092"
+      REDIS_HOST: ticket-redis-dev
       REDIS_PORT: 6379
     volumes:
       - ./backend:/app
@@ -92,52 +113,32 @@ services:
     networks:
       - ticket-booking-network
 
-  order-service:
+  ticket-order-service-dev:
     build:
       context: ./backend
       dockerfile: order-service/Dockerfile.dev
-    image: order-service
+    image: ticket-order-service-dev
     working_dir: /app/order-service
     expose: [8082]
     command: ["mvn", "spring-boot:run"]
     depends_on:
-      - mysql
+      - ticket-mysql-dev
+      - ticket-kafka-broker-dev
     environment:
       SERVER_PORT: "8082"
       API_SERVER_URL: ${API_SERVER_URL_LOCAL}
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_ORDER}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL_ORDER_DEV}
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
-      KAFKA_BOOTSTRAP_SERVERS: "kafka-broker:29092"
+      KAFKA_BOOTSTRAP_SERVERS: "ticket-kafka-broker-dev:29092"
     volumes:
       - ./backend:/app
       - ${HOME}/.m2:/root/.m2
     networks:
       - ticket-booking-network
 
-  gatewayapi:
-    build:
-      context: ./backend
-      dockerfile: gatewayapi/Dockerfile.dev
-    image: gatewayapi
-    working_dir: /app/gatewayapi
-    expose: [8000]
-    command: ["mvn", "-Pdev", "spring-boot:run"]
-    environment:
-      SERVER_PORT: "8000"
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
-      CATALOG_BASE_URL: "catalog-service:8080"
-      CART_BASE_URL: "cart-service:8081"
-      ORDER_BASE_URL: "order-service:8082"
-    volumes:
-      - ./backend:/app
-      - ${HOME}/.m2:/root/.m2
-    networks:
-      - ticket-booking-network
-
-  zookeeper:
+  ticket-zookeeper-dev:
     image: confluentinc/cp-zookeeper:7.9.3
-    hostname: zookeeper
     expose: [2181]
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -146,17 +147,16 @@ services:
     networks:
       - ticket-booking-network
 
-  kafka-broker:
+  ticket-kafka-broker-dev:
     image: confluentinc/cp-kafka:7.9.3
-    hostname: kafka-broker
     expose: [29092]
     depends_on:
-      - zookeeper
+      - ticket-zookeeper-dev
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_ZOOKEEPER_CONNECT: 'ticket-zookeeper-dev:2181'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-broker:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://ticket-kafka-broker-dev:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
       KAFKA_LOG4J_LOGGERS: 'kafka=WARN,kafka.controller=WARN,kafka.log.LogCleaner=WARN,state.change.logger=WARN,kafka.producer.async.DefaultEventHandler=WARN,o.a.kafka.common.utils.AppInfoParser=WARN'
@@ -164,21 +164,7 @@ services:
     networks:
       - ticket-booking-network
 
-  kafka-schema-registry:
-    image: confluentinc/cp-schema-registry:7.9.3
-    hostname: kafka-schema-registry
-    depends_on:
-      - kafka-broker
-    expose: [8081]
-    environment:
-      SCHEMA_REGISTRY_HOST_NAME: kafka-schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'kafka-broker:29092'
-      SCHEMA_REGISTRY_LISTENERS: http://kafka-schema-registry:8081
-      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: WARN
-    networks:
-      - ticket-booking-network
-
-  redis:
+  ticket-redis-dev:
     image: redis:8.2.1-alpine
     expose: [6379]
     networks:
