@@ -32,7 +32,7 @@ A **Caddy web server** serves a static React application and reverse proxies API
 
 * **MySQL:** Data persistence
 * **Redis:** Acts as an in-memory cache for cart data
-* **Kafka + Zookeeper + Schema Registry:** Event-driven communication backbone
+* **Kafka + Zookeeper:** Event-driven communication backbone
 * **Caddy:** Serves frontend + reverse-proxies backend
 
 All services are connected via a shared Docker network. Deployed using Docker Compose.
