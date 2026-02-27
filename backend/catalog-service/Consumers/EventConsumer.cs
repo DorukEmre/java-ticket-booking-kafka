@@ -2,6 +2,7 @@ using CatalogService.Events;
 using CatalogService.Services;
 using Confluent.Kafka;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace CatalogService.Consumers
     {
         private readonly InventoryReservationService _reservationService;
         private readonly InventoryReleaseService _releaseService;
+        private readonly ILogger<EventConsumer> _logger;
 
         private readonly ConsumerConfig _config = new()
         {
@@ -22,16 +24,28 @@ namespace CatalogService.Consumers
 
         public EventConsumer(
             InventoryReservationService reservationService,
-            InventoryReleaseService releaseService)
+            InventoryReleaseService releaseService,
+            ILogger<EventConsumer> logger)
         {
             _reservationService = reservationService;
             _releaseService = releaseService;
+            _logger = logger;
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            Task.Run(() => StartConsumer(stoppingToken), stoppingToken);
-            return Task.CompletedTask;
+            return Task.Run(() =>
+            {
+                try
+                {
+                    StartConsumer(stoppingToken);
+                }
+                catch (System.Exception ex)
+                {
+                    _logger.LogError(ex, "EventConsumer background task failed");
+                    throw;
+                }
+            }, stoppingToken);
         }
 
         private void StartConsumer(CancellationToken stoppingToken)
@@ -48,7 +62,7 @@ namespace CatalogService.Consumers
                 while (!stoppingToken.IsCancellationRequested)
                 {
                     var cr = consumer.Consume(stoppingToken);
-                    Console.WriteLine($"Consumed topic: {cr.Topic}, key: {cr.Message.Key}, value: {cr.Message.Value}");
+                    _logger.LogInformation("EventConsumer > Consumed topic: {Topic}, key: {Key}, value: {Value}", cr.Topic, cr.Message.Key, cr.Message.Value);
 
                     switch (cr.Topic)
                     {
@@ -67,6 +81,11 @@ namespace CatalogService.Consumers
                 }
             }
             catch (OperationCanceledException) { }
+            catch (System.Exception ex)
+            {
+                _logger.LogError(ex, "Unhandled exception in EventConsumer.StartConsumer");
+                throw;
+            }
             finally
             {
                 consumer.Close();
