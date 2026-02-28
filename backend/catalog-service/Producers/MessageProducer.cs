@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+
 using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
 
@@ -27,7 +28,7 @@ public class MessageProducer : IDisposable
         _logger = logger;
     }
 
-    public async Task ProduceAsync<T>(string topic, string? key, T payloadObj)
+    public async Task ProduceAsync<T>(string topic, string key, T payloadObj)
     {
         try
         {
@@ -42,9 +43,6 @@ public class MessageProducer : IDisposable
             _logger.LogError(ex, "An unexpected error occurred while producing a Kafka message.");
         }
     }
-
-    public async Task ProduceAsync<T>(string topic, T payloadObj) =>
-        await ProduceAsync(topic, null, payloadObj).ConfigureAwait(false);
 
     public void Dispose()
     {
