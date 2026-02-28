@@ -25,28 +25,13 @@ public class MessageConsumer(
         AutoOffsetReset = AutoOffsetReset.Earliest
     };
 
-
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        return Task.Run(() =>
-        {
-            try
-            {
-                StartConsumer(stoppingToken);
-            }
-            catch (System.Exception ex)
-            {
-                _logger.LogError(ex, "MessageConsumer background task failed");
-                throw;
-            }
-        }, stoppingToken);
-    }
+        await Task.Yield(); // Ensure async context
 
-    private void StartConsumer(CancellationToken stoppingToken)
-    {
         using var consumer = new ConsumerBuilder<string, string>(_config).Build();
-        consumer.Subscribe(new[]
-        {
+
+        consumer.Subscribe(new[] {
             Topics.RESERVE_INVENTORY,
             Topics.RELEASE_INVENTORY
         });
@@ -56,32 +41,29 @@ public class MessageConsumer(
             while (!stoppingToken.IsCancellationRequested)
             {
                 var cr = consumer.Consume(stoppingToken);
-                _logger.LogInformation("MessageConsumer > Consumed topic: {Topic}, key: {Key}, value: {Value}", cr.Topic, cr.Message.Key, cr.Message.Value);
+
+                _logger.LogInformation("Consumed topic: {Topic}, key: {Key}, value: {Value}", cr.Topic, cr.Message.Key, cr.Message.Value);
 
                 switch (cr.Topic)
                 {
                     case Topics.RESERVE_INVENTORY:
-                        var reservationMsg = JsonSerializer.Deserialize<InventoryReservationRequested>(
-                            cr.Message.Value, JsonOptions
-                        );
+                        var reservationMsg = JsonSerializer.Deserialize<InventoryReservationRequested>(cr.Message.Value, JsonOptions);
                         if (reservationMsg != null)
-                            _reservationService.HandleAsync(reservationMsg).GetAwaiter().GetResult();
+                            await _reservationService.HandleAsync(reservationMsg);
                         break;
 
                     case Topics.RELEASE_INVENTORY:
-                        var releaseMsg = JsonSerializer.Deserialize<InventoryReleaseRequested>(
-                            cr.Message.Value, JsonOptions
-                        );
+                        var releaseMsg = JsonSerializer.Deserialize<InventoryReleaseRequested>(cr.Message.Value, JsonOptions);
                         if (releaseMsg != null)
-                            _releaseService.HandleAsync(releaseMsg).GetAwaiter().GetResult();
+                            await _releaseService.HandleAsync(releaseMsg);
                         break;
                 }
             }
         }
         catch (OperationCanceledException) { }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled exception in MessageConsumer.StartConsumer");
+            _logger.LogError(ex, "Unhandled exception in MessageConsumer");
             throw;
         }
         finally
