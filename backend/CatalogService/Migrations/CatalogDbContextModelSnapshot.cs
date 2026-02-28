@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace catalog_service.Migrations
+namespace CatalogService.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
     partial class CatalogDbContextModelSnapshot : ModelSnapshot

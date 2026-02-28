@@ -53,7 +53,7 @@ services:
   ticket-catalog-service:
     <<: *default-restart
     build:
-      context: ./backend/catalog-service
+      context: ./backend/CatalogService
       dockerfile: Dockerfile.prod
     image: ticket-catalog-service
     working_dir: /app

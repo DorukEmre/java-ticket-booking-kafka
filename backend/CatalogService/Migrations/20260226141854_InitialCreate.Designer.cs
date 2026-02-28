@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace catalog_service.Migrations
+namespace CatalogService.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
     [Migration("20260226141854_InitialCreate")]

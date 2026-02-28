@@ -3,13 +3,13 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine
 WORKDIR /app
 
 # Copy only csproj first for restore caching
-COPY catalog-service/*.csproj ./catalog-service/
-RUN dotnet restore ./catalog-service/catalog-service.csproj
+COPY CatalogService/*.csproj ./CatalogService/
+RUN dotnet restore ./CatalogService/CatalogService.csproj
 
 # Copy rest of source
-COPY catalog-service ./catalog-service
+COPY CatalogService ./CatalogService
 
-WORKDIR /app/catalog-service
+WORKDIR /app/CatalogService
 
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080

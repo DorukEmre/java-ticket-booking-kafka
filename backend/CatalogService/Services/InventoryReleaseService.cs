@@ -1,6 +1,8 @@
-using CatalogService.Events;
 using System;
 using System.Threading.Tasks;
+
+using CatalogService.Events;
+
 
 namespace CatalogService.Services;
 

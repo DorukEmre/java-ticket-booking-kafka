@@ -67,9 +67,9 @@ services:
   ticket-catalog-service-dev:
     build:
       context: ./backend
-      dockerfile: catalog-service/Dockerfile.dev
+      dockerfile: CatalogService/Dockerfile.dev
     image: ticket-catalog-service-dev
-    # working_dir: /app/catalog-service
+    # working_dir: /app/CatalogService
     expose: [8080]
     command: ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:8080"]
     # command: ["sh", "-c", "tail -f /dev/null"]
@@ -84,7 +84,7 @@ services:
       API_SERVER_URL: ${API_SERVER_URL_LOCAL}
       KAFKA_BOOTSTRAP_SERVERS: "ticket-kafka-broker-dev:29092"
     volumes:
-      - ./backend/catalog-service:/app/catalog-service
+      - ./backend/CatalogService:/app/CatalogService
       # - ./backend:/app
       # - ${HOME}/.m2:/root/.m2
     networks:

@@ -53,8 +53,8 @@ backend/
 │       └── pom.xml
 └── order-service/               # Order and payment microservice
 │       └── pom.xml
-└── catalog-service/             # Event catalog microservice (not part of the Maven project)
-        └── catalog-service.csproj
+└── CatalogService/             # Event catalog microservice (not part of the Maven project)
+        └── CatalogService.csproj
 ```
 
 

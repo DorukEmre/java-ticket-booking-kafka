@@ -4,7 +4,7 @@ using MySql.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace catalog_service.Migrations
+namespace CatalogService.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
