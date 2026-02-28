@@ -13,4 +13,7 @@ public interface IEventRepository
     Task<Event?> GetEventAsync(long eventId);
     Task<IEnumerable<Event>> GetAllEventsAsync();
     Task AddEventAsync(Event eventEntity);
+
+    Task<List<Event>> GetEventsForUpdateAsync(IEnumerable<long> eventIds);
+    Task UpdateEventsAsync(IEnumerable<Event> events);
 }

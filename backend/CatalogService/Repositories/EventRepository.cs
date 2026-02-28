@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MySql.Data.MySqlClient;
 
 using CatalogService.Data;
 using CatalogService.Entities;
@@ -37,6 +38,28 @@ public class EventRepository(CatalogDbContext context) : IEventRepository
     public async Task AddEventAsync(Event eventEntity)
     {
         await _context.Events.AddAsync(eventEntity);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<Event>> GetEventsForUpdateAsync(IEnumerable<long> eventIds)
+    {
+        var idList = eventIds.ToList();
+
+        var events = await _context.Events
+            .Where(e => idList.Contains(e.Id))
+            .ToListAsync();
+
+        // Apply FOR UPDATE for row-level lock
+        await _context.Events
+            .FromSqlRaw($"SELECT * FROM event WHERE Id IN ({string.Join(',', idList)}) FOR UPDATE")
+            .ToListAsync();
+
+        return events;
+    }
+
+    public async Task UpdateEventsAsync(IEnumerable<Event> events)
+    {
+        _context.Events.UpdateRange(events);   // entities marked as modified
         await _context.SaveChangesAsync();
     }
 }
