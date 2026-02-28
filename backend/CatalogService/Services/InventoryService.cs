@@ -5,14 +5,10 @@ using CatalogService.Repositories;
 
 namespace CatalogService.Services;
 
-public class InventoryService
+public class InventoryService(IEventRepository eventRepository)
 {
-    private readonly IEventRepository _eventRepository;
+    private readonly IEventRepository _eventRepository = eventRepository;
 
-    public InventoryService(IEventRepository eventRepository)
-    {
-        _eventRepository = eventRepository;
-    }
 
     // Validate cart from cart-service
     public Dictionary<long, bool> ValidateCart(Cart cart)

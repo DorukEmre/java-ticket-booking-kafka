@@ -7,14 +7,10 @@ using CatalogService.Responses;
 
 namespace CatalogService.Services;
 
-public class VenueService
+public class VenueService(IVenueRepository venueRepository)
 {
-    private readonly IVenueRepository _venueRepository;
+    private readonly IVenueRepository _venueRepository = venueRepository;
 
-    public VenueService(IVenueRepository venueRepository)
-    {
-        _venueRepository = venueRepository;
-    }
 
     public async Task<List<VenueResponse>> GetAllVenues()
     {

@@ -5,13 +5,9 @@ using CatalogService.Entities;
 
 namespace CatalogService.Data;
 
-public class CatalogDbContext : DbContext
+public class CatalogDbContext(DbContextOptions<CatalogDbContext> options)
+    : DbContext(options)
 {
-    public CatalogDbContext(DbContextOptions<CatalogDbContext> options)
-        : base(options)
-    {
-    }
-
     public DbSet<Event> Events { get; set; }
     public DbSet<Venue> Venues { get; set; }
 

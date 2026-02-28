@@ -6,14 +6,10 @@ using CatalogService.Entities;
 
 namespace CatalogService.Repositories;
 
-public class EventRepository : IEventRepository
+public class EventRepository(CatalogDbContext context) : IEventRepository
 {
-    private readonly CatalogDbContext _context;
+    private readonly CatalogDbContext _context = context;
 
-    public EventRepository(CatalogDbContext context)
-    {
-        _context = context;
-    }
 
     // sync operations
 

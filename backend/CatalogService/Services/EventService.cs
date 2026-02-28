@@ -7,18 +7,13 @@ using CatalogService.Responses;
 
 namespace CatalogService.Services;
 
-public class EventService
-{
-    private readonly IEventRepository _eventRepository;
-    private readonly IVenueRepository _venueRepository;
-
-    public EventService(
+public class EventService(
         IEventRepository eventRepository,
         IVenueRepository venueRepository)
-    {
-        _eventRepository = eventRepository;
-        _venueRepository = venueRepository;
-    }
+{
+    private readonly IEventRepository _eventRepository = eventRepository;
+    private readonly IVenueRepository _venueRepository = venueRepository;
+
 
     public async Task<List<EventResponse>> GetAllEvents()
     {

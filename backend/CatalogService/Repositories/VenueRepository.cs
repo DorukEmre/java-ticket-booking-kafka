@@ -6,14 +6,10 @@ using CatalogService.Entities;
 
 namespace CatalogService.Repositories;
 
-public class VenueRepository : IVenueRepository
+public class VenueRepository(CatalogDbContext context) : IVenueRepository
 {
-    private readonly CatalogDbContext _context;
+    private readonly CatalogDbContext _context = context;
 
-    public VenueRepository(CatalogDbContext context)
-    {
-        _context = context;
-    }
 
     // async operations
 

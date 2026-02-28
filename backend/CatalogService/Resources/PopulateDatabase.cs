@@ -8,14 +8,10 @@ using CatalogService.Data;
 
 namespace CatalogService.Resources;
 
-public class PopulateDatabase
+public class PopulateDatabase(CatalogDbContext context)
 {
-    private readonly CatalogDbContext _context;
+    private readonly CatalogDbContext _context = context;
 
-    public PopulateDatabase(CatalogDbContext context)
-    {
-        _context = context;
-    }
 
     public async Task SeedAsync()
     {

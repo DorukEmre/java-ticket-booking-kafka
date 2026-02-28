@@ -8,11 +8,14 @@ using CatalogService.Services;
 
 namespace CatalogService.Consumers;
 
-public class MessageConsumer : BackgroundService
+public class MessageConsumer(
+        InventoryReservationService reservationService,
+        InventoryReleaseService releaseService,
+        ILogger<MessageConsumer> logger) : BackgroundService
 {
-    private readonly InventoryReservationService _reservationService;
-    private readonly InventoryReleaseService _releaseService;
-    private readonly ILogger<MessageConsumer> _logger;
+    private readonly InventoryReservationService _reservationService = reservationService;
+    private readonly InventoryReleaseService _releaseService = releaseService;
+    private readonly ILogger<MessageConsumer> _logger = logger;
 
     private readonly ConsumerConfig _config = new()
     {
@@ -21,15 +24,6 @@ public class MessageConsumer : BackgroundService
         AutoOffsetReset = AutoOffsetReset.Earliest
     };
 
-    public MessageConsumer(
-        InventoryReservationService reservationService,
-        InventoryReleaseService releaseService,
-        ILogger<MessageConsumer> logger)
-    {
-        _reservationService = reservationService;
-        _releaseService = releaseService;
-        _logger = logger;
-    }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {

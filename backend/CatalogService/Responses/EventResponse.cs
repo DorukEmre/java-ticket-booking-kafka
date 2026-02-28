@@ -3,26 +3,15 @@ using CatalogService.Entities;
 
 namespace CatalogService.Responses;
 
-public class EventResponse
+public class EventResponse(
+    long id, string name, int capacity, Venue venue, decimal ticketPrice, DateTime eventDate, string description, string imageUrl)
 {
-    public long Id { get; set; }
-    public string Name { get; set; }
-    public int Capacity { get; set; }
-    public Venue Venue { get; set; }
-    public decimal TicketPrice { get; set; }
-    public DateTime EventDate { get; set; }
-    public string Description { get; set; }
-    public string ImageUrl { get; set; }
-
-    public EventResponse(long id, string name, int capacity, Venue venue, decimal ticketPrice, DateTime eventDate, string description, string imageUrl)
-    {
-        Id = id;
-        Name = name;
-        Capacity = capacity;
-        Venue = venue;
-        TicketPrice = ticketPrice;
-        EventDate = eventDate;
-        Description = description;
-        ImageUrl = imageUrl;
-    }
+    public long Id { get; set; } = id;
+    public string Name { get; set; } = name;
+    public int Capacity { get; set; } = capacity;
+    public Venue Venue { get; set; } = venue;
+    public decimal TicketPrice { get; set; } = ticketPrice;
+    public DateTime EventDate { get; set; } = eventDate;
+    public string Description { get; set; } = description;
+    public string ImageUrl { get; set; } = imageUrl;
 }
