@@ -100,9 +100,13 @@ using (var scope = app.Services.CreateScope())
 app.Use(async (context, next) =>
 {
     var logger = app.Services.GetRequiredService<ILogger<Program>>();
-    logger.LogInformation(
-        "Incoming request: {Method} {Path}",
-        context.Request.Method, context.Request.Path);
+
+    if (logger.IsEnabled(LogLevel.Information))
+    {
+        logger.LogInformation(
+            "Incoming request: {Method} {Path}",
+            context.Request.Method, context.Request.Path);
+    }
 
     await next.Invoke(); // Call the next middleware
 });
