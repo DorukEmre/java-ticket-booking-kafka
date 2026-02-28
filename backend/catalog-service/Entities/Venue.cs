@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -29,6 +30,7 @@ public class Venue
     [StringLength(512, ErrorMessage = "Image URL must not exceed 512 characters")]
     public string ImageUrl { get; set; }
 
+    [JsonIgnore]
     public ICollection<Event> Events { get; set; } = new List<Event>();
 
     public Venue(long id, string name, string location, int totalCapacity, string imageUrl)
