@@ -31,7 +31,7 @@ public class Venue
     public string ImageUrl { get; set; }
 
     [JsonIgnore]
-    public ICollection<Event> Events { get; set; } = new List<Event>();
+    public ICollection<Event> Events { get; set; } = [];
 
     public Venue(long id, string name, string location, int totalCapacity, string imageUrl)
     {

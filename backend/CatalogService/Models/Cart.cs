@@ -3,7 +3,7 @@ namespace CatalogService.Models;
 public class Cart
 {
     public Guid CartId { get; set; }
-    public List<CartItem> Items { get; set; } = new();
+    public List<CartItem> Items { get; set; } = [];
 }
 
 public class CartItem
