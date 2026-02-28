@@ -3,8 +3,10 @@ using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 // using Swashbuckle.AspNetCore.Annotations;
 // using Microsoft.OpenApi.Models;
+
 using CatalogService.Services;
 using CatalogService.Data; // for CatalogDbContext
+using CatalogService.Repositories;
 using CatalogService.Resources; // for PopulateDatabase on startup
 using CatalogService.Consumers;
 using CatalogService.Producers;
@@ -20,17 +22,20 @@ var builder = WebApplication.CreateBuilder(args);
 //     c.EnableAnnotations();
 // });
 
+
+// Database configuration
 var connectionString
     = builder.Configuration.GetConnectionString("CatalogDb")
     ?? throw new InvalidOperationException("CatalogDb connection string not configured");
 
-// Database Context Configuration
 builder.Services.AddDbContext<CatalogDbContext>(options =>
     options.UseMySQL(
         connectionString
     )
 );
 
+builder.Services.AddScoped<IEventRepository, EventRepository>();
+builder.Services.AddScoped<IVenueRepository, VenueRepository>();
 
 // Register services
 builder.Services.AddScoped<PopulateDatabase>();
