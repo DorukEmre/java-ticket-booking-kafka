@@ -13,6 +13,9 @@ public class CatalogDbContext(DbContextOptions<CatalogDbContext> options)
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Event>().ToTable("event");
+        modelBuilder.Entity<Venue>().ToTable("venue");
+
         modelBuilder.Entity<Venue>()
             .HasMany<Event>("Events")
             .WithOne(e => e.Venue)
