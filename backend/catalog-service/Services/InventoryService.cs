@@ -1,19 +1,17 @@
 using Microsoft.EntityFrameworkCore;
-using CatalogService.Data;
-using CatalogService.Entities;
+
 using CatalogService.Models;
-using CatalogService.Requests;
-using CatalogService.Responses;
+using CatalogService.Repositories;
 
 namespace CatalogService.Services;
 
 public class InventoryService
 {
-    private readonly CatalogDbContext _context;
+    private readonly IEventRepository _eventRepository;
 
-    public InventoryService(CatalogDbContext context)
+    public InventoryService(IEventRepository eventRepository)
     {
-        _context = context;
+        _eventRepository = eventRepository;
     }
 
     // Validate cart from cart-service
@@ -26,7 +24,7 @@ public class InventoryService
         // Check if each item is a valid event and has enough capacity
         foreach (var item in cart.Items)
         {
-            var evt = _context.Events.Find(item.EventId);
+            var evt = _eventRepository.GetEvent(item.EventId);
 
             bool isValid = evt != null
                           && item.TicketCount > 0
@@ -39,6 +37,7 @@ public class InventoryService
               $"requested: {item.TicketCount}");
 
             // isValid = true; // TEMPORARY FOR TESTING
+
             result[item.EventId] = isValid;
         }
 

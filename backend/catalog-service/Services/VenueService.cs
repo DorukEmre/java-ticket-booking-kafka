@@ -1,26 +1,28 @@
 using Microsoft.EntityFrameworkCore;
-using CatalogService.Data;
+
 using CatalogService.Entities;
+using CatalogService.Repositories;
 using CatalogService.Requests;
 using CatalogService.Responses;
 
 namespace CatalogService.Services;
 
 public class VenueService
-{    
-    private readonly CatalogDbContext _context;
+{
+    private readonly IVenueRepository _venueRepository;
 
-    public VenueService(CatalogDbContext context)
+    public VenueService(IVenueRepository venueRepository)
     {
-        _context = context;
+        _venueRepository = venueRepository;
     }
 
     public async Task<List<VenueResponse>> GetAllVenues()
     {
         Console.WriteLine("GetAllVenues");
 
-        return await _context.Venues
-            .AsNoTracking()
+        var venues = await _venueRepository.GetAllVenuesAsync();
+
+        return venues
             .Select(v => new VenueResponse(
                 v.Id,
                 v.Name,
@@ -28,29 +30,23 @@ public class VenueService
                 v.TotalCapacity,
                 v.ImageUrl
             ))
-            .ToListAsync();
+            .ToList();
     }
 
     public async Task<VenueResponse> GetVenueInformation(long venueId)
     {
         Console.WriteLine($"Fetching venue information for venueId: {venueId}");
 
-        var venue = await _context.Venues
-            .AsNoTracking()
-            .Where(v => v.Id == venueId)
-            .Select(v => new VenueResponse(
-                v.Id,
-                v.Name,
-                v.Location,
-                v.TotalCapacity,
-                v.ImageUrl
-            ))
-            .SingleOrDefaultAsync();
+        var venue = await _venueRepository.GetVenueAsync(venueId)
+            ?? throw new KeyNotFoundException("Venue not found");
 
-        if (venue == null)
-            throw new KeyNotFoundException("Venue not found");
-
-        return venue;
+        return new VenueResponse(
+                venue.Id,
+                venue.Name,
+                venue.Location,
+                venue.TotalCapacity,
+                venue.ImageUrl
+            );
     }
 
     public async Task<VenueResponse> CreateVenue(VenueCreateRequest request)
@@ -62,12 +58,11 @@ public class VenueService
             name: request.Name,
             location: request.Location,
             totalCapacity: request.TotalCapacity,
-            imageUrl: string.IsNullOrEmpty(request.ImageUrl) 
+            imageUrl: string.IsNullOrEmpty(request.ImageUrl)
               ? "default-venue.jpg" : request.ImageUrl
         );
 
-        _context.Venues.Add(venue);
-        await _context.SaveChangesAsync();
+        await _venueRepository.AddVenueAsync(venue);
 
         return new VenueResponse(
             venue.Id,

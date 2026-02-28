@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using CatalogService.Data;
+
 using CatalogService.Entities;
+using CatalogService.Repositories;
 using CatalogService.Requests;
 using CatalogService.Responses;
 
@@ -8,66 +9,63 @@ namespace CatalogService.Services;
 
 public class EventService
 {
-    private readonly CatalogDbContext _context;
+    private readonly IEventRepository _eventRepository;
+    private readonly IVenueRepository _venueRepository;
 
-    public EventService(CatalogDbContext context)
+    public EventService(
+        IEventRepository eventRepository,
+        IVenueRepository venueRepository)
     {
-        _context = context;
+        _eventRepository = eventRepository;
+        _venueRepository = venueRepository;
     }
 
     public async Task<List<EventResponse>> GetAllEvents()
     {
         Console.WriteLine("GetAllEvents");
 
-        return await _context.Events
-            .Include(e => e.Venue)
-            .AsNoTracking()
-            .Select(e => new EventResponse
-            (
-                e.Id,
-                e.Name,
-                e.RemainingCapacity,
-                e.Venue,
-                e.TicketPrice,
-                e.EventDate,
-                e.Description,
-                e.ImageUrl
-            ))
-            .ToListAsync();
+        var events = await _eventRepository.GetAllEventsAsync();
+
+        return events
+                .Select(evt => new EventResponse
+                (
+                    evt.Id,
+                    evt.Name,
+                    evt.RemainingCapacity,
+                    evt.Venue,
+                    evt.TicketPrice,
+                    evt.EventDate,
+                    evt.Description,
+                    evt.ImageUrl
+                ))
+                .ToList();
     }
 
     public async Task<EventResponse?> GetEventInformation(long eventId)
     {
         Console.WriteLine($"Fetching event information for eventId: {eventId}");
 
-        var evt = await _context.Events
-            .Include(e => e.Venue)
-            .AsNoTracking()
-            .Where(e => e.Id == eventId)
-            .Select(e => new EventResponse(
-                e.Id,
-                e.Name,
-                e.RemainingCapacity,
-                e.Venue,
-                e.TicketPrice,
-                e.EventDate,
-                e.Description,
-                e.ImageUrl
-            ))
-            .SingleOrDefaultAsync();
+        var evt = await _eventRepository.GetEventAsync(eventId)
+            ?? throw new KeyNotFoundException("Event not found");
 
-        if (evt == null)
-            throw new KeyNotFoundException("Event not found");
-
-        return evt;
+        return new EventResponse(
+            evt.Id,
+            evt.Name,
+            evt.RemainingCapacity,
+            evt.Venue,
+            evt.TicketPrice,
+            evt.EventDate,
+            evt.Description,
+            evt.ImageUrl
+        );
     }
+
 
     public async Task<EventResponse> CreateEvent(EventCreateRequest request)
     {
         Console.WriteLine($"Creating event: {request}");
 
-        var venue = await _context.Venues
-            .FindAsync(request.VenueId);
+        var venue = await _venueRepository.GetVenueAsync(request.VenueId);
 
         if (venue == null)
             throw new KeyNotFoundException($"Venue with ID {request.VenueId} does not exist.");
@@ -88,8 +86,7 @@ public class EventService
         );
         evt.AssignVenue(venue);
 
-        _context.Events.Add(evt);
-        await _context.SaveChangesAsync();
+        await _eventRepository.AddEventAsync(evt);
 
         return new EventResponse(
             evt.Id,
