@@ -8,9 +8,9 @@ public class MessageProducer : IDisposable
 {
     private readonly IProducer<string, string> _producer;
     private readonly ILogger<MessageProducer> _logger;
+    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
     public MessageProducer(
-        IConfiguration config,
         ILogger<MessageProducer> logger)
     {
         var producerConfig = new ProducerConfig
@@ -28,7 +28,7 @@ public class MessageProducer : IDisposable
     {
         try
         {
-            var payload = JsonSerializer.Serialize(payloadObj, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+            var payload = JsonSerializer.Serialize(payloadObj, JsonOptions);
 
             var msg = new Message<string, string> { Key = key, Value = payload };
 
@@ -52,5 +52,6 @@ public class MessageProducer : IDisposable
         }
 
         _producer.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

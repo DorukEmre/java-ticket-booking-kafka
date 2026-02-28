@@ -16,6 +16,7 @@ public class MessageConsumer(
     private readonly InventoryReservationService _reservationService = reservationService;
     private readonly InventoryReleaseService _releaseService = releaseService;
     private readonly ILogger<MessageConsumer> _logger = logger;
+    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     private readonly ConsumerConfig _config = new()
     {
@@ -61,8 +62,7 @@ public class MessageConsumer(
                 {
                     case Topics.RESERVE_INVENTORY:
                         var reservationMsg = JsonSerializer.Deserialize<InventoryReservationRequested>(
-                            cr.Message.Value,
-                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                            cr.Message.Value, JsonOptions
                         );
                         if (reservationMsg != null)
                             _reservationService.HandleAsync(reservationMsg).GetAwaiter().GetResult();
@@ -70,8 +70,7 @@ public class MessageConsumer(
 
                     case Topics.RELEASE_INVENTORY:
                         var releaseMsg = JsonSerializer.Deserialize<InventoryReleaseRequested>(
-                            cr.Message.Value,
-                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                            cr.Message.Value, JsonOptions
                         );
                         if (releaseMsg != null)
                             _releaseService.HandleAsync(releaseMsg).GetAwaiter().GetResult();
