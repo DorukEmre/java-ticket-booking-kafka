@@ -1,10 +1,6 @@
-using System;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 using Confluent.Kafka;
-using Microsoft.Extensions.Configuration;
 
 namespace CatalogService.Producers;
 

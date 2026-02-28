@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
+
 namespace CatalogService.Requests;
 
 public class VenueCreateRequest

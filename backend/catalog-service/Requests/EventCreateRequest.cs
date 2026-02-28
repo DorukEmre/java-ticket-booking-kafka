@@ -1,5 +1,5 @@
-using System;
 using System.ComponentModel.DataAnnotations;
+
 
 namespace CatalogService.Requests;
 

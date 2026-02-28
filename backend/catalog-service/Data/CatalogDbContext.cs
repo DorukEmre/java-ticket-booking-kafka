@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+
 using CatalogService.Entities;
+
 
 namespace CatalogService.Data;
 

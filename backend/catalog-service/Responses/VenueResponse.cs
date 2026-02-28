@@ -1,5 +1,3 @@
-using CatalogService.Responses;
-
 namespace CatalogService.Responses;
 
 public class VenueResponse

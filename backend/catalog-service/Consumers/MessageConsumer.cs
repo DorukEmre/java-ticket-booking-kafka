@@ -1,11 +1,10 @@
+using System.Text.Json;
+
+using Confluent.Kafka;
+
 using CatalogService.Events;
 using CatalogService.Services;
-using Confluent.Kafka;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
+
 
 namespace CatalogService.Consumers;
 

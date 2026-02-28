@@ -1,7 +1,5 @@
-using System;
-using System.Numerics;
 using CatalogService.Entities;
-using CatalogService.Responses;
+
 
 namespace CatalogService.Responses;
 

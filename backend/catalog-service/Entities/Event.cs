@@ -1,6 +1,6 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace CatalogService.Entities;
 
@@ -30,7 +30,7 @@ public class Event
 
     [ForeignKey(nameof(VenueId))]
     public Venue Venue { get; set; } = null!;
-    
+
     [Column("ticket_price")]
     [Required(ErrorMessage = "Ticket price must not be null")]
     [Range(0.0, double.MaxValue, ErrorMessage = "Ticket price must be at least 0.0")]

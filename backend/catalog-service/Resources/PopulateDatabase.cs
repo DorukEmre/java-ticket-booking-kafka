@@ -1,7 +1,10 @@
+using System.Text.Json;
+
+using Microsoft.EntityFrameworkCore;
+
 using CatalogService.Entities;
 using CatalogService.Data;
-using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
+
 
 namespace CatalogService.Resources;
 
