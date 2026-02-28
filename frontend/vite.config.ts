@@ -9,7 +9,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        silenceDeprecations: ['color-functions', 'global-builtin', 'import']
+        silenceDeprecations: ['color-functions', 'global-builtin', 'import', 'if-function']
       },
     }
   },
@@ -17,13 +17,5 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
-  },
-  // server: {
-  //   proxy: {
-  //     "/images": {
-  //       target: "http://localhost:8000",
-  //       changeOrigin: true,
-  //     },
-  //   },
-  // },
+  }
 })
