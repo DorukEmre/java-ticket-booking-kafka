@@ -60,10 +60,8 @@ public class EventService(
     {
         Console.WriteLine($"Creating event: {request}");
 
-        var venue = await _venueRepository.GetVenueAsync(request.VenueId);
-
-        if (venue == null)
-            throw new KeyNotFoundException($"Venue with ID {request.VenueId} does not exist.");
+        var venue = await _venueRepository.GetVenueAsync(request.VenueId)
+            ?? throw new KeyNotFoundException($"Venue with ID {request.VenueId} does not exist.");
 
         if (request.TotalCapacity > venue.TotalCapacity)
             throw new InvalidOperationException("Event capacity cannot exceed venue capacity.");
