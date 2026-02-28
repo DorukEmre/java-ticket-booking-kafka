@@ -39,8 +39,8 @@ builder.Services.AddScoped<VenueService>();
 builder.Services.AddScoped<InventoryService>();
 builder.Services.AddSingleton<InventoryReservationService>();
 builder.Services.AddSingleton<InventoryReleaseService>();
-builder.Services.AddHostedService<EventConsumer>();
-builder.Services.AddSingleton<EventProducer>();
+builder.Services.AddHostedService<MessageConsumer>();
+builder.Services.AddSingleton<MessageProducer>();
 
 // Configure logging
 builder.Logging.ClearProviders();
