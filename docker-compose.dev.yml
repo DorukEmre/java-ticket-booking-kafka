@@ -6,7 +6,8 @@ services:
       - "80:80"
       - "443:443"
     depends_on:
-      - ticket-gatewayapi-dev
+      ticket-gatewayapi-dev:
+        condition: service_started
     volumes:
       - ./Caddyfile.dev:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
@@ -27,6 +28,12 @@ services:
       - db-data:/var/lib/mysql
     networks:
       - ticket-booking-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   ticket-react-dev:
     build:
@@ -74,8 +81,12 @@ services:
     command: ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:8080"]
     # command: ["sh", "-c", "tail -f /dev/null"]
     depends_on:
-      - ticket-mysql-dev
-      - ticket-kafka-broker-dev
+      ticket-mysql-dev:
+        condition: service_healthy
+      ticket-kafka-broker-dev:
+        condition: service_healthy
+      ticket-kafka-init-dev:
+        condition: service_completed_successfully
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       DOTNET_WATCH_SUPPRESS_LAUNCH_BROWSER: "true"
@@ -99,7 +110,12 @@ services:
     expose: [8081]
     command: ["mvn", "spring-boot:run"]
     depends_on:
-      - ticket-redis-dev
+      ticket-redis-dev:
+        condition: service_started
+      ticket-kafka-broker-dev:
+        condition: service_healthy
+      ticket-kafka-init-dev:
+        condition: service_completed_successfully
     environment:
       SERVER_PORT: "8081"
       API_SERVER_URL: ${API_SERVER_URL_LOCAL}
@@ -122,8 +138,12 @@ services:
     expose: [8082]
     command: ["mvn", "spring-boot:run"]
     depends_on:
-      - ticket-mysql-dev
-      - ticket-kafka-broker-dev
+      ticket-mysql-dev:
+        condition: service_healthy
+      ticket-kafka-broker-dev:
+        condition: service_healthy
+      ticket-kafka-init-dev:
+        condition: service_completed_successfully
     environment:
       SERVER_PORT: "8082"
       API_SERVER_URL: ${API_SERVER_URL_LOCAL}
@@ -144,14 +164,22 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 3000
       KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
+      ZOOKEEPER_LOG4J_LOGGERS: "org.apache.zookeeper.server.NIOServerCnxn=WARN"
     networks:
       - ticket-booking-network
+    healthcheck:
+      test: ["CMD", "sh", "-c", "echo 'srvr' | nc localhost 2181 | grep -q 'Mode:'"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   ticket-kafka-broker-dev:
     image: confluentinc/cp-kafka:7.9.3
     expose: [29092]
     depends_on:
-      - ticket-zookeeper-dev
+      ticket-zookeeper-dev:
+        condition: service_healthy
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'ticket-zookeeper-dev:2181'
@@ -160,7 +188,25 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
       KAFKA_LOG4J_LOGGERS: 'kafka=WARN,kafka.controller=WARN,kafka.log.LogCleaner=WARN,state.change.logger=WARN,kafka.producer.async.DefaultEventHandler=WARN,o.a.kafka.common.utils.AppInfoParser=WARN'
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    networks:
+      - ticket-booking-network
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:29092"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  ticket-kafka-init-dev:
+    image: confluentinc/cp-kafka:7.9.3
+    depends_on:
+      ticket-kafka-broker-dev:
+        condition: service_healthy
+    volumes:
+      - ./infrastructure/kafka/create-topics.sh:/create-topics.sh:ro
+    entrypoint: ["/bin/bash", "/create-topics.sh"]
+    environment:
+      KAFKA_BROKER: ticket-kafka-broker-dev:29092
     networks:
       - ticket-booking-network
 
@@ -169,6 +215,12 @@ services:
     expose: [6379]
     networks:
       - ticket-booking-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
       
 networks:
   ticket-booking-network:
