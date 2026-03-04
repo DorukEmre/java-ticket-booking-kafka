@@ -12,16 +12,27 @@ localhost:5443 {
 }
 
 localhost:8443 {
-	reverse_proxy ticket-gatewayapi:8000
+	reverse_proxy ticket-gatewayapi:8000 {
+		# Remove any Access-Control-Allow-Origin sent by upstream
+		header_down -Access-Control-Allow-Origin
+		header_down -Access-Control-Allow-Credentials
+	}
 
-  header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
-  header Access-Control-Allow-Headers "Authorization, Content-Type"
+	# Add correct CORS headers
+	header {
+		Access-Control-Allow-Origin "https://localhost:5443"
+		Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+		Access-Control-Allow-Headers "Authorization, Content-Type"
+		Access-Control-Allow-Credentials "true"
+		replace Access-Control-Allow-Origin
+		replace Access-Control-Allow-Methods
+		replace Access-Control-Allow-Headers
+	}
 
   @options {
       method OPTIONS
   }
   respond @options 204
-
 
 	log {
 		output stdout
