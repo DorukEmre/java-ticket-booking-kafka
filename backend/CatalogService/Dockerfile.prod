@@ -1,0 +1,30 @@
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
+WORKDIR /src
+
+# Copy and restore dependencies
+COPY CatalogService/*.csproj ./CatalogService/
+RUN dotnet restore ./CatalogService/CatalogService.csproj
+
+# Copy source and publish
+COPY CatalogService ./CatalogService
+WORKDIR /src/CatalogService
+RUN dotnet publish -c Release -o /app/publish --no-restore
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS runtime
+WORKDIR /app
+
+# Create non-root user for security
+RUN addgroup -g 1000 -S appgroup && \
+    adduser -u 1000 -S appuser -G appgroup
+USER appuser
+
+# Copy published output
+COPY --from=build /app/publish .
+
+# Configure
+ENV ASPNETCORE_URLS=http://+:8080
+EXPOSE 8080
+
+ENTRYPOINT ["dotnet", "CatalogService.dll"]
