@@ -9,12 +9,12 @@ services:
   
   ticket-catalog-service:
     environment:
-      API_SERVER_URL: ${API_SERVER_URL_LOCAL}
+      API_SERVER_URL: ${API_SERVER_URL_LOCALPROD}
 
   ticket-cart-service:
     environment:
-      API_SERVER_URL: ${API_SERVER_URL_LOCAL}
+      API_SERVER_URL: ${API_SERVER_URL_LOCALPROD}
 
   ticket-order-service:
     environment:
-      API_SERVER_URL: ${API_SERVER_URL_LOCAL}
+      API_SERVER_URL: ${API_SERVER_URL_LOCALPROD}
