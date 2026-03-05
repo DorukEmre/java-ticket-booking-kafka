@@ -19,7 +19,7 @@ public class CartRedisRepository {
 
   private final RedisTemplate<String, Object> redisTemplate;
 
-  public String key(UUID cartId) {
+  private String key(UUID cartId) {
     return "cart:" + cartId;
   }
 

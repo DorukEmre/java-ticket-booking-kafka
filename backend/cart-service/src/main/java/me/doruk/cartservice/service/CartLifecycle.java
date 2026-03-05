@@ -58,7 +58,7 @@ public class CartLifecycle {
 
     try {
       cartRedisRepository.saveCartToRedis(cartId, cartCache);
-      log.info("Saved cart to Redis with key: {}", cartRedisRepository.key(cartId));
+      log.info("Saved cart to Redis");
     } catch (Exception e) {
       log.error("Error interacting with Redis", e);
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Unable to connect to Redis");
