@@ -21,12 +21,73 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 })
 @AutoConfigureWebTestClient
 @AutoConfigureWireMock(port = 0)
-class CatalogRoutesTest {
+class CatalogServiceRoutesTest {
 
   @Autowired
   private WebTestClient webTestClient;
 
+  // routes to static images
+
   @Test
+  @DisplayName("GET /images/{filename} returns 200")
+  void routesImages() {
+    String filename = "default-event.jpg";
+
+    stubFor(get(urlEqualTo("/images/" + filename))
+        .willReturn(aResponse().withStatus(200)));
+
+    webTestClient.get()
+        .uri("/images/" + filename)
+        .exchange()
+        .expectStatus().isOk();
+  }
+
+  @Test
+  @DisplayName("GET /images/events/{filename} returns 200")
+  void routesImagesEvents() {
+    String filename = "default-event.jpg";
+
+    stubFor(get(urlEqualTo("/images/events/" + filename))
+        .willReturn(aResponse().withStatus(200)));
+
+    webTestClient.get()
+        .uri("/images/events/" + filename)
+        .exchange()
+        .expectStatus().isOk();
+  }
+
+  @Test
+  @DisplayName("GET /images/venues/{filename} returns 200")
+  void routesImagesVenues() {
+    String filename = "default-venue.jpg";
+
+    stubFor(get(urlEqualTo("/images/venues/" + filename))
+        .willReturn(aResponse().withStatus(200)));
+
+    webTestClient.get()
+        .uri("/images/venues/" + filename)
+        .exchange()
+        .expectStatus().isOk();
+  }
+
+  @Test
+  @DisplayName("GET /images/nonexistent.png returns 404")
+  void routesImagesNotFound() {
+    String filename = "nonexistent.png";
+
+    stubFor(get(urlEqualTo("/images/" + filename))
+        .willReturn(aResponse().withStatus(404)));
+
+    webTestClient.get()
+        .uri("/images/" + filename)
+        .exchange()
+        .expectStatus().isNotFound();
+  }
+
+  // public routes
+
+  @Test
+  @DisplayName("GET /events returns 200")
   void routesEvents() {
     stubFor(get(urlEqualTo("/api/v1/catalog/events"))
         .willReturn(aResponse().withStatus(200)));
@@ -38,6 +99,7 @@ class CatalogRoutesTest {
   }
 
   @Test
+  @DisplayName("GET /venues returns 200")
   void routesVenues() {
     stubFor(get(urlEqualTo("/api/v1/catalog/venues"))
         .willReturn(aResponse().withStatus(200)));
@@ -61,6 +123,7 @@ class CatalogRoutesTest {
   }
 
   @Test
+  @DisplayName("GET /venues/456 returns 200")
   void routesVenueById() {
     stubFor(get(urlEqualTo("/api/v1/catalog/venues/456"))
         .willReturn(aResponse().withStatus(200)));
@@ -69,6 +132,18 @@ class CatalogRoutesTest {
         .uri("/venues/456")
         .exchange()
         .expectStatus().isOk();
+  }
+
+  @Test
+  @DisplayName("GET /nonexistent/path returns 404")
+  void routesNotFound() {
+    stubFor(get(urlEqualTo("/api/v1/catalog/nonexistent/path"))
+        .willReturn(aResponse().withStatus(404)));
+
+    webTestClient.get()
+        .uri("/nonexistent/path")
+        .exchange()
+        .expectStatus().isNotFound();
   }
 
 }
