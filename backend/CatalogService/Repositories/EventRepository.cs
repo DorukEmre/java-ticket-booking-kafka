@@ -49,9 +49,18 @@ public class EventRepository(CatalogDbContext context) : IEventRepository
             .Where(e => idList.Contains(e.Id))
             .ToListAsync();
 
-        // Apply FOR UPDATE for row-level lock
+        // Prepare the SQL parameter
+        var parameters = string.Join(",", idList.Select(id => $"@p{id}"));
+
+        // Create the SQL command dynamically using parameters
+        var sqlQuery = $"SELECT * FROM event WHERE Id IN ({parameters}) FOR UPDATE";
+
+        // Create the SqlParameter for each ID
+        var sqlParams = idList.Select(id => new MySqlParameter($"@p{id}", id)).ToArray();
+
+        // Execute the query with parameters
         await _context.Events
-            .FromSqlRaw($"SELECT * FROM event WHERE Id IN ({string.Join(',', idList)}) FOR UPDATE")
+            .FromSqlRaw(sqlQuery, sqlParams)
             .ToListAsync();
 
         return events;
